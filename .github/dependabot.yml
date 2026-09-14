@@ -1,0 +1,50 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    ignore:
+      # eslint 10 breaks eslint-config-next's bundled eslint-plugin-react
+      # (TypeError: contextOrFilename.getFilename is not a function).
+      # Stay on 9.x until eslint-plugin-react ships ESLint 10 compatibility.
+      - dependency-name: eslint
+        update-types:
+          - version-update:semver-major
+    groups:
+      next:
+        patterns:
+          - next
+          - '@next/*'
+          - eslint-config-next
+      react:
+        patterns:
+          - react
+          - react-dom
+          - '@types/react'
+          - '@types/react-dom'
+      tailwind:
+        patterns:
+          - tailwindcss
+          - '@tailwindcss/*'
+      wix:
+        patterns:
+          - '@wix/*'
+      types:
+        patterns:
+          - '@types/*'
+        exclude-patterns:
+          - '@types/react'
+          - '@types/react-dom'
+      eslint:
+        patterns:
+          - eslint
+          - '@eslint/*'
+        exclude-patterns:
+          - eslint-config-next
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
