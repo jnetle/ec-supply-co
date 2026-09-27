@@ -66,6 +66,32 @@
   border-radius: 0 0 var(--radius-ecs-lg) var(--radius-ecs-lg);
 }
 
+.drawerHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-ecs-ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ecs-ink);
+  font-family: var(--font-heading);
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:focus-visible {
+  outline: 3px solid var(--color-ecs-teal);
+  outline-offset: 3px;
+}
+
 .groupLabel {
   display: flex;
   align-items: center;

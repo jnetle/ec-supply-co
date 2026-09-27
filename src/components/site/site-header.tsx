@@ -101,6 +101,8 @@ export function SiteHeader({ revealBrandAfter }: SiteHeaderProps) {
           ref={brandRef}
           href="/"
           aria-label="El Cerrito Supply Co. — home"
+          aria-hidden={!brandShown}
+          tabIndex={brandShown ? undefined : -1}
           className={`${styles.brand} ${brandShown ? "" : styles.brandHidden}`}
         >
           <BrandMark />

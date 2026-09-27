@@ -29,7 +29,12 @@ export function MobileNav() {
       <Dialog.Portal>
         <Dialog.Overlay className={styles.scrim} />
         <Dialog.Content className={styles.drawer}>
-          <Dialog.Title className="sr-only">Site menu</Dialog.Title>
+          <div className={styles.drawerHeader}>
+            <Dialog.Title className="sr-only">Site menu</Dialog.Title>
+            <Dialog.Close className={styles.close} aria-label="Close menu">
+              <span aria-hidden="true">×</span>
+            </Dialog.Close>
+          </div>
 
           {NAV_GROUPS.map((group) => (
             <div key={group.key}>
