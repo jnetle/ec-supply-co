@@ -1,0 +1,11 @@
+/* Hennai's photo column: one wide shot over two square details. */
+.collage {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(10px, 1.4vw, 18px);
+}
+
+.collageWide {
+  grid-column: 1 / -1;
+}

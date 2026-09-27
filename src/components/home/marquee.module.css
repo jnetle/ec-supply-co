@@ -1,0 +1,46 @@
+.strip {
+  background: var(--color-ecs-teal);
+  color: var(--color-ecs-neutral-100);
+  overflow: hidden;
+  padding: 14px 0;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  animation: ecs-marquee 44s linear infinite;
+  font-family: var(--font-script);
+  font-weight: 600;
+  font-size: clamp(24px, 3vw, 42px);
+  line-height: 1.15;
+  letter-spacing: 0.005em;
+}
+
+.run {
+  display: flex;
+  gap: 30px;
+  padding-right: 30px;
+}
+
+/* Sawtooth strip under the marquee — the edge of a ply shelf. */
+.teeth {
+  height: 22px;
+  background-color: var(--color-ecs-bg);
+  background-image: conic-gradient(
+    var(--color-ecs-ply-pale) 0 25%,
+    transparent 0 50%,
+    var(--color-ecs-ply-pale) 0 75%,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+/* Declared here rather than in globals.css: the CSS Modules transformer
+   scopes every animation-name in this file, so a reference to a globally
+   defined keyframe would be rewritten to a name that does not exist. A
+   keyframe has to live in the same module as the rule that uses it. */
+@keyframes ecs-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}

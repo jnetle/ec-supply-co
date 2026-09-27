@@ -1,0 +1,74 @@
+/* The repeating two-column band: copy on one side, photography on the
+   other, torn-paper edges top and bottom. Hennai, Popup vendors and the
+   Tool library are all this shape. */
+.band {
+  position: relative;
+  background-color: var(--band-bg);
+  color: var(--band-fg);
+  margin: clamp(30px, 6vh, 72px) 0;
+  padding: clamp(44px, 7vh, 100px) clamp(18px, 4vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: clamp(26px, 4vw, 72px);
+  align-items: center;
+}
+
+.copy {
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(1.8rem, 4.2vw, 4rem);
+  line-height: 1;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+  text-wrap: pretty;
+}
+
+.kicker {
+  margin-top: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--band-kicker, inherit);
+}
+
+.prose {
+  display: grid;
+  gap: 16px;
+  margin-top: 22px;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.65;
+}
+
+.prose p {
+  margin: 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.media {
+  min-width: 0;
+}
+
+/* The photo column leads on wide screens for bands that want the mirror
+   layout; below the column break it always follows the copy. */
+.mediaFirst {
+  order: 2;
+}
+
+@media (min-width: 700px) {
+  .mediaFirst {
+    order: -1;
+  }
+}

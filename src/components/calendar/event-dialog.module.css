@@ -1,0 +1,133 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(20, 18, 16, 0.5);
+}
+
+.content {
+  position: fixed;
+  z-index: 101;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: min(560px, calc(100vw - 32px));
+  max-height: min(86vh, 760px);
+  overflow: auto;
+  background: var(--color-ecs-surface);
+  color: var(--color-ecs-ink);
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: clamp(24px, 3vw, 36px);
+  box-shadow: 0 24px 60px rgba(42, 31, 22, 0.35);
+}
+
+.header {
+  position: relative;
+  padding: clamp(24px, 4vw, 34px);
+  background: var(--header-color);
+  color: var(--header-ink);
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.55);
+  color: #22201c;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.category {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 10px 0 0;
+  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
+  line-height: 1.05;
+}
+
+.when {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.body {
+  padding: clamp(24px, 4vw, 34px);
+  display: grid;
+  gap: 18px;
+}
+
+.description {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.fact {
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: var(--color-ecs-ply-pale);
+  color: var(--color-ecs-ply-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* Shown instead of the form when there is nothing to sign up for. */
+.note {
+  border-radius: 18px;
+  padding: 14px 18px;
+  background: var(--color-ecs-ply-pale);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.done {
+  border-radius: 18px;
+  padding: 18px;
+  background: var(--color-ecs-teal-pale);
+  color: var(--color-ecs-teal-deep);
+  display: grid;
+  gap: 6px;
+}
+
+.doneTitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  text-transform: uppercase;
+}
+
+.doneBody {
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.select {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 20px;
+  border: 2px solid var(--color-ecs-ply);
+  border-radius: 999px;
+  background: #ffffff;
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: inherit;
+}

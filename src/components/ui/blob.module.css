@@ -1,0 +1,37 @@
+/* The soft organic shapes drifting behind the bands. Decorative only. */
+.blob {
+  position: absolute;
+  pointer-events: none;
+  background: var(--blob-color);
+  border-radius: 48% 52% 38% 62% / 56% 42% 58% 44%;
+  animation:
+    ecs-morph 16s ease-in-out infinite,
+    ecs-drift 27s ease-in-out infinite;
+}
+
+/* Declared here rather than in globals.css: the CSS Modules transformer
+   scopes every animation-name in this file, so a reference to a globally
+   defined keyframe would be rewritten to a name that does not exist. A
+   keyframe has to live in the same module as the rule that uses it. */
+@keyframes ecs-morph {
+  0%,
+  100% {
+    border-radius: 48% 52% 38% 62% / 56% 42% 58% 44%;
+  }
+  34% {
+    border-radius: 62% 38% 58% 42% / 42% 60% 40% 58%;
+  }
+  67% {
+    border-radius: 38% 62% 46% 54% / 58% 44% 56% 42%;
+  }
+}
+
+@keyframes ecs-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+  50% {
+    transform: translate3d(22px, -30px, 0) rotate(10deg) scale(1.06);
+  }
+}

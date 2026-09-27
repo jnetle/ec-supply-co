@@ -1,0 +1,13 @@
+/* Small hand-set labels under a band's copy. */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.2;
+  background: var(--tag-bg);
+  color: var(--tag-fg);
+}

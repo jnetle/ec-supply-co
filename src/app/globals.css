@@ -1,26 +1,220 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Design tokens. Values come verbatim from the handoff's :root block; what
+   changed is where they live. Scale-like tokens (colors, fonts) go in
+   @theme so Tailwind generates utilities for them — `bg-ecs-teal`,
+   `font-heading`. Tokens that are whole CSS declarations rather than scale
+   entries (the stacked text-shadow extrudes) stay in :root, because there
+   is no utility to generate.
+   ────────────────────────────────────────────────────────────────────── */
+@theme {
+  --font-heading: var(--font-jost), "Futura", system-ui, sans-serif;
+  --font-body: var(--font-bitter), Georgia, serif;
+  --font-script: var(--font-caveat), var(--font-bitter), cursive;
+
+  /* Surfaces and ink */
+  --color-ecs-bg: #f4e9d5;
+  --color-ecs-surface: #fbf3e3;
+  --color-ecs-ink: #2a1f16;
+
+  /* Teal */
+  --color-ecs-teal: #0b7a82;
+  --color-ecs-teal-deep: #0a3940;
+  --color-ecs-teal-pale: #a6d4cf;
+
+  /* Marigold */
+  --color-ecs-marigold: #f0a520;
+  --color-ecs-marigold-pale: #f6dca6;
+
+  /* Reds and pinks */
+  --color-ecs-red: #cc3a20;
+  --color-ecs-warm-red: #ee8260;
+  --color-ecs-vermilion: #f4562a;
+  --color-ecs-magenta: #bd336c;
+  --color-ecs-pink: #e8a2ac;
+  --color-ecs-pink-deep: #7d2445;
+
+  /* Woods, ply and the rest */
+  --color-ecs-navy: #1c2540;
+  --color-ecs-jade: #2c8559;
+  --color-ecs-wood: #c4844a;
+  --color-ecs-wood-pale: #ecd6b2;
+  --color-ecs-ply: #e0c28e;
+  --color-ecs-ply-pale: #eddfc0;
+  --color-ecs-ply-ink: #63401c;
+  --color-ecs-glass: #1d2a2c;
+  --color-ecs-garden: #e2e7cd;
+
+  /* Neutral ramp, carried over from the design-system sheet. Only the
+     neutrals survived — every page overrode its accent ramp. */
+  --color-ecs-neutral-100: #f9f4ed;
+  --color-ecs-neutral-200: #eee7db;
+  --color-ecs-neutral-300: #dcd3c4;
+  --color-ecs-neutral-400: #c0b6a5;
+  --color-ecs-neutral-500: #a19786;
+  --color-ecs-neutral-600: #82796a;
+  --color-ecs-neutral-700: #645c50;
+  --color-ecs-neutral-800: #474238;
+  --color-ecs-neutral-900: #2e2b25;
+
+  --radius-ecs-sm: 8px;
+  --radius-ecs-md: 16px;
+  --radius-ecs-lg: 28px;
+
+  --shadow-ecs-sm: 0 1px 2px color-mix(in srgb, #2e2b25 14%, transparent);
+  --shadow-ecs-md: 0 3px 10px color-mix(in srgb, #2e2b25 16%, transparent);
+  --shadow-ecs-lg: 0 12px 32px color-mix(in srgb, #2e2b25 22%, transparent);
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --ec-ink: #2a1f16;
+  --ec-vermilion: #f4562a;
+
+  /* Hand-drawn extrude, as on the painted window lettering. */
+  --ec-extrude: 0.016em 0.018em 0 var(--ec-ink), 0.032em 0.036em 0 var(--ec-ink),
+    0.048em 0.054em 0 var(--ec-ink), 0.064em 0.072em 0 var(--ec-ink),
+    0.08em 0.09em 0 var(--ec-ink), 0.096em 0.108em 0.01em rgba(42, 31, 22, 0.55);
+  --ec-extrude-sm: 0.02em 0.024em 0 var(--ec-ink), 0.04em 0.048em 0 var(--ec-ink),
+    0.058em 0.07em 0.008em rgba(42, 31, 22, 0.5);
+
+  /* Hand-painted window lettering: cream face, solid colour block behind.
+     --ec-x overrides the block colour per element. */
+  --ec-extrude-paint: -0.013em -0.013em 0 var(--ec-x, var(--ec-vermilion)),
+    0.013em 0.015em 0 var(--ec-x, var(--ec-vermilion)),
+    0.026em 0.03em 0 var(--ec-x, var(--ec-vermilion)),
+    0.039em 0.045em 0 var(--ec-x, var(--ec-vermilion)),
+    0.052em 0.06em 0 var(--ec-x, var(--ec-vermilion)),
+    0.065em 0.075em 0 var(--ec-x, var(--ec-vermilion)),
+    0.072em 0.083em 0.012em rgba(40, 26, 16, 0.28);
+  --ec-extrude-cream: -0.013em -0.013em 0 #fbf3e3, 0.013em 0.015em 0 #fbf3e3,
+    0.026em 0.03em 0 #fbf3e3, 0.039em 0.045em 0 #fbf3e3, 0.052em 0.06em 0 #fbf3e3,
+    0.065em 0.075em 0 #fbf3e3, 0.072em 0.083em 0.012em rgba(40, 26, 16, 0.28);
+  --ec-extrude-paint-sm: -0.014em -0.014em 0 var(--ec-x, var(--ec-vermilion)),
+    0.016em 0.018em 0 var(--ec-x, var(--ec-vermilion)),
+    0.032em 0.037em 0 var(--ec-x, var(--ec-vermilion)),
+    0.046em 0.053em 0 var(--ec-x, var(--ec-vermilion)),
+    0.053em 0.061em 0.01em rgba(40, 26, 16, 0.26);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-text-size-adjust: 100%;
+  background-color: var(--color-ecs-bg);
+  color: var(--color-ecs-ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
 }
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ecs-teal);
+  outline-offset: 2px;
+}
+
+/* Anchor targets stop clear of the awning AND the brand sign hanging below
+   it — hence the clearance variable rather than the header's own height.
+   Every id'd section on this site is a link target, and `:target` is no use
+   here because it does not update on client-side navigation. The header
+   publishes the measurement; the fallback covers the moment before it mounts. */
+section[id] {
+  scroll-margin-top: calc(var(--ecs-header-clearance, 100px) + 24px);
+}
+
+::selection {
+  background: color-mix(in srgb, var(--color-ecs-marigold) 40%, transparent);
+}
+
+/* Pressed-paper grain over the whole site. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900;
+  background-image: url(/assets/paper-grain.svg);
+  mix-blend-mode: multiply;
+  opacity: var(--ec-grain, 0.34);
+}
+
+/* Soft sun-fade in the corners, like an old painted window. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 899;
+  background: radial-gradient(
+    120% 90% at 50% 40%,
+    transparent 55%,
+    rgba(84, 58, 32, 0.16) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+/* Photographs sit back into the warm page instead of on top of it. */
+.washed {
+  filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Keyframes ────────────────────────────────────────────────────────────
+   The design system's animations — ecs-marquee, ecs-morph, ecs-drift,
+   ecs-sway and ecs-sign-settle — are NOT defined here, even though they are
+   shared. The CSS Modules transformer scopes every `animation-name` in a
+   module file, including references to keyframes defined globally: the name
+   is rewritten to a hashed one that does not exist, so the animation simply
+   never runs. Each keyframe therefore lives in the module that uses it:
+
+     ecs-marquee      components/home/marquee.module.css
+     ecs-sway         components/ui/eyebrow.module.css
+     ecs-morph        components/ui/blob.module.css
+                      components/ui/blob-image.module.css
+     ecs-drift        components/ui/blob.module.css
+     ecs-sign-settle  components/home/hero.module.css
+
+   If an animation is ever needed from a non-module stylesheet, define it
+   there too rather than moving it back here.
+   ──────────────────────────────────────────────────────────────────────── */

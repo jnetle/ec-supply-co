@@ -1,0 +1,272 @@
+.track {
+  position: relative;
+  /* Set by the component from the same formula the motion hook uses, so the
+     height is right from first paint. If this and the hook disagreed, the
+     document would grow after hydration and any in-flight anchor scroll
+     would land short. */
+  height: var(--hero-track-height);
+  /* Pull the stage up under the awning so no page background shows through. */
+  margin-top: -64px;
+}
+
+.stage {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: clamp(28px, 6vh, 72px);
+}
+
+/* dvh is iOS 16.4+; the vh above is the base so older iPhones still get a
+   sensible height. */
+@supports (height: 100dvh) {
+  .stage {
+    height: 100dvh;
+  }
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+}
+
+.photo img {
+  object-fit: cover;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, #3a3227 46%, transparent) 0%,
+    color-mix(in srgb, #3a3227 24%, transparent) 42%,
+    color-mix(in srgb, #241f18 72%, transparent) 100%
+  );
+}
+
+/* Tints the photo to match whichever word is currently on screen. */
+.wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--color-ecs-teal-deep);
+  opacity: 0.13;
+  transition: background 800ms ease;
+}
+
+.content {
+  position: relative;
+  padding: 0 clamp(14px, 4vw, 52px);
+  pointer-events: none;
+  color: var(--color-ecs-neutral-100);
+}
+
+.kicker {
+  font-family: var(--font-script);
+  font-weight: 600;
+  font-size: clamp(22px, 2.6vw, 40px);
+  line-height: 1.1;
+  letter-spacing: 0.005em;
+  margin-bottom: clamp(16px, 3.1vh, 38px);
+  color: #fbf3e3;
+}
+
+.lockup {
+  position: relative;
+  transform-origin: left top;
+  will-change: transform;
+}
+
+/* Both lines share the wordmark's size; only the extrude colour differs. */
+.brandLine,
+.coWord,
+.suffix {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 7.6vw, 7.9rem);
+  letter-spacing: 0.012em;
+  text-transform: uppercase;
+}
+
+.brandLine {
+  margin: 0;
+  line-height: 0.95;
+  white-space: nowrap;
+  color: #fbf3e3;
+  text-shadow: var(--ec-extrude-paint);
+}
+
+.secondLine {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  margin-top: clamp(2px, 0.8vh, 12px);
+}
+
+/* The period after "Co" melts into this underline as the words start. */
+.squiggle {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  width: 0;
+  height: clamp(9px, 1.1vw, 26px);
+  margin-top: clamp(2px, 0.4vw, 10px);
+  overflow: visible;
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+}
+
+.coWord {
+  position: relative;
+  display: inline-block;
+  transform-origin: 50% 60%;
+  will-change: transform;
+  line-height: 0.99;
+  color: #fbf3e3;
+  text-shadow: var(--ec-extrude-paint);
+}
+
+.coDot {
+  position: absolute;
+  left: 100%;
+  top: 0;
+}
+
+/* The window the cycling suffix paints in; its left edge is where the word
+   starts, so the squiggle hangs off this column. */
+.coWindow {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: clamp(1.3rem, 7.5vw, 7.9rem);
+  overflow: hidden;
+}
+
+/* Inverted from the fixed letters: colour on a cream block. */
+.suffix {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  line-height: 0.99;
+  color: var(--suffix-color);
+  text-shadow: var(--ec-extrude-cream);
+  opacity: 0;
+}
+
+.cue {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(14px, 3vh, 30px);
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #fbf3e3;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.cueLine {
+  display: block;
+  width: 1.5px;
+  height: clamp(18px, 3vh, 30px);
+  background: #fbf3e3;
+  border-radius: 999px;
+}
+
+/* Keep the hero inside one screen so the lockup can't be clipped. */
+@media (max-width: 620px) {
+  .stage {
+    justify-content: center;
+  }
+}
+
+/* ── The Coming Soon sign ──────────────────────────────────────────────────
+   A painted plank hanging on two poles above the stage. Its box is sized
+   and placed by the hero hook against the live wordmark, so the values here
+   are only what measurement can't supply. It starts parked a full viewport
+   above its resting spot and is lowered as the hero scrolls. */
+.sign {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 10px;
+  height: 10px;
+  opacity: 0;
+  /* Hidden until measured, so it can't flash at the wrong size. */
+  visibility: hidden;
+  pointer-events: none;
+  z-index: 4;
+  will-change: transform, opacity;
+}
+
+.signPlank {
+  position: absolute;
+  inset: 0;
+  /* Well above the plank, so it swings from the poles rather than its middle. */
+  transform-origin: 50% -220px;
+  display: grid;
+  place-items: center;
+  background: var(--color-ecs-marigold);
+  color: var(--color-ecs-teal-deep);
+  border: 5px solid var(--color-ecs-teal-deep);
+  border-radius: 26px 14px 22px 16px;
+  box-shadow: 0 14px 0 -4px rgba(5, 63, 74, 0.34);
+  animation: ecs-sign-settle 7s ease-in-out infinite;
+}
+
+/* Tall enough to run off the top of the stage at any viewport height. */
+.signPole {
+  position: absolute;
+  bottom: 100%;
+  width: 3px;
+  height: 100vh;
+  background: var(--color-ecs-teal-deep);
+  border-radius: 999px;
+}
+
+.signPole[data-side="left"] {
+  left: 14%;
+}
+
+.signPole[data-side="right"] {
+  right: 14%;
+}
+
+/* Reads "Coming Soon" with the "Co" of the wordmark underneath it. */
+.signText {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: var(--ec-extrude-paint-sm);
+}
+
+/* Declared here rather than in globals.css: the CSS Modules transformer
+   scopes every animation-name in this file, so a reference to a globally
+   defined keyframe would be rewritten to a name that does not exist. A
+   keyframe has to live in the same module as the rule that uses it. */
+@keyframes ecs-sign-settle {
+  0% {
+    transform: rotate(-0.7deg);
+  }
+  50% {
+    transform: rotate(0.7deg);
+  }
+  100% {
+    transform: rotate(-0.7deg);
+  }
+}
