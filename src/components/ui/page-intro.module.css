@@ -1,0 +1,21 @@
+/* The opening block every interior page shares: label, headline, lede. */
+.intro {
+  padding: clamp(44px, 8vh, 110px) clamp(18px, 4vw, 56px) clamp(24px, 4vh, 44px);
+  max-width: 1180px;
+}
+
+.title {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 6.2rem);
+  line-height: 0.96;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: clamp(16px, 2.4vh, 26px) 0 0;
+  max-width: 54ch;
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.6;
+}

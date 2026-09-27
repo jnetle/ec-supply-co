@@ -1,0 +1,35 @@
+/* A photo inside an organic mask. The image is overscaled by the parallax
+   effect and drifts inside this box, so the mask must clip. */
+.frame {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--frame-radius);
+  aspect-ratio: var(--frame-ratio);
+}
+
+.frame img {
+  object-fit: cover;
+}
+
+/* Portraits breathe through the organic radii instead of holding one shape. */
+.morphing {
+  animation: ecs-morph 18s ease-in-out infinite;
+}
+
+/* Declared here rather than in globals.css: the CSS Modules transformer
+   scopes every animation-name in this file, so a reference to a globally
+   defined keyframe would be rewritten to a name that does not exist. A
+   keyframe has to live in the same module as the rule that uses it. */
+@keyframes ecs-morph {
+  0%,
+  100% {
+    border-radius: 48% 52% 38% 62% / 56% 42% 58% 44%;
+  }
+  34% {
+    border-radius: 62% 38% 58% 42% / 42% 60% 40% 58%;
+  }
+  67% {
+    border-radius: 38% 62% 46% 54% / 58% 44% 56% 42%;
+  }
+}

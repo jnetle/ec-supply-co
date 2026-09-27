@@ -1,0 +1,69 @@
+.section {
+  padding: clamp(48px, 8vh, 110px) clamp(14px, 4vw, 52px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr));
+  gap: clamp(24px, 4vw, 64px);
+  align-items: center;
+}
+
+.heading {
+  margin: 0 0 20px;
+  font-size: clamp(1.9rem, 4.4vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+}
+
+.address {
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.7;
+}
+
+.address a {
+  color: var(--color-ecs-teal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The hours card reads as a painted sign hung slightly off true. */
+.hours {
+  margin-top: 26px;
+  background: var(--color-ecs-glass);
+  color: #ffffff;
+  border: 5px solid var(--color-ecs-ply);
+  border-radius: 34px 18px 30px 20px;
+  padding: 22px 24px 24px;
+  transform: rotate(-1.1deg);
+  display: grid;
+  gap: 9px;
+  font-size: 14px;
+  max-width: 340px;
+}
+
+.hoursTitle {
+  font-family: var(--font-heading);
+  font-size: 22px;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-ecs-marigold);
+  margin-bottom: 6px;
+}
+
+.hoursRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hoursRow dt {
+  font-weight: 600;
+}
+
+.hoursRow dd {
+  margin: 0;
+}
+
+/* Closed days sit back without disappearing. */
+.hoursClosed {
+  opacity: 0.62;
+}

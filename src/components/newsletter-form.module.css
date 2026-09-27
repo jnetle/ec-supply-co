@@ -1,0 +1,73 @@
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex: 1 1 440px;
+  max-width: 620px;
+}
+
+.input {
+  flex: 1;
+  min-width: 220px;
+  background: transparent;
+  border: 2px solid
+    color-mix(in srgb, var(--color-ecs-neutral-100) 45%, transparent);
+  border-radius: 999px;
+  padding: 17px 24px;
+  color: var(--color-ecs-neutral-100);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+.input::placeholder {
+  color: color-mix(in srgb, var(--color-ecs-neutral-100) 60%, transparent);
+}
+
+.input[aria-invalid="true"] {
+  border-color: var(--color-ecs-warm-red);
+}
+
+.button {
+  cursor: pointer;
+  background: var(--color-ecs-marigold);
+  color: #22201c;
+  border: none;
+  border-radius: 999px;
+  padding: 17px 34px;
+  min-height: 56px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  transition:
+    background 220ms ease,
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.button:hover:not(:disabled) {
+  background: var(--color-ecs-marigold-pale);
+  transform: translateY(-2px);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Reserves its line so the row doesn't jump when an error appears. */
+.message {
+  flex-basis: 100%;
+  min-height: 1.25rem;
+  padding-left: 24px;
+  font-size: 14px;
+  color: var(--color-ecs-marigold-pale);
+}
+
+.success {
+  flex: 1 1 440px;
+  max-width: 620px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(18px, 1.6vw, 22px);
+  line-height: 1.4;
+  color: var(--color-ecs-marigold);
+}

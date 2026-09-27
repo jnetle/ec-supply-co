@@ -1,0 +1,147 @@
+/* The hamburger only exists once the desktop row has been hidden. */
+.burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: #161513;
+  color: #f7f4ed;
+  cursor: pointer;
+  padding: 0;
+}
+
+@media (max-width: 900px) {
+  .burger {
+    display: inline-flex;
+  }
+}
+
+.bars {
+  display: grid;
+  gap: 5px;
+  width: 20px;
+}
+
+.bar {
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 160ms ease;
+}
+
+/* Open state folds the three bars into a cross. */
+.burger[data-state="open"] .barTop {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.burger[data-state="open"] .barMid {
+  opacity: 0;
+}
+
+.burger[data-state="open"] .barBot {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 64;
+  background: rgba(20, 18, 16, 0.4);
+}
+
+.drawer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Sits directly under the awning, whose live height the header publishes. */
+  top: var(--ecs-nav-height, 72px);
+  bottom: 0;
+  z-index: 65;
+  overflow: auto;
+  background: var(--color-ecs-bg);
+  padding: 16px clamp(14px, 4vw, 44px) 26px;
+  box-shadow: var(--shadow-ecs-lg);
+  border-radius: 0 0 var(--radius-ecs-lg) var(--radius-ecs-lg);
+}
+
+.drawerHeader {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--color-ecs-ink);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-ecs-ink);
+  font-family: var(--font-heading);
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.close:focus-visible {
+  outline: 3px solid var(--color-ecs-teal);
+  outline-offset: 3px;
+}
+
+.groupLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 8px 2px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ecs-ply-ink);
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--dot-color);
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 8px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--color-ecs-ink);
+}
+
+.visit {
+  margin-top: 14px;
+  min-height: 52px;
+  display: inline-flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #c23a21;
+  color: #ffffff;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.address {
+  margin-top: 18px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-ecs-neutral-700);
+}

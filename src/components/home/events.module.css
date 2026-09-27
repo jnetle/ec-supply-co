@@ -1,0 +1,117 @@
+.section {
+  padding: clamp(48px, 8vh, 110px) clamp(14px, 4vw, 52px);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(26px, 4vh, 50px);
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.6vw, 4.4rem);
+  line-height: 1;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* Outlined pill that fills in on hover; the outline colour is per-link. */
+.action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 2px solid var(--action-color);
+  color: var(--action-color);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.action:hover {
+  background: var(--action-color);
+  color: #ffffff;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+  gap: clamp(16px, 2.4vw, 30px);
+}
+
+.card {
+  background: var(--color-ecs-surface);
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: 28px;
+  overflow: hidden;
+  transition:
+    transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 340ms ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-ecs-lg);
+}
+
+.badge {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  pointer-events: none;
+  background: var(--badge-color);
+  color: #ffffff;
+  border-radius: var(--radius-ecs-md);
+  padding: 8px 12px;
+  text-align: center;
+  font-family: var(--font-heading);
+  line-height: 1;
+}
+
+.badgeMonth {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.badgeDay {
+  font-size: 24px;
+}
+
+.cardBody {
+  padding: 18px 18px 22px;
+}
+
+.cardMeta {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ecs-teal-deep);
+}
+
+.cardTitle {
+  margin: 8px 0 0;
+  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
+  line-height: 1.1;
+}
+
+.cardBlurb {
+  margin: 10px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}

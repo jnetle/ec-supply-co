@@ -1,0 +1,136 @@
+.section {
+  position: relative;
+  background: var(--color-ecs-navy);
+  color: var(--color-ecs-neutral-100);
+  margin: clamp(30px, 6vh, 72px) 0;
+  padding: clamp(44px, 7vh, 96px) clamp(18px, 4vw, 56px);
+}
+
+.inner {
+  max-width: 1240px;
+}
+
+/* Below the headline the band splits: argument on the left, evidence on the
+   right. The figure is the narrower of the two, so it reads as a supporting
+   note rather than a second headline. */
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px);
+  align-items: start;
+  margin-top: clamp(22px, 3vh, 34px);
+}
+
+.copy {
+  min-width: 0;
+}
+
+/* One column once the figure would be too narrow to read. */
+@media (max-width: 880px) {
+  .body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: 0.008em;
+  text-wrap: pretty;
+}
+
+.prose {
+  display: grid;
+  gap: 18px;
+  max-width: 56ch;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.65;
+}
+
+.prose p {
+  margin: 0;
+}
+
+.figure {
+  /* The percentage's size also sets the column the bars share with it. */
+  --figure-value-size: clamp(1.7rem, 2.8vw, 2.6rem);
+
+  margin: 0;
+  max-width: 460px;
+  display: grid;
+  gap: clamp(14px, 2vh, 18px);
+  padding: clamp(18px, 2vw, 26px);
+  border-radius: clamp(18px, 2vw, 26px);
+  background: rgba(251, 243, 227, 0.07);
+  border: 2px solid rgba(251, 243, 227, 0.16);
+}
+
+.figcaption {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(14px, 1.05vw, 16px);
+  line-height: 1.4;
+  color: #fbf3e3;
+}
+
+/* Label and bar share a column; the big percentage spans both rows. */
+.row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) calc(var(--figure-value-size) * 3);
+  align-items: end;
+  gap: 5px 16px;
+}
+
+.rowLabel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(12px, 0.95vw, 14px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.rowValue {
+  grid-row: span 2;
+  align-self: center;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: var(--figure-value-size);
+  line-height: 0.9;
+  color: var(--row-color);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(251, 243, 227, 0.14);
+  overflow: hidden;
+}
+
+.barFill {
+  width: var(--bar-width);
+  height: 100%;
+  border-radius: 999px;
+  background: var(--row-color);
+}
+
+.source {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #cfd6e0;
+}
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 20px;
+  font-weight: 600;
+  color: var(--color-ecs-marigold);
+}
+
+.more:hover {
+  color: var(--color-ecs-neutral-100);
+}

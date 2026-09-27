@@ -1,0 +1,155 @@
+.root {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.list {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: clamp(8px, 1.1vw, 24px);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each group's chip is a hand-cut pill, tilted at rest and straightened on
+   hover — the tilt and radii come from the group's own data. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: clamp(22px, 1.7vw, 44px);
+  padding: clamp(3px, 0.4vw, 10px) clamp(9px, 0.9vw, 20px);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--chip-radius);
+  background: var(--chip-bg);
+  color: var(--chip-fg);
+  font-family: var(--font-body);
+  font-size: clamp(10px, 0.72vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(var(--chip-tilt));
+  transform-origin: 50% 50%;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 260ms ease;
+}
+
+.chip:hover {
+  box-shadow: 0 6px 0 -2px rgba(22, 21, 19, 0.26);
+}
+
+.chip[data-state="open"] {
+  transform: rotate(0deg) translateY(-2px);
+}
+
+.caret {
+  display: inline-block;
+  font-size: 0.8em;
+  transition: transform 200ms ease;
+}
+
+.chip[data-state="open"] .caret {
+  transform: rotate(180deg);
+}
+
+.group {
+  position: relative;
+}
+
+/* Each panel hangs from its own chip, nudged 6px past the chip edge on
+   whichever side the group leans. */
+.panelWrap {
+  position: absolute;
+  top: 100%;
+  padding-top: 12px;
+  z-index: 80;
+}
+
+.panelWrap[data-align="left"] {
+  left: -6px;
+}
+
+.panelWrap[data-align="right"] {
+  right: -6px;
+}
+
+.panel {
+  width: max-content;
+  min-width: 250px;
+  max-width: 320px;
+  background: var(--color-ecs-surface);
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: 22px;
+  padding: 8px;
+  box-shadow: 0 14px 34px rgba(42, 31, 22, 0.22);
+  display: grid;
+  gap: 2px;
+  list-style: none;
+  margin: 0;
+}
+
+.item {
+  display: grid;
+  gap: 2px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  color: #22201c;
+}
+
+.item:hover,
+.item:focus-visible {
+  background: var(--color-ecs-ply-pale);
+}
+
+.itemLabel {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.15;
+}
+
+.itemNote {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #5a4a3a;
+}
+
+.visit {
+  display: inline-flex;
+  align-items: center;
+  min-height: clamp(22px, 1.7vw, 44px);
+  padding: clamp(3px, 0.4vw, 10px) clamp(9px, 0.9vw, 20px);
+  background: #c23a21;
+  color: #ffffff;
+  border-radius: 9px 16px 8px 17px;
+  font-size: clamp(10px, 0.72vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: rotate(1.8deg);
+  transform-origin: 50% 50%;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 260ms ease;
+}
+
+.visit:hover {
+  transform: rotate(0deg) translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 0 -2px rgba(22, 21, 19, 0.26);
+}
+
+/* Below the awning's hamburger breakpoint the whole row gives way to the
+   drawer, so it is hidden rather than wrapped. */
+@media (max-width: 900px) {
+  .root {
+    display: none;
+  }
+}

@@ -1,0 +1,46 @@
+.section {
+  position: relative;
+  background-color: var(--color-ecs-pink);
+  background-image: radial-gradient(
+    circle,
+    rgba(140, 31, 76, 0.16) 1.7px,
+    transparent 1.8px
+  );
+  background-size: 20px 20px;
+  margin: clamp(20px, 4vh, 48px) 0;
+  padding: clamp(36px, 6vh, 80px) clamp(18px, 4vw, 56px) clamp(44px, 7vh, 96px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
+  gap: clamp(22px, 2.6vw, 38px) clamp(18px, 2.2vw, 32px);
+}
+
+.card {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+}
+
+.name {
+  margin: 16px 0 0;
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.15;
+}
+
+.craft {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ecs-pink-deep);
+  margin-top: 6px;
+}
+
+.bio {
+  margin: 8px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #3a2a2e;
+}

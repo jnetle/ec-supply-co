@@ -10,6 +10,8 @@
     "wix:forms": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --env-file-if-exists=.env.local scripts/wix-forms.mjs"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.23",
+    "@radix-ui/react-navigation-menu": "^1.2.22",
     "@wix/data": "^1.0.521",
     "@wix/forms": "^1.0.509",
     "@wix/marketing": "^1.0.157",

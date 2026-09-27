@@ -1,0 +1,71 @@
+/* Pegboard dots on ply — the wall behind the retail counter. */
+.section {
+  position: relative;
+  background-color: var(--color-ecs-ply-pale);
+  background-image: radial-gradient(
+    circle,
+    rgba(111, 69, 25, 0.17) 1.7px,
+    transparent 1.8px
+  );
+  background-size: 20px 20px;
+  margin: clamp(26px, 5vh, 64px) 0;
+  padding: clamp(44px, 8vh, 104px) clamp(18px, 4vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: clamp(28px, 5vw, 84px);
+  align-items: start;
+}
+
+.heading {
+  margin: 0;
+  font-size: clamp(1.9rem, 4.2vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: 0.008em;
+  text-wrap: pretty;
+}
+
+.body {
+  display: grid;
+  gap: 20px;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.65;
+  max-width: 60ch;
+}
+
+.body p {
+  margin: 0;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+  gap: 12px;
+}
+
+.stat {
+  background: var(--stat-bg);
+  color: var(--stat-fg);
+  border-radius: var(--radius-ecs-lg);
+  padding: 18px 16px;
+}
+
+.statTitle {
+  font-family: var(--font-heading);
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.statNote {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  margin-top: 6px;
+  opacity: 0.85;
+}
+
+@media (max-width: 620px) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+}

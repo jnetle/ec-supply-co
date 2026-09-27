@@ -1,0 +1,27 @@
+/* The hand-lettered section label: a tilted pill that rocks gently. */
+.eyebrow {
+  display: inline-block;
+  background: var(--eyebrow-bg);
+  color: var(--eyebrow-fg);
+  border-radius: var(--eyebrow-radius);
+  padding: 9px 15px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  animation: ecs-sway 9s ease-in-out infinite;
+}
+
+/* Declared here rather than in globals.css: the CSS Modules transformer
+   scopes every animation-name in this file, so a reference to a globally
+   defined keyframe would be rewritten to a name that does not exist. A
+   keyframe has to live in the same module as the rule that uses it. */
+@keyframes ecs-sway {
+  0%,
+  100% {
+    transform: rotate(-1.3deg);
+  }
+  50% {
+    transform: rotate(1.3deg);
+  }
+}

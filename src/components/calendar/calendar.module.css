@@ -1,0 +1,308 @@
+.section {
+  padding: 0 clamp(18px, 4vw, 56px) clamp(48px, 8vh, 110px);
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(22px, 3.4vh, 36px);
+}
+
+.monthNav {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: 2px solid var(--color-ecs-ply);
+  background: var(--color-ecs-surface);
+  color: var(--color-ecs-ply-ink);
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.monthLabel {
+  margin: 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 2px solid var(--color-ecs-navy);
+  background: transparent;
+  color: var(--color-ecs-navy);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.filter[aria-pressed="true"] {
+  background: var(--color-ecs-navy);
+  color: #ffffff;
+}
+
+.filterDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--dot-color);
+}
+
+.listHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.listHeading {
+  margin: 0;
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ecs-ply-ink);
+}
+
+.jumpLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ecs-teal);
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.empty {
+  padding: clamp(24px, 5vh, 56px) 0;
+  font-size: 16px;
+}
+
+/* One event: date chip, details, and the action on the right. */
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(14px, 2vw, 24px);
+  background: var(--color-ecs-surface);
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: 24px;
+  padding: 14px clamp(14px, 2vw, 22px);
+  opacity: var(--row-opacity, 1);
+}
+
+.dateChip {
+  display: grid;
+  place-items: center;
+  min-width: 68px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  background: var(--chip-color);
+  color: var(--chip-ink);
+  font-family: var(--font-heading);
+  line-height: 1;
+}
+
+.dateChipDow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.dateChipDay {
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.rowMeta {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ecs-teal-deep);
+}
+
+.rowTitle {
+  margin: 4px 0 0;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
+  line-height: 1.15;
+}
+
+.rowDetail {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.rowCta {
+  min-height: 48px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background: var(--cta-color);
+  color: var(--cta-ink);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.rowCta:disabled {
+  cursor: default;
+}
+
+/* Drop-in events have no fill, so they need an edge to stay readable. */
+.rowCtaOutline {
+  border-color: var(--color-ecs-teal);
+}
+
+@media (max-width: 620px) {
+  .row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .rowCta {
+    grid-column: 1 / -1;
+  }
+}
+
+/* ── Month grid ────────────────────────────────────────────────────────── */
+
+.monthViewBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: clamp(30px, 5vh, 56px) 0 16px;
+  /* Not a <section>, so it needs the clearance rule spelled out. */
+  scroll-margin-top: calc(var(--ecs-header-clearance, 100px) + 24px);
+}
+
+.grid {
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--color-ecs-ply-pale);
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 1px;
+}
+
+.weekdays {
+  background: var(--color-ecs-ply-pale);
+  padding: 12px 0;
+}
+
+.weekday {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ecs-ply-ink);
+  padding-left: 12px;
+}
+
+.cell {
+  min-height: 116px;
+  padding: 8px;
+  background: var(--color-ecs-surface);
+  display: grid;
+  align-content: start;
+  gap: 4px;
+}
+
+.cellEmpty {
+  background: transparent;
+}
+
+.cellDay {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--color-ecs-ply-ink);
+}
+
+.cellToday {
+  box-shadow: inset 0 0 0 2px var(--color-ecs-magenta);
+}
+
+.cellToday .cellDay {
+  color: var(--color-ecs-magenta);
+}
+
+.chip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 5px 7px;
+  background: var(--chip-color);
+  color: var(--chip-ink);
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1.25;
+  opacity: var(--chip-opacity, 1);
+}
+
+.chip strong {
+  font-weight: 700;
+}
+
+/* The grid is unusable at phone widths; the list above carries it. */
+@media (max-width: 760px) {
+  .monthViewBar,
+  .grid {
+    display: none;
+  }
+}
