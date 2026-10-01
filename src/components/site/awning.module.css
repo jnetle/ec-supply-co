@@ -1,6 +1,8 @@
 /* The striped shop awning behind the nav bar. Each stripe is a scalloped
-   tab; every fourth one is ink instead of cream. The whole strip carries a
-   single drop-shadow so the scallops cast one continuous edge. */
+   tab; every fourth one is faded ink instead of cream. Both colours are
+   muted toward each other so the canvas reads matte, not glossy. The whole
+   strip carries a single drop-shadow so the scallops cast one continuous
+   edge. */
 .awning {
   position: absolute;
   inset: 0;
@@ -19,11 +21,12 @@
   height: 100%;
   border-radius: 0 0 clamp(8px, 0.8vw, 20px) clamp(8px, 0.8vw, 20px);
   /* The hard stop at 67.1% is the scallop's shaded underside. */
-  background: linear-gradient(180deg, #f1eee6 0 67.1%, #d9d4c7 67.1%);
+  background: linear-gradient(180deg, #e9e4d8 0 67.1%, #d6cfc0 67.1%);
   box-shadow: inset -1px 0 0 rgba(20, 18, 16, 0.09);
 }
 
 .stripeInk {
-  background: linear-gradient(180deg, #0d0c0a 0 67.1%, #221e1a 67.1%);
+  /* Sun-faded black: a warm charcoal rather than true ink. */
+  background: linear-gradient(180deg, #3a3531 0 67.1%, #48423d 67.1%);
   box-shadow: none;
 }
