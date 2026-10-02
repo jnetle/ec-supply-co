@@ -153,36 +153,3 @@
     display: none;
   }
 }
-
-/* TEMPORARY awning-lab: with the hanging-nav layout
-   (half-height strip) the
-   chips hang from it like tags — square tops tucked under the strip, rounded
-   bottoms, each tilt swinging from the top. Delete with awning-lab. */
-:global(html[data-awning-layout="hanging"]) .root {
-  align-self: flex-start;
-  /* Strip bottom (half the header) less the row's own top offset, less the
-     8px tucked under the strip. */
-  margin-top: calc(
-    clamp(25px, 2.205vw, 56.5px) - clamp(3px, 0.32vw, 9px) - 8px
-  );
-}
-
-:global(html[data-awning-layout="hanging"]) .list {
-  align-items: flex-start;
-}
-
-:global(html[data-awning-layout="hanging"]) .chip,
-:global(html[data-awning-layout="hanging"]) .visit {
-  padding-top: calc(clamp(3px, 0.4vw, 10px) + 8px);
-  border-radius: 0 0 12px 14px;
-  transform-origin: 50% 0;
-  box-shadow: 0 4px 0 -2px rgba(20, 18, 16, 0.18);
-}
-
-:global(html[data-awning-layout="hanging"]) .chip[data-state="open"] {
-  transform: rotate(0deg);
-}
-
-:global(html[data-awning-layout="hanging"]) .visit:hover {
-  transform: rotate(0deg) scale(1.04);
-}

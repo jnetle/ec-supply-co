@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Awning } from "./awning";
-import { AwningSwitcher } from "./awning-lab/awning-switcher";
 import { BrandMark } from "./brand-mark";
 import { MobileNav } from "./mobile-nav";
 import { SiteNav } from "./site-nav";
@@ -96,7 +95,6 @@ export function SiteHeader({ revealBrandAfter }: SiteHeaderProps) {
   return (
     <header ref={headerRef} className={styles.header}>
       <Awning />
-      <AwningSwitcher />
 
       <div className={styles.row}>
         <Link
