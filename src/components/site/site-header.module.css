@@ -57,3 +57,23 @@
     height: 96px;
   }
 }
+
+/* TEMPORARY awning-lab: with the hanging-nav layout the sign tucks
+   under the strip like the nav tags, so it grows by the strip's height
+   (half the header, less the 8px tuck) to keep its lettering below it.
+   Delete with awning-lab. */
+:global(html[data-awning-layout="hanging"]) .brand {
+  height: calc(
+    clamp(60px, 5.6vw, 140px) + 30px + clamp(25px, 2.205vw, 56.5px) - 8px
+  );
+  padding-top: calc(
+    clamp(4px, 0.4vw, 10px) + 30px + clamp(25px, 2.205vw, 56.5px) - 8px
+  );
+}
+
+@media (max-width: 900px) {
+  :global(html[data-awning-layout="hanging"]) .brand {
+    height: calc(96px + 33px - 8px);
+    padding-top: calc(clamp(4px, 0.4vw, 10px) + 30px + 33px - 8px);
+  }
+}

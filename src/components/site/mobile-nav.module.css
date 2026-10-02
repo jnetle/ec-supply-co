@@ -145,3 +145,20 @@
   line-height: 1.6;
   color: var(--color-ecs-neutral-700);
 }
+
+/* TEMPORARY awning-lab: with the hanging-nav layout the hamburger
+   hangs from the strip like the desktop chips. The header is 66px here, so
+   the strip ends at 33px; the row starts 3px down and the tag tucks 8px
+   under. Delete with awning-lab. */
+@media (max-width: 900px) {
+  :global(html[data-awning-layout="hanging"]) .burger {
+    align-self: flex-start;
+    margin-top: calc(33px - 3px - 8px);
+    padding-top: 8px;
+    height: 52px;
+    border-radius: 0 0 10px 12px;
+    transform: rotate(-1.5deg);
+    transform-origin: 50% 0;
+    box-shadow: 0 4px 0 -2px rgba(20, 18, 16, 0.18);
+  }
+}
