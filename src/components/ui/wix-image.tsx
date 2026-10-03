@@ -14,6 +14,7 @@ import { WIX_MEDIA } from "@/lib/wix-media";
  */
 export function WixImage({
   ratio,
+  alt,
   ...props
 }: Omit<ImageProps, "src" | "loader"> & {
   src: string;
@@ -30,5 +31,5 @@ export function WixImage({
     return `${src}/v1/fill/w_${width},h_${height},al_c,q_${q},enc_auto/${mediaId}`;
   };
 
-  return <Image {...props} loader={loader} />;
+  return <Image {...props} alt={alt} loader={loader} />;
 }
