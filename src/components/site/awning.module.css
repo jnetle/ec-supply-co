@@ -1,32 +1,18 @@
-/* The striped shop awning behind the nav bar. Each stripe is a scalloped
-   tab; every fourth one is faded ink instead of cream. Both colours are
-   muted toward each other so the canvas reads matte, not glossy. The whole
-   strip carries a single drop-shadow so the scallops cast one continuous
-   edge. */
+/* The painted shop awning behind the nav bar (drawn in awning.tsx). The
+   whole strip carries one shadow from its wavy hem: a tight contact shadow
+   right under the edge and a wider, softer falloff, as canvas casts in
+   daylight. */
 .awning {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: flex-start;
   overflow: hidden;
   pointer-events: none;
-  /* 6px drop, no blur, 15% darkness — a hard-edged shadow, as a canvas awning
-     casts in direct sun. */
-  filter: drop-shadow(0 6px 0 rgba(20, 18, 16, 0.15));
+  filter: drop-shadow(0 2px 1.5px rgba(20, 18, 16, 0.22))
+    drop-shadow(0 7px 9px rgba(20, 18, 16, 0.16));
 }
 
-.stripe {
-  flex: 0 0 auto;
-  width: clamp(19px, 1.9vw, 48px);
+.art {
+  display: block;
+  width: 100%;
   height: 100%;
-  border-radius: 0 0 clamp(8px, 0.8vw, 20px) clamp(8px, 0.8vw, 20px);
-  /* The hard stop at 67.1% is the scallop's shaded underside. */
-  background: linear-gradient(180deg, #e9e4d8 0 67.1%, #d6cfc0 67.1%);
-  box-shadow: inset -1px 0 0 rgba(20, 18, 16, 0.09);
-}
-
-.stripeInk {
-  /* Sun-faded black: a warm charcoal rather than true ink. */
-  background: linear-gradient(180deg, #3a3531 0 67.1%, #48423d 67.1%);
-  box-shadow: none;
 }
