@@ -6,7 +6,7 @@ import styles from "./sell-with-us-band.module.css";
 export function SellWithUsBand() {
   return (
     <section className={styles.section}>
-      <div className={styles.panel}>
+      <div data-reveal className={styles.panel}>
         <div className={styles.copy}>
           <div className={styles.title}>Make something good?</div>
           <div className={styles.note}>

@@ -18,7 +18,7 @@ export function MakerDirectory({ makers }: { makers: Maker[] }) {
 
       <div className={styles.grid}>
         {makers.map((maker, i) => (
-          <article key={maker.id} className={styles.card}>
+          <article key={maker.id} data-reveal className={styles.card}>
             <BlobImage
               src={maker.photo?.src}
               alt={maker.photo?.alt ?? ""}

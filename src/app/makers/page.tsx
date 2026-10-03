@@ -4,6 +4,7 @@ import { MakerDirectory } from "@/components/makers/maker-directory";
 import { PageFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
+import { ScrollEffects } from "@/components/ui/scroll-effects";
 import { SellWithUsBand } from "@/components/ui/sell-with-us-band";
 import { getMakers } from "@/lib/makers";
 
@@ -36,6 +37,7 @@ export default async function MakersPage() {
       </main>
 
       <PageFooter />
+      <ScrollEffects />
     </>
   );
 }
