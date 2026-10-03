@@ -30,35 +30,11 @@ type Placeholder = Omit<Maker, "id" | "photo"> & {
  */
 const PLACEHOLDERS: Placeholder[] = [
   {
-    name: "Rosa Delgado",
-    craft: "Ceramics",
-    since: 2019,
-    bio: "Throws in a garage two blocks east. Teaches the clay nights and refuses to make anything that can't go in a dishwasher.",
-    photoId: 64,
-    featured: true,
-  },
-  {
-    name: "Ninth St. Press",
-    craft: "Print",
-    since: 2021,
-    bio: "Two people, one four-color carousel. They print the event posters you see taped in our window.",
-    photoId: 91,
-    featured: true,
-  },
-  {
     name: "Hana Ito",
     craft: "Textiles",
     since: 2020,
     bio: "Keeps a live indigo vat going year-round and will happily explain the smell to anyone who asks.",
     photoId: 65,
-    featured: true,
-  },
-  {
-    name: "Marisol Vega",
-    craft: "Jewelry",
-    since: 2018,
-    bio: "Hammered brass and recycled silver, cut and finished at a bench off San Pablo.",
-    photoId: 177,
     featured: true,
   },
   {
