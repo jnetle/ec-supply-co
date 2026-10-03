@@ -6,6 +6,8 @@
   overflow: hidden;
   border-radius: var(--frame-radius);
   aspect-ratio: var(--frame-ratio);
+  /* Shows only when there is no photo. */
+  background: rgba(140, 31, 76, 0.14);
 }
 
 .frame img {

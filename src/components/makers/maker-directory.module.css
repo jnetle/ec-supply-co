@@ -11,10 +11,16 @@
   padding: clamp(36px, 6vh, 80px) clamp(18px, 4vw, 56px) clamp(44px, 7vh, 96px);
 }
 
+/* As many 210px columns as fit, but never more than five: past that, the
+   minimum grows to a fifth of the row so a sixth column can't open. */
 .grid {
+  --column-gap: clamp(18px, 2.2vw, 32px);
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr));
-  gap: clamp(22px, 2.6vw, 38px) clamp(18px, 2.2vw, 32px);
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(max(min(100%, 210px), (100% - 4 * var(--column-gap)) / 5), 1fr)
+  );
+  gap: clamp(22px, 2.6vw, 38px) var(--column-gap);
 }
 
 .card {
@@ -27,6 +33,43 @@
   margin: 16px 0 0;
   font-size: clamp(19px, 1.6vw, 22px);
   line-height: 1.15;
+}
+
+.nameLink {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 220ms ease;
+}
+
+.nameLink:hover,
+.nameLink:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* The cue that the name leads to the maker's own site. */
+.linkBadge {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 999px;
+  background: var(--color-ecs-pink-deep);
+  color: #ffffff;
+  vertical-align: 0.08em;
+  transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.nameLink:hover .linkBadge,
+.nameLink:focus-visible .linkBadge {
+  transform: rotate(-12deg) scale(1.08);
+}
+
+.maker {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 4px;
 }
 
 .craft {

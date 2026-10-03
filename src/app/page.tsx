@@ -11,6 +11,9 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
 
+// Picks up maker edits in the Wix CMS within five minutes.
+export const revalidate = 300;
+
 export default function HomePage() {
   return (
     <>

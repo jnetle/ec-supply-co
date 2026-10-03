@@ -1,20 +1,34 @@
 /**
- * The maker roster. `photoId` keys the placeholder portraits in
- * public/assets/photos; swap it for a real image path when the photography
- * arrives. `featured` picks the four shown in the home page spotlight.
+ * The maker roster's shape, shared by the Wix `LocalMakers` collection (see
+ * src/lib/makers.ts) and the placeholders below. `featured` picks the makers
+ * shown in the home page spotlight.
  */
 
 export type Maker = {
+  id: string;
+  /** The shop or studio name, shown as the card heading. */
   name: string;
+  /** The person behind it, when that differs from `name`. */
+  makerName?: string;
   craft: string;
   /** Year they started making. */
-  since: number;
+  since?: number;
   bio: string;
-  photoId: number;
+  photo?: { src: string; alt: string };
+  website?: string;
   featured?: boolean;
 };
 
-export const MAKERS: Maker[] = [
+type Placeholder = Omit<Maker, "id" | "photo"> & {
+  /** Keys the stock portraits in public/assets/photos. */
+  photoId: number;
+};
+
+/**
+ * Stand-ins from the design handoff, listed after the real makers from Wix
+ * until the CMS holds the full roster. Delete them then.
+ */
+const PLACEHOLDERS: Placeholder[] = [
   {
     name: "Rosa Delgado",
     craft: "Ceramics",
@@ -161,12 +175,22 @@ export const MAKERS: Maker[] = [
   },
 ];
 
-/** The four makers on the home page, in roster order. */
-export const SPOTLIGHT_MAKERS = MAKERS.filter((m) => m.featured).slice(0, 4);
+export const PLACEHOLDER_MAKERS: Maker[] = PLACEHOLDERS.map(
+  ({ photoId, ...maker }) => ({
+    ...maker,
+    id: `placeholder-${photoId}`,
+    photo: {
+      src: `/assets/photos/id-${photoId}-600-600.jpg`,
+      alt: `Portrait of ${maker.name}`,
+    },
+  }),
+);
 
-/** Portraits ship at two sizes; the home spotlight uses the larger one. */
-export function makerPhoto(maker: Maker, size: 600 | 700) {
-  return `/assets/photos/id-${maker.photoId}-${size}-${size}.jpg`;
+/** "Ceramics · since 2019", skipping whichever half the CMS left blank. */
+export function makerByline(maker: Maker) {
+  return [maker.craft, maker.since && `since ${maker.since}`]
+    .filter(Boolean)
+    .join(" · ");
 }
 
 /**

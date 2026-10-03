@@ -2,19 +2,17 @@ import Link from "next/link";
 
 import { Blob } from "@/components/ui/blob";
 import { BlobImage } from "@/components/ui/blob-image";
+import { LinkIcon } from "@/components/ui/link-icon";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
-import {
-  MAKERS,
-  MAKER_RADII,
-  SPOTLIGHT_MAKERS,
-  makerMorphDelay,
-  makerPhoto,
-} from "@/lib/content/makers";
+import { MAKER_RADII, makerByline, makerMorphDelay } from "@/lib/content/makers";
+import { getMakers, getSpotlightMakers } from "@/lib/makers";
 
 import styles from "./maker-spotlight.module.css";
 
-export function MakerSpotlight() {
+export async function MakerSpotlight() {
+  const [makers, spotlight] = await Promise.all([getMakers(), getSpotlightMakers()]);
+
   return (
     <section id="makers" className={styles.section}>
       <WaveDivider edge="top" fill="var(--color-ecs-pink)" />
@@ -44,16 +42,16 @@ export function MakerSpotlight() {
         </div>
 
         <Link href="/makers" className={styles.allLink}>
-          Meet all {MAKERS.length} makers →
+          Meet all {makers.length} makers →
         </Link>
       </div>
 
       <div className={styles.grid}>
-        {SPOTLIGHT_MAKERS.map((maker, i) => (
-          <article key={maker.name} className={styles.card}>
+        {spotlight.map((maker, i) => (
+          <article key={maker.id} className={styles.card}>
             <BlobImage
-              src={makerPhoto(maker, 700)}
-              alt={`Portrait of ${maker.name}`}
+              src={maker.photo?.src}
+              alt={maker.photo?.alt ?? ""}
               radius={MAKER_RADII[i % MAKER_RADII.length]}
               ratio="1/1"
               sizes="(max-width: 700px) 100vw, 230px"
@@ -61,10 +59,27 @@ export function MakerSpotlight() {
               morphing
               delay={makerMorphDelay(i)}
             />
-            <h3 className={styles.name}>{maker.name}</h3>
-            <div className={styles.craft}>
-              {maker.craft} · since {maker.since}
-            </div>
+            <h3 className={styles.name}>
+              {maker.website ? (
+                <a
+                  href={maker.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.nameLink}
+                >
+                  {/* The no-break space keeps the badge on the name's last line. */}
+                  {maker.name}&nbsp;
+                  <span className={styles.linkBadge}>
+                    <LinkIcon size="0.62em" />
+                  </span>
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              ) : (
+                maker.name
+              )}
+            </h3>
+            {maker.makerName && <div className={styles.maker}>{maker.makerName}</div>}
+            <div className={styles.craft}>{makerByline(maker)}</div>
             <p className={styles.bio}>{maker.bio}</p>
           </article>
         ))}

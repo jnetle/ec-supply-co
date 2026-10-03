@@ -1,10 +1,15 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { isWixMedia } from "@/lib/wix-media";
+
+import { WixImage } from "./wix-image";
+
 import styles from "./blob-image.module.css";
 
 type BlobImageProps = {
-  src: string;
+  /** Leave unset to show the empty tinted mask, e.g. for a maker with no photo. */
+  src?: string;
   alt: string;
   /** The mask's asymmetric corners. */
   radius: string;
@@ -48,13 +53,25 @@ export function BlobImage({
         } as CSSProperties
       }
     >
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes={sizes}
-        data-parallax-img={parallax ? "1" : undefined}
-      />
+      {src &&
+        (isWixMedia(src) ? (
+          <WixImage
+            src={src}
+            ratio={ratio}
+            alt={alt}
+            fill
+            sizes={sizes}
+            data-parallax-img={parallax ? "1" : undefined}
+          />
+        ) : (
+          <Image
+            src={src}
+            alt={alt}
+            fill
+            sizes={sizes}
+            data-parallax-img={parallax ? "1" : undefined}
+          />
+        ))}
       {children}
     </div>
   );
