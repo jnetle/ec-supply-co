@@ -10,7 +10,7 @@ import {
 
 import styles from "./site-footer.module.css";
 
-/** The home page's full sitemap footer. */
+/** The full sitemap footer shown on every page. */
 export function SiteFooter() {
   return (
     <footer id="ecs-footer" className={styles.footer}>
@@ -48,20 +48,6 @@ export function SiteFooter() {
       <div className={styles.colophon}>
         <span>© 2026 El Cerrito Supply Co.</span>
       </div>
-    </footer>
-  );
-}
-
-/** The compact footer used by every page other than home. */
-export function PageFooter() {
-  return (
-    <footer className={styles.plain}>
-      <div>
-        {SHOP_ADDRESS.street} · El Cerrito
-      </div>
-      <Link href="/" className="font-bold">
-        ← Back to El Cerrito Supply Co.
-      </Link>
     </footer>
   );
 }

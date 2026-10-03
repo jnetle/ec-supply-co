@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { InquiryForm } from "@/components/private-events/inquiry-form";
-import { PageFooter } from "@/components/site/site-footer";
+import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -151,7 +151,7 @@ export default function PrivateEventsPage() {
         </section>
       </main>
 
-      <PageFooter />
+      <SiteFooter />
     </>
   );
 }

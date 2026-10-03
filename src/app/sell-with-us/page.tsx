@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { ApplicationForm } from "@/components/sell-with-us/application-form";
-import { PageFooter } from "@/components/site/site-footer";
+import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
@@ -108,7 +108,7 @@ export default function SellWithUsPage() {
         <ApplicationForm />
       </main>
 
-      <PageFooter />
+      <SiteFooter />
     </>
   );
 }

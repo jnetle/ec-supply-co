@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { MakerDirectory } from "@/components/makers/maker-directory";
-import { PageFooter } from "@/components/site/site-footer";
+import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
@@ -36,7 +36,7 @@ export default async function MakersPage() {
         <SellWithUsBand />
       </main>
 
-      <PageFooter />
+      <SiteFooter />
       <ScrollEffects />
     </>
   );
