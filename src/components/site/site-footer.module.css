@@ -89,12 +89,3 @@
 }
 
 /* The compact footer the interior pages use instead of the sitemap. */
-.plain {
-  padding: clamp(28px, 5vh, 56px) clamp(18px, 4vw, 56px);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 16px;
-  font-size: 14px;
-  line-height: 1.6;
-}

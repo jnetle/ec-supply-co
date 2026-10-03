@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { MANIFESTO_RULES } from "@/lib/content/manifesto";
 
@@ -84,10 +85,7 @@ export default function ManifestoPage() {
         </section>
       </main>
 
-      <footer className={styles.footer}>
-        <div>7523 Fairmount Ave, El Cerrito CA · Thu–Sun</div>
-        <Link href="/">← Back to the shop</Link>
-      </footer>
+      <SiteFooter />
     </>
   );
 }

@@ -107,29 +107,3 @@
 .action:hover {
   transform: translateY(-2px);
 }
-
-.footer {
-  background: var(--color-ecs-wood-pale);
-  border-radius: var(--radius-ecs-lg);
-  margin: 0 clamp(14px, 4vw, 52px) clamp(20px, 4vh, 44px);
-  padding: clamp(30px, 5vh, 56px) clamp(20px, 4vw, 56px);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 14px;
-  line-height: 1.6;
-}
-
-.footer a {
-  font-weight: 700;
-}
-
-@media (max-width: 620px) {
-  .footer {
-    margin-left: 0;
-    margin-right: 0;
-    border-radius: 0;
-  }
-}
