@@ -36,6 +36,29 @@ export function todayKey(now = new Date()) {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 }
 
+/**
+ * Today as an ISO date key in the shop's own time zone, for server renders
+ * where the machine's clock is UTC and would roll over at 5pm Pacific.
+ */
+export function shopTodayKey(now = new Date()) {
+  // en-CA formats as YYYY-MM-DD.
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+  }).format(now);
+}
+
+/** The next `count` events on or after `today`, soonest first. */
+export function upcomingEvents(
+  events: CalendarEvent[],
+  today: string,
+  count: number,
+) {
+  return events
+    .filter((e) => e.date >= today)
+    .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start))
+    .slice(0, count);
+}
+
 /** Months since year 0, so navigation is one number to clamp. */
 export const monthIndex = (year: number, month: number) => year * 12 + month;
 
