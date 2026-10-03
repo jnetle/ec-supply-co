@@ -3,6 +3,7 @@
 import { env } from "@/lib/env";
 import type { SubscribeState } from "@/lib/newsletter";
 import { getWixClient } from "@/lib/wix";
+import { NEWSLETTER_FORM_FIELDS } from "@/lib/wix-form-config";
 
 // Server Actions are public POST endpoints, so every value here is untrusted.
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -22,7 +23,8 @@ export async function subscribe(
   }
 
   const submitted = formData.get("email");
-  const email = typeof submitted === "string" ? submitted.trim().toLowerCase() : "";
+  const email =
+    typeof submitted === "string" ? submitted.trim().toLowerCase() : "";
 
   if (!email || email.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(email)) {
     return { status: "error", message: "Enter a valid email address." };
@@ -31,11 +33,11 @@ export async function subscribe(
   try {
     // Lands in Wix under Customers & Leads > Forms & Submissions, alongside
     // submissions from the classic site, and runs that form's automations.
-    // The submission key is the field's `target` in the form schema, not its
-    // label or ID. Misconfigured env vars throw here and are logged below.
+    // The submission key is the field's stable `target` in the form schema,
+    // not its label or ID.
     await getWixClient().submissions.createSubmission({
       formId: env.newsletterFormId(),
-      submissions: { [env.newsletterEmailField()]: email },
+      submissions: { [NEWSLETTER_FORM_FIELDS.email]: email },
     });
   } catch (error) {
     console.error("Newsletter subscription failed", error);

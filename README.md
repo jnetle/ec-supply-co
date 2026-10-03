@@ -7,14 +7,14 @@ the newsletter and the maker roster.
 
 ## Routes
 
-| Route | What it is |
-| --- | --- |
-| `/` | Home: scroll-driven hero, then the shop, manifesto, events, makers and signup |
-| `/calendar` | Community calendar: month list + grid, filters, seat sign-ups |
-| `/private-events` | Private workshop and event-space rental inquiries |
-| `/makers` | Maker directory, from the Wix `LocalMakers` collection |
-| `/sell-with-us` | Maker submission criteria and application |
-| `/manifesto` | The nine rules |
+| Route             | What it is                                                                    |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `/`               | Home: scroll-driven hero, then the shop, manifesto, events, makers and signup |
+| `/calendar`       | Community calendar: month list + grid, filters, seat sign-ups                 |
+| `/private-events` | Private workshop and event-space rental inquiries                             |
+| `/makers`         | Maker directory, from the Wix `LocalMakers` collection                        |
+| `/sell-with-us`   | Maker submission criteria and application                                     |
+| `/manifesto`      | The nine rules                                                                |
 
 ## How the styling is organised
 
@@ -69,9 +69,9 @@ footer sitemap all read from it.
 
 ## Known gaps
 
-- The maker application and the two private-event inquiries are client-side
-  only; each has a `TODO` where the submit endpoint goes. The newsletter
-  (below) shows the shape to follow.
+- The two private-event inquiries are client-side only; each has a `TODO` where
+  the submit endpoint goes. The maker application and newsletter submit to Wix
+  Forms once their form IDs and field targets are configured.
 - Calendar seat sign-ups are remembered in the visitor's own browser via
   `localStorage`, not on a server.
 - All photography is placeholder stock from the handoff.
@@ -117,16 +117,16 @@ Replace `YourCollectionId` with the collection ID shown in the Wix CMS collectio
 `/makers` and the home page spotlight read the Wix CMS collection **`LocalMakers`**
 through `getMakers()` in `src/lib/makers.ts`.
 
-| Wix field | Shown as |
-| --- | --- |
-| `title` | Card heading (required — items without one are skipped) |
-| `makerName` | The person behind it, under the heading |
-| `category` | The craft, in the byline |
-| `since` | "since 2017", in the byline |
-| `description` | The bio |
-| `image` | The portrait, in the organic mask |
-| `website` | Links the heading |
-| `featured` | Boolean. Puts the maker in the home spotlight (4 slots) |
+| Wix field     | Shown as                                                |
+| ------------- | ------------------------------------------------------- |
+| `title`       | Card heading (required — items without one are skipped) |
+| `makerName`   | The person behind it, under the heading                 |
+| `category`    | The craft, in the byline                                |
+| `since`       | "since 2017", in the byline                             |
+| `description` | The bio                                                 |
+| `image`       | The portrait, in the organic mask                       |
+| `website`     | Links the heading                                       |
+| `featured`    | Boolean. Puts the maker in the home spotlight (4 slots) |
 
 Until the CMS holds the full roster, the 20 placeholder makers in
 `src/lib/content/makers.ts` are listed after the Wix ones and top up the spotlight.
@@ -156,15 +156,16 @@ and trigger that form's automations.
    npm run wix:forms
    ```
 
-3. Copy the values into `.env.local`:
+3. Copy the form ID into `.env.local`:
 
    ```
    WIX_NEWSLETTER_FORM_ID=<id from the script>
-   WIX_NEWSLETTER_EMAIL_FIELD=<the email field's target, if not "email">
    ```
 
 Submission keys are each field's `target` — its stable storage key, not its label or
-ID — and Wix rejects keys that don't match one. The script prints the real targets.
+ID — and Wix rejects keys that don't match one. The newsletter email target is the
+typed constant `NEWSLETTER_FORM_FIELDS.email` in `src/lib/wix-form-config.ts`.
+Update it if the Wix field is deleted and recreated with a different target.
 
 Anonymous visitor tokens may create submissions but may not read them back, so the
 form cannot be used to enumerate subscribers.
@@ -181,7 +182,60 @@ return `NOT_FOUND` shortly after; those made under None persist.
 Do not treat the `status` in the create response as a success signal — it reads
 `PENDING` either way.
 
+## Maker application
+
+`/sell-with-us` posts the maker application to a separate Wix form. Create a
+standalone form named **Maker application** under **Customers & Leads > Forms &
+Submissions** on the same Wix site as the headless client.
+
+Add these fields. Use plain **Short answer** or **Long answer** fields as listed;
+the site owns the visible controls and Wix is the submission inbox. The Email
+field may use Wix's **Email** type.
+
+| Wix field label                | Wix field type | Required |
+| ------------------------------ | -------------- | -------- |
+| First name                     | Short answer   | Yes      |
+| Last name                      | Short answer   | Yes      |
+| Business name                  | Short answer   | Yes      |
+| Email                          | Email          | Yes      |
+| Website or social media        | Short answer   | Yes      |
+| About the maker and their work | Long answer    | Yes      |
+| Current city                   | Short answer   | No       |
+| Connection to El Cerrito       | Long answer    | No       |
+| Wholesale understanding        | Short answer   | Yes      |
+| Wholesale pricing readiness    | Short answer   | No       |
+
+Set spam protection to **None** or **Basic**, not Advanced, for the same reason
+described above. Then add the form ID to `.env.local` and the matching Vercel
+environment:
+
+```bash
+WIX_MAKER_FORM_ID=3f22c99a-cd9e-4300-8fe9-88fc174cd650
+```
+
+The form ID is an identifier, not a secret. The stable field targets are typed
+constants in `src/lib/wix-form-config.ts`; update that file if a Wix field is
+deleted and recreated with a different target.
+
+The server also uses Zod to validate required fields, email, URL, accepted choice
+values, and length limits before sending anything to Wix. A hidden honeypot
+discards common bot submissions. After configuration, make one test submission
+and confirm it persists under the maker form in Wix before deploying.
+
 ## Configuration
+
+### All environments use the same Wix forms
+
+Local development, Vercel preview deployments and production must all use the
+same Wix site, Newsletter Subscription form and Maker Application form. Set the
+same `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID` and `WIX_MAKER_FORM_ID` values in
+every environment.
+
+This is required because the forms' stable field targets are compiled into
+`src/lib/wix-form-config.ts`. Pointing an environment at a different Wix form may
+cause submissions to be rejected or written under the wrong fields. If separate
+Wix forms become necessary later, move each complete form configuration — ID and
+field targets — behind an environment-specific mapping.
 
 Every environment variable is read in one place: `src/lib/env.ts`. Nothing else in
 `src/` or `scripts/` touches `process.env` — add new variables there, with a hint

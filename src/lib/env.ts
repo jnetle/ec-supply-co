@@ -5,19 +5,17 @@
 // plain Node. That also means it must stay erasable TypeScript — no enums, no
 // namespaces, no parameter properties — for Node's type stripping to handle it.
 
-const FORMS_HINT = "Run `npm run wix:forms` to list form IDs and field targets.";
+const FORMS_HINT =
+  "Run `npm run wix:forms` to list form IDs and field targets.";
 
 const HINTS = {
   WIX_CLIENT_ID:
     "Find it in the Wix dashboard under Settings > Development & integrations > Headless Settings.",
   WIX_NEWSLETTER_FORM_ID: FORMS_HINT,
-  WIX_NEWSLETTER_EMAIL_FIELD: FORMS_HINT,
+  WIX_MAKER_FORM_ID: FORMS_HINT,
 } as const;
 
 type EnvKey = keyof typeof HINTS;
-
-/** The email field's `target` when WIX_NEWSLETTER_EMAIL_FIELD is unset. */
-const DEFAULT_NEWSLETTER_EMAIL_FIELD = "email";
 
 function optional(key: EnvKey): string | undefined {
   // Treat blank and whitespace-only as unset — `.env` files make both easy.
@@ -38,6 +36,5 @@ function required(key: EnvKey): string {
 export const env = {
   wixClientId: () => required("WIX_CLIENT_ID"),
   newsletterFormId: () => required("WIX_NEWSLETTER_FORM_ID"),
-  newsletterEmailField: () =>
-    optional("WIX_NEWSLETTER_EMAIL_FIELD") ?? DEFAULT_NEWSLETTER_EMAIL_FIELD,
+  makerFormId: () => required("WIX_MAKER_FORM_ID"),
 };
