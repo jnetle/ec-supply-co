@@ -3,7 +3,7 @@
 The El Cerrito Supply Co. site: a vintage, hand-painted-window community shop,
 built from the Claude Design handoff. Next.js App Router, Tailwind v4 for tokens
 and layout, CSS Modules for the bespoke pieces, Wix as the headless backend for
-the newsletter.
+the newsletter and the maker roster.
 
 ## Routes
 
@@ -12,7 +12,7 @@ the newsletter.
 | `/` | Home: scroll-driven hero, then the shop, manifesto, events, makers and signup |
 | `/calendar` | Community calendar: month list + grid, filters, seat sign-ups |
 | `/private-events` | Private workshop and event-space rental inquiries |
-| `/makers` | Maker directory with craft filters and live search |
+| `/makers` | Maker directory, from the Wix `LocalMakers` collection |
 | `/sell-with-us` | Maker submission criteria and application |
 | `/manifesto` | The nine rules |
 
@@ -60,7 +60,8 @@ animates.
 
 ## Content
 
-Placeholder copy and stock photography from the handoff live as typed modules in
+Makers come from Wix (below). Everything else — placeholder copy and stock
+photography from the handoff — lives as typed modules in
 `src/lib/content/` (`makers.ts`, `events.ts`, `calendar.ts`, `manifesto.ts`,
 `criteria.ts`, `nav.ts`). `nav.ts` is the single source for the site's
 information architecture — the header dropdowns, the mobile drawer and the
@@ -110,6 +111,36 @@ export default async function Page() {
 ```
 
 Replace `YourCollectionId` with the collection ID shown in the Wix CMS collection settings. The integration uses visitor OAuth, so reads follow the collection permissions configured in Wix.
+
+## Makers
+
+`/makers` and the home page spotlight read the Wix CMS collection **`LocalMakers`**
+through `getMakers()` in `src/lib/makers.ts`.
+
+| Wix field | Shown as |
+| --- | --- |
+| `title` | Card heading (required — items without one are skipped) |
+| `makerName` | The person behind it, under the heading |
+| `category` | The craft, in the byline |
+| `since` | "since 2017", in the byline |
+| `description` | The bio |
+| `image` | The portrait, in the organic mask |
+| `website` | Links the heading |
+| `featured` | Boolean. Puts the maker in the home spotlight (4 slots) |
+
+Until the CMS holds the full roster, the 20 placeholder makers in
+`src/lib/content/makers.ts` are listed after the Wix ones and top up the spotlight.
+Delete `PLACEHOLDER_MAKERS` once the real list is in.
+
+Maker photos are sized by Wix's own image CDN, not the Next.js optimizer, so they
+cost no image transformations on our host: `WixImage`
+(`src/components/ui/wix-image.tsx`) gives next/image a loader that asks Wix for each
+width in the srcset, cropped to the frame. Local images still go through Next. Upload
+portraits at 1000px or wider so they stay sharp on high-density screens.
+
+Both pages are static and revalidate every five minutes, so a CMS edit shows up
+within that window. If Wix is unreachable or `WIX_CLIENT_ID` is unset, the error is
+logged and the pages render the placeholders alone.
 
 ## Newsletter signup
 

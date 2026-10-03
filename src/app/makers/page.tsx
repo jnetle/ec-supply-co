@@ -5,7 +5,7 @@ import { PageFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
 import { SellWithUsBand } from "@/components/ui/sell-with-us-band";
-import { MAKERS } from "@/lib/content/makers";
+import { getMakers } from "@/lib/makers";
 
 export const metadata: Metadata = {
   title: "Makers",
@@ -13,20 +13,25 @@ export const metadata: Metadata = {
     "Every piece in the shop has a name attached. Meet everyone on our shelves right now.",
 };
 
-export default function MakersPage() {
+// Picks up edits in the Wix CMS within five minutes.
+export const revalidate = 300;
+
+export default async function MakersPage() {
+  const makers = await getMakers();
+
   return (
     <>
       <SiteHeader />
 
       <main>
         <PageIntro
-          eyebrow={`${MAKERS.length} makers`}
+          eyebrow={`${makers.length} makers`}
           eyebrowColor="var(--color-ecs-pink-deep)"
           eyebrowInk="#ffffff"
           title="Who made it"
           lede="Every piece in the shop has a name attached. Here is everyone on our shelves right now."
         />
-        <MakerDirectory />
+        <MakerDirectory makers={makers} />
         <SellWithUsBand />
       </main>
 
