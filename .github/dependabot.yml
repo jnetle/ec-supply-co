@@ -12,6 +12,13 @@ updates:
       - dependency-name: eslint
         update-types:
           - version-update:semver-major
+      # `typescript` is an alias for @typescript/typescript6, because
+      # typescript-eslint throws on TS 7 (it has no compiler API yet). TS 7's
+      # own `tsc` lives under the @typescript/native alias. Keep `typescript`
+      # on 6.x until typescript-eslint supports TS 7 (typescript-eslint#10940).
+      - dependency-name: typescript
+        update-types:
+          - version-update:semver-major
     groups:
       next:
         patterns:
@@ -37,6 +44,10 @@ updates:
         exclude-patterns:
           - '@types/react'
           - '@types/react-dom'
+      typescript:
+        patterns:
+          - typescript
+          - '@typescript/*'
       eslint:
         patterns:
           - eslint
