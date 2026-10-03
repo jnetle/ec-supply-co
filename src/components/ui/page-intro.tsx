@@ -17,7 +17,7 @@ export function PageIntro({
   lede,
 }: PageIntroProps) {
   return (
-    <section className={styles.intro}>
+    <section data-reveal className={styles.intro}>
       <Eyebrow color={eyebrowColor} ink={eyebrowInk} className="mb-5">
         {eyebrow}
       </Eyebrow>

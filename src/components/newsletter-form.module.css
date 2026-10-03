@@ -13,7 +13,8 @@
   border: 2px solid
     color-mix(in srgb, var(--color-ecs-neutral-100) 45%, transparent);
   border-radius: 999px;
-  padding: 17px 24px;
+  height: 56px;
+  padding: 0 24px;
   color: var(--color-ecs-neutral-100);
   font-family: var(--font-body);
   font-size: 16px;
@@ -33,8 +34,8 @@
   color: #22201c;
   border: none;
   border-radius: 999px;
-  padding: 17px 34px;
-  min-height: 56px;
+  height: 56px;
+  padding: 0 34px;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 18px;
