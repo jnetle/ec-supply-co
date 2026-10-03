@@ -42,7 +42,9 @@
 .row {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  /* Top-align: the form reserves an error line below its controls, so
+     centering would push the Instagram pill below the input. */
+  align-items: flex-start;
   gap: clamp(14px, 2vw, 26px);
 }
 
@@ -62,8 +64,8 @@
 .instagram {
   display: inline-flex;
   align-items: center;
-  min-height: 52px;
-  padding: 13px 26px;
+  height: 56px;
+  padding: 0 26px;
   border: 2px solid
     color-mix(in srgb, var(--color-ecs-neutral-100) 45%, transparent);
   border-radius: 999px;
