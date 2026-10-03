@@ -18,25 +18,36 @@ try {
   clientId = env.wixClientId();
 } catch (error) {
   console.error(error.message);
-  console.error("If you ran this with plain `node`, use `npm run wix:forms` so .env.local loads.");
+  console.error(
+    "If you ran this with plain `node`, use `npm run wix:forms` so .env.local loads.",
+  );
   process.exit(1);
 }
 
-const client = createClient({ modules: { forms }, auth: OAuthStrategy({ clientId }) });
+const client = createClient({
+  modules: { forms },
+  auth: OAuthStrategy({ clientId }),
+});
 
-const { items = [] } = await client.forms.queryForms({ namespace: NAMESPACE }).find();
+const { items = [] } = await client.forms
+  .queryForms({ namespace: NAMESPACE })
+  .find();
 
 if (items.length === 0) {
   console.log(`No forms found in namespace "${NAMESPACE}" for this client ID.`);
-  console.log("The headless client is probably attached to a different site than the");
-  console.log("one holding your form. Create the headless client on the site that owns");
-  console.log("the newsletter form, then re-run this script.");
+  console.log(
+    "The headless client is probably attached to a different site than the",
+  );
+  console.log(
+    "one holding your form. Create the headless client on the site that owns",
+  );
+  console.log("the forms, then re-run this script.");
   process.exit(0);
 }
 
 for (const form of items) {
   console.log(`\nForm: ${form.name ?? "(unnamed)"}`);
-  console.log(`  WIX_NEWSLETTER_FORM_ID=${form._id}`);
+  console.log(`  id: ${form._id}`);
   console.log("  fields:");
   // Fields without a target (submit buttons, static text) hold no value.
   const inputs = (form.fields ?? []).filter((field) => field.target);
@@ -49,8 +60,10 @@ for (const form of items) {
     );
   }
   const emailField = inputs.find(
-    (field) => field.view?.fieldType === "CONTACTS_EMAIL" || field.validation?.string?.format === "EMAIL",
+    (field) =>
+      field.view?.fieldType === "CONTACTS_EMAIL" ||
+      field.validation?.string?.format === "EMAIL",
   );
-  if (emailField) console.log(`  WIX_NEWSLETTER_EMAIL_FIELD=${emailField.target}`);
+  if (emailField) console.log(`  email target: ${emailField.target}`);
 }
 console.log();
