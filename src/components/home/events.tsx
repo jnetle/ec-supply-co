@@ -1,13 +1,24 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 
-import { BlobImage } from "@/components/ui/blob-image";
+import { EventPhoto } from "@/components/calendar/event-photo";
+import {
+  decorate,
+  shopTodayKey,
+  upcomingEvents,
+} from "@/components/calendar/event-model";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { HOME_EVENTS } from "@/lib/content/events";
+import { CALENDAR_EVENTS } from "@/lib/content/calendar";
 
 import styles from "./events.module.css";
 
+/** The next few events from the community calendar, the one source of truth. */
 export function Events() {
+  const today = shopTodayKey();
+  const events = upcomingEvents(CALENDAR_EVENTS, today, 4).map((e) =>
+    decorate(e, {}, today),
+  );
+
   return (
     <section id="events" className={styles.section}>
       <div className={styles.header}>
@@ -44,34 +55,31 @@ export function Events() {
         </div>
       </div>
 
-      <div className={styles.grid}>
-        {HOME_EVENTS.map((event) => (
-          <article key={event.title} data-reveal className={styles.card}>
-            <BlobImage
-              src={event.photo}
-              alt={event.alt}
-              radius="0"
-              ratio="4/5"
-              sizes="(max-width: 700px) 100vw, 270px"
-            >
-              <div
-                className={styles.badge}
-                style={
-                  { "--badge-color": event.badgeColor } as CSSProperties
-                }
-              >
-                <div className={styles.badgeMonth}>{event.month}</div>
-                <div className={styles.badgeDay}>{event.day}</div>
+      {events.length === 0 ? (
+        <p className={styles.empty}>
+          Nothing scheduled just yet. New workshops and popups land on the{" "}
+          <Link href="/calendar">full calendar</Link> first.
+        </p>
+      ) : (
+        <div className={styles.grid}>
+          {events.map((event) => (
+            <article key={event.id} data-reveal className={styles.card}>
+              <EventPhoto
+                event={event}
+                className={styles.cardPhoto}
+                sizes="(max-width: 700px) 100vw, 270px"
+              />
+              <div className={styles.cardBody}>
+                <div className={styles.cardMeta}>
+                  {event.longDate} · {event.time} · {event.priceLabel}
+                </div>
+                <h3 className={styles.cardTitle}>{event.title}</h3>
+                <p className={styles.cardBlurb}>{event.description}</p>
               </div>
-            </BlobImage>
-            <div className={styles.cardBody}>
-              <div className={styles.cardMeta}>{event.meta}</div>
-              <h3 className={styles.cardTitle}>{event.title}</h3>
-              <p className={styles.cardBlurb}>{event.blurb}</p>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

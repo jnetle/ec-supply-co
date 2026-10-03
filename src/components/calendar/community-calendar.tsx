@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   useLayoutEffect,
   useMemo,
@@ -20,6 +19,7 @@ import {
 
 import styles from "./calendar.module.css";
 import { EventDialog } from "./event-dialog";
+import { EventPhoto } from "./event-photo";
 import {
   MONTHS,
   WEEKDAYS,
@@ -185,26 +185,11 @@ export function CommunityCalendar() {
                 { "--row-opacity": event.past ? 0.5 : 1 } as CSSProperties
               }
             >
-              <div className={styles.rowPhoto}>
-                <Image
-                  src={event.photo}
-                  alt=""
-                  fill
-                  sizes="(max-width: 620px) calc(100vw - 72px), 168px"
-                />
-                <div
-                  className={styles.dateChip}
-                  style={
-                    {
-                      "--chip-color": event.categoryColor,
-                      "--chip-ink": event.categoryInk,
-                    } as CSSProperties
-                  }
-                >
-                  <span className={styles.dateChipDow}>{event.dow}</span>
-                  <span className={styles.dateChipDay}>{event.day}</span>
-                </div>
-              </div>
+              <EventPhoto
+                event={event}
+                className={styles.rowPhoto}
+                sizes="(max-width: 620px) min(calc(100vw - 72px), 360px), 168px"
+              />
 
               <div>
                 <div className={styles.rowMeta}>

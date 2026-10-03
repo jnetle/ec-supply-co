@@ -1,0 +1,53 @@
+/* An event's photo with its date chip. Square everywhere it appears, so an
+   event photo only ever has to work at one crop. */
+.photo {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--color-ecs-ply-pale);
+}
+
+.photo img {
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+/* Zooms when the card or row holding the photo is hovered. */
+*:hover > .photo img {
+  transform: scale(1.04);
+}
+
+/* Pinned over the photo's corner, like a sticker on a flyer. */
+.chip {
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  display: grid;
+  place-items: center;
+  min-width: 56px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
+  background: var(--chip-color);
+  color: var(--chip-ink);
+  font-family: var(--font-heading);
+  line-height: 1;
+}
+
+.chipDow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+}
+
+.chipDay {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photo img {
+    transition: none;
+  }
+}

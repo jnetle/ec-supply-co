@@ -131,49 +131,7 @@
 }
 
 .rowPhoto {
-  position: relative;
   width: clamp(124px, 14vw, 168px);
-  aspect-ratio: 1 / 1;
-  border-radius: 18px;
-  overflow: hidden;
-  background: var(--color-ecs-ply-pale);
-}
-
-.rowPhoto img {
-  object-fit: cover;
-  transition: transform 400ms ease;
-}
-
-.row:hover .rowPhoto img {
-  transform: scale(1.04);
-}
-
-/* Pinned over the photo's corner, like a sticker on a flyer. */
-.dateChip {
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  display: grid;
-  place-items: center;
-  min-width: 56px;
-  padding: 8px 10px;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
-  background: var(--chip-color);
-  color: var(--chip-ink);
-  font-family: var(--font-heading);
-  line-height: 1;
-}
-
-.dateChipDow {
-  font-size: 11px;
-  letter-spacing: 0.12em;
-}
-
-.dateChipDay {
-  font-size: 22px;
-  font-weight: 700;
-  margin-top: 4px;
 }
 
 .rowMeta {
@@ -266,14 +224,14 @@
     align-items: stretch;
   }
 
+  /* Still square, just bigger, capped so the row doesn't get too tall. */
   .rowPhoto {
     width: 100%;
-    aspect-ratio: 16 / 10;
+    max-width: 360px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .rowPhoto img,
   .hostLinkBadge {
     transition: none;
   }
