@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   useLayoutEffect,
   useMemo,
@@ -8,6 +9,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import { LinkIcon } from "@/components/ui/link-icon";
 import {
   CALENDAR_EVENTS,
   CATEGORIES,
@@ -183,17 +185,25 @@ export function CommunityCalendar() {
                 { "--row-opacity": event.past ? 0.5 : 1 } as CSSProperties
               }
             >
-              <div
-                className={styles.dateChip}
-                style={
-                  {
-                    "--chip-color": event.categoryColor,
-                    "--chip-ink": event.categoryInk,
-                  } as CSSProperties
-                }
-              >
-                <span className={styles.dateChipDow}>{event.dow}</span>
-                <span className={styles.dateChipDay}>{event.day}</span>
+              <div className={styles.rowPhoto}>
+                <Image
+                  src={event.photo}
+                  alt=""
+                  fill
+                  sizes="(max-width: 620px) calc(100vw - 72px), 168px"
+                />
+                <div
+                  className={styles.dateChip}
+                  style={
+                    {
+                      "--chip-color": event.categoryColor,
+                      "--chip-ink": event.categoryInk,
+                    } as CSSProperties
+                  }
+                >
+                  <span className={styles.dateChipDow}>{event.dow}</span>
+                  <span className={styles.dateChipDay}>{event.day}</span>
+                </div>
               </div>
 
               <div>
@@ -204,6 +214,20 @@ export function CommunityCalendar() {
                 <div className={styles.rowDetail}>
                   {event.host} · {event.priceLabel} · {event.spotsLabel}
                 </div>
+                {event.hostUrl && (
+                  <a
+                    href={event.hostUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.hostLink}
+                  >
+                    Visit {event.host}
+                    <span className={styles.hostLinkBadge}>
+                      <LinkIcon size="0.7em" />
+                    </span>
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                )}
               </div>
 
               <button

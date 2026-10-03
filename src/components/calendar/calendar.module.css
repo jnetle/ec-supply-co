@@ -117,7 +117,7 @@
   font-size: 16px;
 }
 
-/* One event: date chip, details, and the action on the right. */
+/* One event: photo with its date chip, details, and the action on the right. */
 .row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
@@ -126,16 +126,39 @@
   background: var(--color-ecs-surface);
   border: 3px solid var(--color-ecs-ply);
   border-radius: 24px;
-  padding: 14px clamp(14px, 2vw, 22px);
+  padding: 12px clamp(12px, 1.6vw, 18px);
   opacity: var(--row-opacity, 1);
 }
 
+.rowPhoto {
+  position: relative;
+  width: clamp(124px, 14vw, 168px);
+  aspect-ratio: 1 / 1;
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--color-ecs-ply-pale);
+}
+
+.rowPhoto img {
+  object-fit: cover;
+  transition: transform 400ms ease;
+}
+
+.row:hover .rowPhoto img {
+  transform: scale(1.04);
+}
+
+/* Pinned over the photo's corner, like a sticker on a flyer. */
 .dateChip {
+  position: absolute;
+  left: 8px;
+  top: 8px;
   display: grid;
   place-items: center;
-  min-width: 68px;
-  padding: 10px 12px;
-  border-radius: 18px;
+  min-width: 56px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.18);
   background: var(--chip-color);
   color: var(--chip-ink);
   font-family: var(--font-heading);
@@ -148,7 +171,7 @@
 }
 
 .dateChipDay {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   margin-top: 4px;
 }
@@ -173,6 +196,42 @@
   margin-top: 4px;
   font-size: 14px;
   line-height: 1.45;
+}
+
+.hostLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-ecs-teal);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 220ms ease;
+}
+
+.hostLink:hover,
+.hostLink:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+.hostLinkBadge {
+  display: inline-grid;
+  place-items: center;
+  width: 1.3em;
+  height: 1.3em;
+  border-radius: 999px;
+  background: var(--color-ecs-teal);
+  color: #ffffff;
+  transition: transform 220ms ease;
+}
+
+.hostLink:hover .hostLinkBadge,
+.hostLink:focus-visible .hostLinkBadge {
+  transform: rotate(-12deg) scale(1.08);
 }
 
 .rowCta {
@@ -200,13 +259,23 @@
   border-color: var(--color-ecs-teal);
 }
 
+/* Phones stack it like a flyer: photo on top, details, then the action. */
 @media (max-width: 620px) {
   .row {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
   }
 
-  .rowCta {
-    grid-column: 1 / -1;
+  .rowPhoto {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rowPhoto img,
+  .hostLinkBadge {
+    transition: none;
   }
 }
 
