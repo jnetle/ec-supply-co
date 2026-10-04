@@ -21,6 +21,20 @@ const SIGN_DESCENT = 7.2;
 /** The squiggle is gone by the time the sign is this far down. */
 const SIGN_SQUIGGLE_FADE = 0.45;
 
+/* ── Autoplay script ────────────────────────────────────────────────────── */
+
+/** Hold on the bare wordmark before anything moves. */
+const PLAY_OPEN_MS = 1200;
+/** "Co" dropping to line two. The move itself fills about the middle half
+    of this, with its swell before and settle after. */
+const PLAY_CO_MS = 3000;
+/** Each word sliding in. */
+const PLAY_SWAP_MS = 600;
+/** Each word held still, long enough to read. */
+const PLAY_HOLD_MS = 1800;
+/** The sign coming down, once the last word has been read. */
+const PLAY_SIGN_MS = 1800;
+
 /* ── Easings, as named in the design ────────────────────────────────────── */
 
 const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
@@ -63,6 +77,12 @@ type HeroOptions = {
   enabled: boolean;
   /** Whether the hanging sign is lowered after the words finish. */
   showSign: boolean;
+  /**
+   * Play the sequence once on its own, paced to be read, instead of
+   * scrubbing it off a pinned scroll track. The hero is then unpinned and
+   * its height comes from the stylesheet.
+   */
+  autoplay: boolean;
 };
 
 /**
@@ -79,6 +99,7 @@ export function useHeroSequence({
   wordCount,
   enabled,
   showSign,
+  autoplay,
 }: HeroOptions) {
   // The hook owns every element it animates; the component only attaches them.
   const trackRef = useRef<HTMLElement>(null);
@@ -108,6 +129,10 @@ export function useHeroSequence({
     // mobile, where 100vh and window.innerHeight disagree while the browser
     // toolbars are showing.
     const setTrackHeight = () => {
+      if (autoplay) {
+        track.style.height = "";
+        return;
+      }
       const total = heroTrackVh(wordCount, showSign);
       const vh = window.innerHeight;
       // Measure against the viewport, not the stage: a stage taller than the
@@ -191,7 +216,7 @@ export function useHeroSequence({
       // no dead scrolling, and rest the sequence at the end state it would
       // otherwise scrub to — last word in, period already melted into the
       // squiggle — so the hero still reads as designed.
-      track.style.height = "100vh";
+      track.style.height = autoplay ? "" : "100vh";
       coDotRef.current?.style.setProperty("opacity", "0");
 
       const words = coWindowRef.current?.querySelectorAll<HTMLElement>(
@@ -224,6 +249,8 @@ export function useHeroSequence({
         }
         if (squiggle) squiggle.style.opacity = "0";
       }
+      // Rests in its unscaled layout, so there is nothing to wait for.
+      lockup?.setAttribute("data-ready", "");
       return;
     }
 
@@ -331,7 +358,11 @@ export function useHeroSequence({
         const x = (geometry.dx * (1 - move)).toFixed(1);
         const y = (geometry.dy * (1 - move)).toFixed(1);
         coWord.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale.toFixed(4)})`;
-        if (lockup) lockup.style.transform = `scale(${geometry.scale.toFixed(4)})`;
+        if (lockup) {
+          lockup.style.transform = `scale(${geometry.scale.toFixed(4)})`;
+          // Shown only once it has been measured and scaled; see .lockup.
+          lockup.setAttribute("data-ready", "");
+        }
       }
 
       coWindowRef.current
@@ -396,6 +427,8 @@ export function useHeroSequence({
         }
       }
 
+      if (autoplay) return;
+
       const kicker = kickerRef.current;
       if (kicker) {
         kicker.style.opacity = Math.max(0, 1 - p * 2.6).toFixed(3);
@@ -406,7 +439,53 @@ export function useHeroSequence({
       if (cue) cue.style.opacity = (0.7 * Math.max(0, 1 - p * 3.4)).toFixed(3);
     };
 
+    /* ── Autoplay ──────────────────────────────────────────────────────────── */
+
+    // The script as [ms, position] stops, in the same units as the scroll
+    // budget. Not one steady pace: a steady clock would either rush the
+    // words or crawl through the sign's long descent, so each word gets a
+    // still hold and the empty stretches are skipped quickly.
+    // Each stop can carry its own easing into it.
+    type Ease = (t: number) => number;
+    const script: [number, number, Ease][] = [[0, 0, io]];
+    const step = (ms: number, pos: number, ease: Ease = io) =>
+      script.push([script[script.length - 1][0] + ms, pos, ease]);
+    step(PLAY_OPEN_MS, 0);
+    // Linear: "Co" already eases its own swell, move and settle, and easing
+    // the clock as well would squeeze the move into a dart.
+    step(PLAY_CO_MS, CO_SPAN, (t) => t);
+    for (let word = 1; word <= wordCount; word++) {
+      step(PLAY_SWAP_MS, CO_SPAN + word);
+      step(PLAY_HOLD_MS, CO_SPAN + word);
+    }
+    if (showSign) {
+      // Straight to the top of the descent, then down.
+      step(200, wordCount + CO_SPAN + SIGN_DWELL);
+      step(PLAY_SIGN_MS, wordCount + CO_SPAN + SIGN_DWELL + SIGN_DESCENT);
+    }
+    step(200, budget);
+
+    const playStart = performance.now();
+    const scripted = () => {
+      const t = performance.now() - playStart;
+      let pos = budget;
+      for (let i = 1; i < script.length; i++) {
+        const [t1, p1, ease] = script[i];
+        if (t < t1) {
+          const [t0, p0] = script[i - 1];
+          pos = p0 + (p1 - p0) * ease((t - t0) / (t1 - t0));
+          break;
+        }
+      }
+      // Back from budget position to the progress render() expects.
+      return LEAD + (pos / budget) * (1 - LEAD);
+    };
+
     const draw = () => {
+      if (autoplay) {
+        render(scripted());
+        return;
+      }
       const m = measure();
       if (Math.abs(m - startProgress) > 0.002) rectMoved = true;
       render(rectMoved ? m : gestureProgress);
@@ -489,7 +568,7 @@ export function useHeroSequence({
     };
     // washColors is a module constant at the call site.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enabled, wordCount, showSign]);
+  }, [enabled, wordCount, showSign, autoplay]);
 
   return {
     trackRef,
