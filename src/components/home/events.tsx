@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 
 import { EventPhoto } from "@/components/calendar/event-photo";
 import {
+  type DecoratedEvent,
   decorate,
   shopTodayKey,
   upcomingEvents,
@@ -56,10 +57,12 @@ export function Events() {
       </div>
 
       {events.length === 0 ? (
-        <p className={styles.empty}>
-          Nothing scheduled just yet. New workshops and popups land on the{" "}
-          <Link href="/calendar">full calendar</Link> first.
-        </p>
+        <EmptyBoard />
+      ) : events.length === 1 ? (
+        <div className={styles.solo}>
+          <FeaturedEvent event={events[0]} />
+          <MoreOnTheWay />
+        </div>
       ) : (
         <div className={styles.grid}>
           {events.map((event) => (
@@ -81,5 +84,120 @@ export function Events() {
         </div>
       )}
     </section>
+  );
+}
+
+/**
+ * A lone event gets the room four cards would have shared: a wide card with
+ * the details a visitor needs to decide, beside a nudge to hear about the next.
+ */
+function FeaturedEvent({ event }: { event: DecoratedEvent }) {
+  return (
+    <article data-reveal className={styles.feature}>
+      <EventPhoto
+        event={event}
+        className={styles.featurePhoto}
+        sizes="(max-width: 700px) 100vw, 420px"
+      />
+      <div className={styles.featureBody}>
+        <span
+          className={styles.featureTag}
+          style={
+            {
+              "--tag-color": event.categoryColor,
+              "--tag-ink": event.categoryInk,
+            } as CSSProperties
+          }
+        >
+          {event.categoryLabel}
+        </span>
+        <h3 className={styles.featureTitle}>{event.title}</h3>
+        <p className={styles.featureHost}>with {event.host}</p>
+        <p className={styles.featureBlurb}>{event.description}</p>
+
+        <dl className={styles.featureFacts}>
+          <div>
+            <dt>When</dt>
+            <dd>{event.longDate}</dd>
+            <dd>{event.time}</dd>
+          </div>
+          <div>
+            <dt>Cost</dt>
+            <dd>{event.priceLabel}</dd>
+            <dd>{event.spotsLabel}</dd>
+          </div>
+        </dl>
+
+        <Link href="/calendar" className={styles.featureCta}>
+          {event.cta === "Details" ? "See details" : event.cta} →
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+/** Shared by the one-event and no-event layouts: where the next ones show up. */
+function MoreOnTheWay() {
+  return (
+    <aside data-reveal className={styles.more}>
+      <p className={styles.moreKicker}>More on the way</p>
+      <p className={styles.moreCopy}>
+        New workshops and popups land all season long. Subscribe once and
+        they&rsquo;ll show up in your calendar on their own.
+      </p>
+      <div className={styles.moreLinks}>
+        <Link href="/calendar#subscribe-heading" className={styles.moreLink}>
+          Subscribe to the calendar
+        </Link>
+        <Link href="#signup" className={styles.moreLink}>
+          Get the newsletter
+        </Link>
+      </div>
+    </aside>
+  );
+}
+
+/**
+ * Between seasons: an empty corkboard with one note pinned to it, so the
+ * section still invites something instead of apologising.
+ */
+function EmptyBoard() {
+  return (
+    <div className={styles.board}>
+      <div className={styles.boardMessage}>
+        <p className={styles.boardScript}>Fresh flyers soon</p>
+        <h3 className={styles.boardTitle}>The board&rsquo;s clear for now</h3>
+        <p className={styles.boardCopy}>
+          We&rsquo;re lining up the next round of workshops, popups and
+          neighborhood nights. Subscribe to the calendar and they&rsquo;ll
+          appear the moment they&rsquo;re posted.
+        </p>
+        <div className={styles.moreLinks}>
+          <Link
+            href="/calendar#subscribe-heading"
+            className={styles.boardPrimary}
+          >
+            Subscribe to the calendar
+          </Link>
+          <Link href="#signup" className={styles.moreLink}>
+            Get the newsletter
+          </Link>
+        </div>
+      </div>
+
+      {/* Revealed on a wrapper, since the reveal's inline transform would
+          straighten the note's tilt. */}
+      <div data-reveal className={styles.noteWrap}>
+        <Link href="/private-events" className={styles.note}>
+          <span className={styles.notePin} aria-hidden="true" />
+          <span className={styles.noteKicker}>Open date</span>
+          <span className={styles.noteTitle}>Your event here?</span>
+          <span className={styles.noteCopy}>
+            Teach a class, throw a party or host a popup at the shop.
+          </span>
+          <span className={styles.noteCta}>Book the space →</span>
+        </Link>
+      </div>
+    </div>
   );
 }
