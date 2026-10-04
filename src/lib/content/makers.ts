@@ -93,13 +93,6 @@ const PLACEHOLDERS: Placeholder[] = [
     photoId: 1043,
   },
   {
-    name: "Grace Kim",
-    craft: "Illustration",
-    since: 2019,
-    bio: "Prints and stickers of corner stores, bungalows and the Plaza.",
-    photoId: 1011,
-  },
-  {
     name: "Loop + Knot",
     craft: "Textiles",
     since: 2022,
