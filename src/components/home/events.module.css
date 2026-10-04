@@ -98,11 +98,329 @@
   line-height: 1.55;
 }
 
-.empty {
-  font-size: 16px;
+/* ---- One event: a wide feature card beside a "more on the way" tile ---- */
+
+.solo {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: clamp(16px, 2.4vw, 30px);
 }
 
-.empty a {
+.feature {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  background: var(--color-ecs-surface);
+  border: 3px solid var(--color-ecs-ply);
+  border-radius: 28px;
+  overflow: hidden;
+  transition:
+    transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 340ms ease;
+}
+
+.feature:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-ecs-lg);
+}
+
+.featurePhoto {
+  border-radius: 0;
+  height: 100%;
+}
+
+.featureBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(20px, 2.6vw, 34px);
+}
+
+.featureTag {
+  padding: 5px 12px;
+  border-radius: 12px 6px 11px 5px;
+  background: var(--tag-color);
+  color: var(--tag-ink);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.featureTitle {
+  margin: 14px 0 0;
+  font-size: clamp(1.6rem, 2.8vw, 2.5rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+}
+
+.featureHost {
+  margin: 6px 0 0;
+  font-family: var(--font-script);
+  font-size: 22px;
+  color: var(--color-ecs-magenta);
+}
+
+.featureBlurb {
+  margin: 12px 0 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.featureFacts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: 100%;
+  margin: 20px 0 24px;
+  padding-top: 16px;
+  border-top: 2px dashed var(--color-ecs-ply);
+}
+
+.featureFacts dt {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ecs-teal-deep);
+}
+
+.featureFacts dd {
+  margin: 4px 0 0;
+  font-size: 15px;
+}
+
+.featureCta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  margin-top: auto;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--color-ecs-teal);
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 220ms ease;
+}
+
+.featureCta:hover {
+  background: var(--color-ecs-teal-deep);
+}
+
+.more {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(22px, 3vw, 34px);
+  border: 3px solid var(--color-ecs-teal-deep);
+  border-radius: 26px;
+  background: var(--color-ecs-teal-pale);
+  color: var(--color-ecs-teal-deep);
+}
+
+.moreKicker {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(1.3rem, 2vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.moreCopy {
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.moreLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.moreLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition:
+    background 220ms ease,
+    color 220ms ease;
+}
+
+.moreLink:hover {
+  background: var(--color-ecs-teal-deep);
+  color: #ffffff;
+}
+
+/* ---- No events: an empty corkboard with one note pinned to it ---- */
+
+.board {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+  padding: clamp(26px, 4vw, 56px);
+  border: 3px dashed var(--color-ecs-ply);
+  border-radius: 28px;
+  background: var(--color-ecs-ply-pale);
+  color: var(--color-ecs-ply-ink);
+}
+
+.boardScript {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: clamp(22px, 2.4vw, 30px);
+  color: var(--color-ecs-magenta);
+}
+
+.boardTitle {
+  margin: 4px 0 0;
+  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  line-height: 1.02;
+  text-transform: uppercase;
+  color: var(--color-ecs-ink);
+}
+
+.boardCopy {
+  max-width: 52ch;
+  margin: 14px 0 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.boardPrimary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background: var(--color-ecs-magenta);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 220ms ease;
+}
+
+.boardPrimary:hover {
+  background: var(--color-ecs-pink-deep);
+}
+
+.board .moreLink:hover {
+  background: var(--color-ecs-ply-ink);
+}
+
+/* A flyer tacked up slightly crooked; it straightens when you reach for it. */
+.noteWrap {
+  justify-self: center;
+  width: min(100%, 300px);
+}
+
+.note {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 34px 26px 26px;
+  border-radius: 6px 18px 8px 16px;
+  background: var(--color-ecs-marigold);
+  color: var(--color-ecs-ink);
+  box-shadow: var(--shadow-ecs-md);
+  transform: rotate(3deg);
+  transition:
+    transform 320ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 320ms ease;
+}
+
+.note:hover {
+  transform: rotate(0deg) translateY(-4px);
+  box-shadow: var(--shadow-ecs-lg);
+}
+
+.notePin {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: var(--color-ecs-red);
+  box-shadow: 0 2px 3px rgb(0 0 0 / 0.3);
+}
+
+.noteKicker {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.noteTitle {
+  margin-top: 6px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.noteCopy {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.noteCta {
+  margin-top: 16px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 960px) {
+  .solo,
+  .board {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .feature {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .featurePhoto {
+    height: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature,
+  .note {
+    transition: none;
+  }
+
+  .feature:hover {
+    transform: none;
+  }
+
+  .note:hover {
+    transform: rotate(3deg);
+  }
 }
