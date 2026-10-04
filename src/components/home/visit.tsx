@@ -1,5 +1,7 @@
 import { BlobImage } from "@/components/ui/blob-image";
 import { Eyebrow } from "@/components/ui/eyebrow";
+import { SHOP_ADDRESS } from "@/lib/content/nav";
+import { SITE_EMAIL } from "@/lib/site";
 
 import styles from "./visit.module.css";
 
@@ -25,11 +27,11 @@ export function Visit() {
         <h2 className={styles.heading}>Thursday through Sunday</h2>
 
         <div className={styles.address}>
-          7523 Fairmount Ave
+          {SHOP_ADDRESS.street}
           <br />
-          El Cerrito, CA 94530
+          {SHOP_ADDRESS.city}
           <br />
-          <a href="mailto:hello@elcerritosupply.co">hello@elcerritosupply.co</a>
+          <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
         </div>
 
         <dl className={styles.hours}>

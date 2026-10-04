@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
 import { Bitter, Caveat, Jost } from "next/font/google";
 
+import {
+  SHARE_IMAGE,
+  allowIndexing,
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+} from "@/lib/site";
+
 import "./globals.css";
 
 // Exposed as CSS variables so globals.css can bind them to the --font-*
@@ -25,12 +33,26 @@ const caveat = Caveat({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_NAME,
   title: {
-    default: "El Cerrito Supply Co.",
-    template: "%s · El Cerrito Supply Co.",
+    default: SITE_NAME,
+    template: `%s · ${SITE_NAME}`,
   },
-  description:
-    "Built by neighbors, at 7523 Fairmount Ave in El Cerrito. Local makers, workshops, a tool library and a place to sit down.",
+  description: SITE_DESCRIPTION,
+  // No canonical here: it would be inherited by any page that forgets its
+  // own, pointing that page at the home page. Pages set it via pageMetadata.
+  openGraph: {
+    siteName: SITE_NAME,
+    locale: "en_US",
+    type: "website",
+    images: [SHARE_IMAGE],
+  },
+  twitter: { card: "summary_large_image", images: [SHARE_IMAGE] },
+  // Hidden from search until production is served on the real domain.
+  robots: allowIndexing()
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

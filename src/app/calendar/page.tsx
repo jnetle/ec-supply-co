@@ -4,12 +4,14 @@ import { CommunityCalendar } from "@/components/calendar/community-calendar";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Community calendar",
   description:
-    "Workshops, classes, food popups and neighborhood nights at the shop. Pick something, save a seat.",
-};
+    "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat.",
+  path: "/calendar",
+});
 
 export default function CalendarPage() {
   return (

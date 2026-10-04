@@ -5,14 +5,16 @@ import type { CSSProperties } from "react";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { MANIFESTO_RULES } from "@/lib/content/manifesto";
+import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/manifesto/manifesto-page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Manifesto",
   description:
     "Nine things we decided in a folding-chair meeting in 2019, and haven't found a good reason to change since.",
-};
+  path: "/manifesto",
+});
 
 export default function ManifestoPage() {
   return (
