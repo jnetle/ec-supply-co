@@ -30,14 +30,6 @@ type Placeholder = Omit<Maker, "id" | "photo"> & {
  */
 const PLACEHOLDERS: Placeholder[] = [
   {
-    name: "Hana Ito",
-    craft: "Textiles",
-    since: 2020,
-    bio: "Keeps a live indigo vat going year-round and will happily explain the smell to anyone who asks.",
-    photoId: 65,
-    featured: true,
-  },
-  {
     name: "Oak + Iron Co.",
     craft: "Woodwork",
     since: 2017,
