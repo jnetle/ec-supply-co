@@ -17,7 +17,7 @@
     "@wix/forms": "^1.0.525",
     "@wix/marketing": "^1.0.157",
     "@wix/sdk": "^1.21.16",
-    "next": "16.3.6",
+    "next": "16.3.8",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "^4.6.5"
@@ -29,7 +29,7 @@
     "@types/react-dom": "^19",
     "@typescript/native": "npm:typescript@^7.0.2",
     "eslint": "^9",
-    "eslint-config-next": "16.3.6",
+    "eslint-config-next": "16.3.8",
     "tailwindcss": "^4",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
