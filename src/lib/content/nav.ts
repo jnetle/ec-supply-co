@@ -124,8 +124,11 @@ export const FOOTER_EXTRA_LINKS: Record<string, NavLink[]> = {
 };
 
 export const SHOP_ADDRESS = {
-  street: "7523 Fairmount Ave",
+  street: "7523 A Fairmount Ave",
   city: "El Cerrito, CA 94530",
+  locality: "El Cerrito",
+  region: "CA",
+  postalCode: "94530",
   hours: "Thu–Sun",
   instagram: "https://instagram.com/elcerritosupplyco",
 };

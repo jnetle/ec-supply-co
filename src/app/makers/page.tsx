@@ -7,12 +7,14 @@ import { PageIntro } from "@/components/ui/page-intro";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
 import { SellWithUsBand } from "@/components/ui/sell-with-us-band";
 import { getMakers } from "@/lib/makers";
+import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Makers",
   description:
-    "Every piece in the shop has a name attached. Meet everyone on our shelves right now.",
-};
+    "Every piece in the shop has a name attached. Meet the local makers in El Cerrito and the East Bay on our shelves right now.",
+  path: "/makers",
+});
 
 // Picks up edits in the Wix CMS within five minutes.
 export const revalidate = 300;

@@ -107,7 +107,7 @@ export function Hero() {
 
         <div className={styles.content}>
           <div ref={kickerRef} className={styles.kicker}>
-            Built by neighbors · 7523 Fairmount Ave
+            Built by neighbors · 7523 A Fairmount Ave
           </div>
 
           <div ref={lockupRef} className={styles.lockup}>

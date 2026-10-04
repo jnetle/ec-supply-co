@@ -38,3 +38,18 @@ export const env = {
   newsletterFormId: () => required("WIX_NEWSLETTER_FORM_ID"),
   makerFormId: () => required("WIX_MAKER_FORM_ID"),
 };
+
+/**
+ * Vercel's production deployment and the domain it is served on. Both are
+ * Vercel system variables, set at build time. Previews also see the production
+ * domain, so check the environment as well.
+ */
+export const vercel = {
+  isProduction: () => process.env.VERCEL_ENV === "production",
+  productionHost: () => optionalSystem("VERCEL_PROJECT_PRODUCTION_URL"),
+};
+
+function optionalSystem(key: string): string | undefined {
+  const value = process.env[key]?.trim();
+  return value === "" ? undefined : value;
+}

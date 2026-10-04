@@ -8,14 +8,16 @@ import { Eyebrow } from "@/components/ui/eyebrow";
 import { Field } from "@/components/ui/field";
 import { PageIntro } from "@/components/ui/page-intro";
 import { WaveDivider } from "@/components/ui/wave-divider";
+import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/private-events/private-events-page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Private events",
   description:
     "Host a private workshop with us, or rent the space for your own meeting, class or party.",
-};
+  path: "/private-events",
+});
 
 const RENTAL_FACTS = [
   { value: "$75", unit: " / hour", note: "Rental rates start here" },

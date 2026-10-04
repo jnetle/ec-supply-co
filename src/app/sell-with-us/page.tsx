@@ -6,14 +6,16 @@ import { SiteHeader } from "@/components/site/site-header";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
 import { SUBMISSION_CRITERIA } from "@/lib/content/criteria";
+import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/sell-with-us/sell-with-us-page.module.css";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Maker submissions",
   description:
     "Apply to sell your work at El Cerrito Supply Co. We review submissions in rounds a few times a year.",
-};
+  path: "/sell-with-us",
+});
 
 export default function SellWithUsPage() {
   return (
