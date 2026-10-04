@@ -16,3 +16,19 @@
   width: 100%;
   height: 100%;
 }
+
+/* One strip per range, switched in CSS so the right one paints first; see
+   NARROW in awning.tsx. The breakpoint matches site-header.module.css. */
+.narrow {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .wide {
+    display: none;
+  }
+
+  .narrow {
+    display: block;
+  }
+}

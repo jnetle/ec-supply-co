@@ -47,8 +47,17 @@ function measure(width: number, height: number, viewport: number): Geo {
 }
 
 /** Drawn on the server and for the first client render, before the header
-    has been measured: a 1440px viewport, where the header is 4.41vw tall. */
+    has been measured: a 1440px viewport, where the header is 4.41vw tall.
+    Exact as drawn from about 1134px to 2526px, where the header and slats
+    both scale with the viewport, so the measured redraw changes nothing. */
 const FIRST_PAINT = measure(1440, 1440 * 0.0441, 1440);
+
+/** At 900px and below, the header is a fixed 66px and the slats a fixed
+    19px, so one strip drawn for the widest such viewport, scaled uniformly
+    and cropped at the right, is exact at every narrower width. It is never
+    measured, so a refresh can't paint the desktop strip squeezed into a
+    phone and then redraw it. Mirrors site-header.module.css. */
+const NARROW = measure(900, 66, 900);
 
 /** mulberry32: tiny, deterministic, good enough for wobble. */
 function seeded(seed: number): Rand {
@@ -210,6 +219,89 @@ function draw(g: Geo) {
   };
 }
 
+type ArtProps = {
+  geo: Geo;
+  /** Keeps the clip and filter ids unique when both strips are in the DOM. */
+  id: string;
+  /** "none" stretches a measured strip to fit; "xMinYMin slice" scales a
+      wider one uniformly and crops it. */
+  fit: string;
+  className: string;
+};
+
+function AwningArt({ geo, id, fit, className }: ArtProps) {
+  const art = useMemo(() => draw(geo), [geo]);
+
+  return (
+    <svg
+      className={className}
+      viewBox={`0 0 ${geo.W} 100`}
+      preserveAspectRatio={fit}
+    >
+      <defs>
+        <clipPath id={`${id}-hem`}>
+          <path d={art.outline} />
+        </clipPath>
+        {/* Dry-brush patches: streaky noise as their opacity, edges
+            wobbled a little. */}
+        <filter id={`${id}-brush`} x="-1%" y="-30%" width="102%" height="160%">
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.07 0.006"
+            numOctaves="3"
+            seed="9"
+            result="grain"
+          />
+          <feColorMatrix
+            in="grain"
+            type="matrix"
+            values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.6 0 0 0 -0.45"
+            result="mask"
+          />
+          <feComposite
+            in="SourceGraphic"
+            in2="mask"
+            operator="in"
+            result="painted"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="0.03"
+            numOctaves="3"
+            seed="4"
+            result="warp"
+          />
+          <feDisplacementMap
+            in="painted"
+            in2="warp"
+            scale="2"
+            xChannelSelector="R"
+            yChannelSelector="G"
+          />
+        </filter>
+      </defs>
+      <g clipPath={`url(#${id}-hem)`}>
+        {art.slats.map((slat, i) => (
+          <path key={i} d={slat.d} fill={slat.fill} />
+        ))}
+        <g fill={PATCH} filter={`url(#${id}-brush)`}>
+          {art.patches.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+        {/* The shared edges, inked faintly so the waver reads between
+            two cream slats. */}
+        <g fill="none" stroke={EDGE} strokeWidth={1.2} strokeLinecap="round">
+          {art.edges.map((d, i) => (
+            <path key={i} d={d} />
+          ))}
+        </g>
+        <path d={art.hem} fill="none" stroke={HEM} strokeWidth={1.6} />
+      </g>
+    </svg>
+  );
+}
+
 export function Awning() {
   const ref = useRef<HTMLDivElement>(null);
   const [geo, setGeo] = useState<Geo>(FIRST_PAINT);
@@ -217,10 +309,12 @@ export function Awning() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    // Fires once on observe, then on every header resize.
+    // Fires once on observe, then on every header resize. Only the wide
+    // strip is measured; below 900px it is hidden and the fixed narrow
+    // strip shows instead.
     const observer = new ResizeObserver(([entry]) => {
       const { width, height } = entry.contentRect;
-      if (!width || !height) return;
+      if (!width || !height || window.innerWidth <= 900) return;
       const next = measure(width, height, window.innerWidth);
       setGeo((prev) =>
         prev.W === next.W && prev.S === next.S && prev.R === next.R
@@ -232,76 +326,20 @@ export function Awning() {
     return () => observer.disconnect();
   }, []);
 
-  const art = useMemo(() => draw(geo), [geo]);
-
   return (
     <div ref={ref} aria-hidden="true" className={styles.awning}>
-      <svg
-        className={styles.art}
-        viewBox={`0 0 ${geo.W} 100`}
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <clipPath id="awning-hem">
-            <path d={art.outline} />
-          </clipPath>
-          {/* Dry-brush patches: streaky noise as their opacity, edges
-              wobbled a little. */}
-          <filter id="awning-brush" x="-1%" y="-30%" width="102%" height="160%">
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.07 0.006"
-              numOctaves="3"
-              seed="9"
-              result="grain"
-            />
-            <feColorMatrix
-              in="grain"
-              type="matrix"
-              values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1.6 0 0 0 -0.45"
-              result="mask"
-            />
-            <feComposite
-              in="SourceGraphic"
-              in2="mask"
-              operator="in"
-              result="painted"
-            />
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.03"
-              numOctaves="3"
-              seed="4"
-              result="warp"
-            />
-            <feDisplacementMap
-              in="painted"
-              in2="warp"
-              scale="2"
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </defs>
-        <g clipPath="url(#awning-hem)">
-          {art.slats.map((slat, i) => (
-            <path key={i} d={slat.d} fill={slat.fill} />
-          ))}
-          <g fill={PATCH} filter="url(#awning-brush)">
-            {art.patches.map((d, i) => (
-              <path key={i} d={d} />
-            ))}
-          </g>
-          {/* The shared edges, inked faintly so the waver reads between
-              two cream slats. */}
-          <g fill="none" stroke={EDGE} strokeWidth={1.2} strokeLinecap="round">
-            {art.edges.map((d, i) => (
-              <path key={i} d={d} />
-            ))}
-          </g>
-          <path d={art.hem} fill="none" stroke={HEM} strokeWidth={1.6} />
-        </g>
-      </svg>
+      <AwningArt
+        geo={geo}
+        id="awning-wide"
+        fit="none"
+        className={`${styles.art} ${styles.wide}`}
+      />
+      <AwningArt
+        geo={NARROW}
+        id="awning-narrow"
+        fit="xMinYMin slice"
+        className={`${styles.art} ${styles.narrow}`}
+      />
     </div>
   );
 }
