@@ -76,10 +76,19 @@
   color: #fbf3e3;
 }
 
+/* The server can't measure the wordmark, so it sends the unscaled two-line
+   layout; the hook then scales it and lifts "Co" onto line one. Hidden until
+   then, so a refresh doesn't paint the big version and visibly shrink it. */
 .lockup {
   position: relative;
   transform-origin: left top;
   will-change: transform;
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+.lockup[data-ready] {
+  opacity: 1;
 }
 
 /* Both lines share the wordmark's size; only the extrude colour differs. */
@@ -185,10 +194,31 @@
   border-radius: 999px;
 }
 
-/* Keep the hero inside one screen so the lockup can't be clipped. */
+/* Phones: the whole photo, uncropped, at the device's width and starting
+   below the awning, rather than a full screen cropped from its middle. A
+   stage this short can't be pinned without the empty track showing beneath
+   it, so it scrolls away like any other section and the hook plays the
+   sequence once on its own (the breakpoint is mirrored in hero.tsx). */
 @media (max-width: 620px) {
+  .track {
+    height: auto;
+    margin-top: 0;
+  }
+
   .stage {
-    justify-content: center;
+    position: relative;
+    height: auto;
+    aspect-ratio: 1600 / 1000;
+    padding-bottom: 14px;
+  }
+
+  .kicker {
+    margin-bottom: 8px;
+  }
+
+  /* No pinned scroll left to cue. */
+  .cue {
+    display: none;
   }
 }
 

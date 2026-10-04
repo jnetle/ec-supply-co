@@ -4,6 +4,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 
 import { heroTrackVh, useHeroSequence } from "@/hooks/use-hero-sequence";
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 import styles from "./hero.module.css";
@@ -37,8 +38,23 @@ const SQUIGGLE =
  */
 const SHOW_COMING_SOON_SIGN = true;
 
+/**
+ * Feature flag. Off: the sequence plays once on its own and the hero is a
+ * plain full-screen photo that scrolls away. On: the original scroll-driven
+ * version on desktop, the photo pinned while the visitor's scroll scrubs
+ * the sequence over a 352vh track, with the "Scroll" cue at the bottom.
+ * Phones always autoplay, since the compact hero there is too short to pin.
+ */
+const SCROLL_DRIVEN_HERO = false;
+
+/** Must match the compact breakpoint in hero.module.css. */
+const COMPACT_QUERY = "(max-width: 620px)";
+
 export function Hero() {
   const reducedMotion = useReducedMotion();
+  // Phones: the uncropped photo, unpinned; see hero.module.css.
+  const compact = useMediaQuery(COMPACT_QUERY);
+  const autoplay = !SCROLL_DRIVEN_HERO || compact;
 
   const {
     trackRef,
@@ -58,6 +74,7 @@ export function Hero() {
     wordCount: WORDS.length,
     enabled: !reducedMotion,
     showSign: SHOW_COMING_SOON_SIGN,
+    autoplay,
   });
 
   return (
@@ -67,7 +84,10 @@ export function Hero() {
       className={styles.track}
       style={
         {
-          "--hero-track-height": `${heroTrackVh(WORDS.length, SHOW_COMING_SOON_SIGN)}vh`,
+          // Unpinned, the track just wraps the stage.
+          "--hero-track-height": SCROLL_DRIVEN_HERO
+            ? `${heroTrackVh(WORDS.length, SHOW_COMING_SOON_SIGN)}vh`
+            : "auto",
         } as CSSProperties
       }
     >
@@ -152,10 +172,13 @@ export function Hero() {
           </div>
         </div>
 
-        <div ref={cueRef} className={styles.cue} aria-hidden="true">
-          <span>Scroll</span>
-          <span className={styles.cueLine} />
-        </div>
+        {/* The cue only means something while scroll drives the sequence. */}
+        {SCROLL_DRIVEN_HERO ? (
+          <div ref={cueRef} className={styles.cue} aria-hidden="true">
+            <span>Scroll</span>
+            <span className={styles.cueLine} />
+          </div>
+        ) : null}
       </div>
     </section>
   );

@@ -1,15 +1,31 @@
-/* The hamburger only exists once the desktop row has been hidden. */
+/* The hamburger only exists once the desktop row has been hidden. It hangs
+   from the awning like the brand sign does, a smaller tab in the same teal,
+   so it doesn't get lost among the cream and ink slats. Like the sign, it
+   bleeds 30px above the page top (plus the row's 3px offset at this width)
+   so no gap shows at the viewport edge. */
 .burger {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  align-self: flex-start;
+  width: 50px;
+  height: calc(33px + 60px);
+  margin-top: -33px;
+  padding: 33px 0 0;
+  box-sizing: border-box;
   border: none;
-  background: #161513;
-  color: #f7f4ed;
+  border-radius: 0 0 14px 14px;
+  background: var(--color-ecs-teal-deep);
+  color: var(--color-ecs-bg);
+  box-shadow: 0 4px 0 -2px rgba(20, 18, 16, 0.18);
+  transform: rotate(1.4deg);
+  transform-origin: 50% 0;
   cursor: pointer;
-  padding: 0;
+}
+
+.burger:focus-visible {
+  outline: 3px solid var(--color-ecs-marigold);
+  outline-offset: 3px;
 }
 
 @media (max-width: 900px) {
@@ -51,19 +67,87 @@
   background: rgba(20, 18, 16, 0.4);
 }
 
+/* Radix keeps the drawer mounted until its closing animation ends, so both
+   directions are keyframes on data-state rather than transitions. */
+.scrim[data-state="open"] {
+  animation: scrimIn 300ms ease both;
+}
+
+.scrim[data-state="closed"] {
+  animation: scrimOut 240ms ease both;
+}
+
+/* Covers the whole screen, awning included; it carries its own close. */
 .drawer {
   position: fixed;
-  left: 0;
-  right: 0;
-  /* Sits directly under the awning, whose live height the header publishes. */
-  top: var(--ecs-nav-height, 72px);
-  bottom: 0;
+  inset: 0;
   z-index: 65;
   overflow: auto;
+  overscroll-behavior: contain;
   background: var(--color-ecs-bg);
-  padding: 16px clamp(14px, 4vw, 44px) 26px;
-  box-shadow: var(--shadow-ecs-lg);
-  border-radius: 0 0 var(--radius-ecs-lg) var(--radius-ecs-lg);
+  padding: max(16px, env(safe-area-inset-top)) clamp(14px, 4vw, 44px)
+    max(26px, env(safe-area-inset-bottom));
+}
+
+/* It rolls down from the awning like a shade, and back up to close. */
+.drawer[data-state="open"] {
+  animation: shadeDown 460ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.drawer[data-state="closed"] {
+  animation: shadeUp 280ms cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+/* Then its contents drop in one after another, each a beat behind the
+   last; --i is set per item in mobile-nav.tsx. */
+.drawer[data-state="open"] > * {
+  animation: itemIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(140ms + var(--i, 0) * 55ms);
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes scrimOut {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes shadeDown {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@keyframes shadeUp {
+  from {
+    clip-path: inset(0 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 100% 0);
+  }
+}
+
+@keyframes itemIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* The global rule zeroes durations; the stagger delays have to go too, or
+   items would sit invisible while they wait their turn. */
+@media (prefers-reduced-motion: reduce) {
+  .drawer[data-state="open"] > * {
+    animation-delay: 0ms;
+  }
 }
 
 .drawerHeader {

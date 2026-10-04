@@ -12,6 +12,9 @@ import styles from "./mobile-nav.module.css";
  * The full-screen drawer below 900px. Radix Dialog supplies the focus trap,
  * Escape handling, scroll lock and aria-expanded that the design wires by hand.
  */
+/** An item's place in the drawer's drop-in stagger, read by the CSS. */
+const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
+
 export function MobileNav() {
   // Every link closes the drawer itself, so same-page anchors work too.
   const [open, setOpen] = useState(false);
@@ -36,8 +39,8 @@ export function MobileNav() {
             </Dialog.Close>
           </div>
 
-          {NAV_GROUPS.map((group) => (
-            <div key={group.key}>
+          {NAV_GROUPS.map((group, i) => (
+            <div key={group.key} style={stagger(i + 1)}>
               <div className={styles.groupLabel}>
                 <span
                   className={styles.dot}
@@ -61,12 +64,16 @@ export function MobileNav() {
           <Link
             href={VISIT_HREF}
             className={styles.visit}
+            style={stagger(NAV_GROUPS.length + 1)}
             onClick={() => setOpen(false)}
           >
             Visit us
           </Link>
 
-          <div className={styles.address}>
+          <div
+            className={styles.address}
+            style={stagger(NAV_GROUPS.length + 2)}
+          >
             {SHOP_ADDRESS.street}
             <br />
             {SHOP_ADDRESS.hours}
