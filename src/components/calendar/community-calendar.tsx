@@ -18,6 +18,7 @@ import {
 } from "@/lib/content/calendar";
 
 import styles from "./calendar.module.css";
+import { CalendarSubscriptions } from "./calendar-subscriptions";
 import { EventDialog } from "./event-dialog";
 import { EventPhoto } from "./event-photo";
 import {
@@ -93,8 +94,7 @@ export function CommunityCalendar() {
   const keepRef = useRef<number | null>(null);
 
   const shiftKeepingGrid = (nextIndex: number) => {
-    keepRef.current =
-      monthViewRef.current?.getBoundingClientRect().top ?? null;
+    keepRef.current = monthViewRef.current?.getBoundingClientRect().top ?? null;
     setIndex(nextIndex);
   };
 
@@ -144,7 +144,11 @@ export function CommunityCalendar() {
           </button>
         </div>
 
-        <div role="group" aria-label="Filter by type" className={styles.filters}>
+        <div
+          role="group"
+          aria-label="Filter by type"
+          className={styles.filters}
+        >
           {FILTERS.map((option) => (
             <button
               key={option.key}
@@ -181,9 +185,7 @@ export function CommunityCalendar() {
             <article
               key={event.id}
               className={styles.row}
-              style={
-                { "--row-opacity": event.past ? 0.5 : 1 } as CSSProperties
-              }
+              style={{ "--row-opacity": event.past ? 0.5 : 1 } as CSSProperties}
             >
               <EventPhoto
                 event={event}
@@ -299,6 +301,8 @@ export function CommunityCalendar() {
           ))}
         </div>
       </div>
+
+      <CalendarSubscriptions />
 
       <EventDialog
         event={selected}

@@ -3,7 +3,7 @@
 The El Cerrito Supply Co. site: a vintage, hand-painted-window community shop,
 built from the Claude Design handoff. Next.js App Router, Tailwind v4 for tokens
 and layout, CSS Modules for the bespoke pieces, Wix as the headless backend for
-the newsletter and the maker roster.
+events, the newsletter and the maker roster.
 
 ## Routes
 
@@ -15,6 +15,7 @@ the newsletter and the maker roster.
 | `/makers`         | Maker directory, from the Wix `LocalMakers` collection                        |
 | `/sell-with-us`   | Maker submission criteria and application                                     |
 | `/manifesto`      | The nine rules                                                                |
+| `/api/events.ics` | Public, subscribable iCalendar feed generated from published Wix Events       |
 
 ## How the styling is organised
 
@@ -60,18 +61,22 @@ animates.
 
 ## Content
 
-Makers come from Wix (below). Everything else — placeholder copy and stock
-photography from the handoff — lives as typed modules in
-`src/lib/content/` (`makers.ts`, `events.ts`, `calendar.ts`, `manifesto.ts`,
-`criteria.ts`, `nav.ts`). `nav.ts` is the single source for the site's
-information architecture — the header dropdowns, the mobile drawer and the
-footer sitemap all read from it.
+Makers and the public calendar subscription feed come from Wix (below). The
+visible calendar UI still uses the typed placeholder events in
+`src/lib/content/calendar.ts`; it can move to the same Wix source once the event
+model and signup flow are finalized. Other placeholder copy and stock
+photography from the handoff lives in `src/lib/content/`. `nav.ts` is the single
+source for the site's information architecture — the header dropdowns, the
+mobile drawer and the footer sitemap all read from it.
 
 ## Known gaps
 
 - The two private-event inquiries are client-side only; each has a `TODO` where
   the submit endpoint goes. The maker application and newsletter submit to Wix
   Forms once their form IDs and field targets are configured.
+- The visible `/calendar` event list still uses local placeholder data, while
+  `/api/events.ics` reads live Wix Events. They may differ until the UI is moved
+  to Wix.
 - Calendar seat sign-ups are remembered in the visitor's own browser via
   `localStorage`, not on a server.
 - All photography is placeholder stock from the handoff.
@@ -111,6 +116,57 @@ export default async function Page() {
 ```
 
 Replace `YourCollectionId` with the collection ID shown in the Wix CMS collection settings. The integration uses visitor OAuth, so reads follow the collection permissions configured in Wix.
+
+## Calendar subscription feed
+
+`GET /api/events.ics` is a public iCalendar feed generated from the Wix Events
+site attached to `WIX_CLIENT_ID`. The subscription panel on `/calendar` offers
+links for Google Calendar, Apple Calendar (`webcal:`) and Outlook, plus a
+button that copies the feed URL for any other app. The links
+resolve against the current origin, so they work in local, preview and production
+environments without a separate site URL setting.
+
+The implementation is split into:
+
+- `src/lib/wix-events.ts` — reads and normalizes Wix Events.
+- `src/lib/ics.ts` — serializes normalized events as RFC 5545 iCalendar.
+- `src/app/api/events.ics/route.ts` — serves the feed with a five-minute cache.
+- `src/components/calendar/calendar-subscriptions.tsx` — renders subscription
+  links on the calendar page.
+
+### Feed policy
+
+- Wix is the source of truth; Google, Apple and Outlook only subscribe to it.
+- Draft and undated events are omitted.
+- All future events and events from the previous 60 days are included. This keeps
+  recent history without allowing the feed to grow forever.
+- Each event uses its immutable Wix event ID in a stable `UID`, so edits update
+  the existing calendar entry instead of creating a duplicate.
+- Canceled Wix events remain in the feed as `STATUS:CANCELLED`. For a real event,
+  cancel it first and leave it in Wix long enough for subscribers to refresh
+  before deleting it. Test events that were never distributed may be deleted
+  immediately.
+- Text is escaped and long lines are folded according to the iCalendar format.
+- Wix descriptions are converted from rich content to plain text.
+- If Wix is unavailable, the endpoint returns `502` rather than an empty calendar,
+  avoiding the appearance that every event was removed.
+
+The route revalidates every five minutes, but calendar clients control their own
+refresh schedules. Google Calendar in particular may take several hours to show
+changes. The endpoint must remain publicly readable over HTTPS; do not put it
+behind login, cookies or browser authentication.
+
+To inspect the feed locally:
+
+```bash
+curl http://localhost:3000/api/events.ics
+```
+
+If the feed returns unfamiliar events, the configured client is connected to a
+different Wix site/headless project, or Wix is showing them under **Past/Ended
+events**. Verify **Settings > Development & integrations > Headless Settings**
+and ensure every environment uses the client ID for the site that owns the real
+events.
 
 ## Makers
 

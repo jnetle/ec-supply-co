@@ -1,6 +1,7 @@
 import "server-only";
 
 import { items } from "@wix/data";
+import { wixEventsV2 } from "@wix/events";
 import { submissions } from "@wix/forms";
 import { createClient, OAuthStrategy } from "@wix/sdk";
 
@@ -8,7 +9,7 @@ import { env } from "@/lib/env";
 
 function createWixClient(clientId: string) {
   return createClient({
-    modules: { items, submissions },
+    modules: { items, submissions, wixEventsV2 },
     auth: OAuthStrategy({ clientId }),
   });
 }
