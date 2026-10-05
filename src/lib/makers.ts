@@ -61,8 +61,9 @@ function fromWix(item: Record<string, unknown>): Maker | undefined {
 }
 
 /**
- * Every maker: the real ones from Wix first, then the placeholders. If Wix is
- * unreachable or unconfigured, the page still renders with the placeholders.
+ * Every maker: the real ones from Wix first, in the order they were added, then
+ * the placeholders. If Wix is unreachable or unconfigured, the page still
+ * renders with the placeholders.
  * Memoized per request, since the home page asks for it twice.
  */
 export const getMakers = cache(async (): Promise<Maker[]> => {
@@ -71,7 +72,7 @@ export const getMakers = cache(async (): Promise<Maker[]> => {
   try {
     const { items } = await getWixClient()
       .items.query(LOCAL_MAKERS_COLLECTION)
-      .ascending("title")
+      .ascending("_createdDate")
       .limit(1000)
       .find();
     wixMakers = items.map(fromWix).filter((maker) => maker !== undefined);
