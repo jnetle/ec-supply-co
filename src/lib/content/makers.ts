@@ -127,13 +127,6 @@ const PLACEHOLDERS: Placeholder[] = [
     bio: "Hand-poured beeswax tapers from a family apiary in Sonoma.",
     photoId: 1036,
   },
-  {
-    name: "Westside Leather",
-    craft: "Leather",
-    since: 2021,
-    bio: "Dog collars and leashes that last longer than the dog is a puppy.",
-    photoId: 1024,
-  },
 ];
 
 export const PLACEHOLDER_MAKERS: Maker[] = PLACEHOLDERS.map(
