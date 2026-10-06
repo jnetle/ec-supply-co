@@ -2,7 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
-import { PLACEHOLDER_MAKERS, type Maker } from "@/lib/content/makers";
+import type { Maker } from "@/lib/content/makers";
 import { getWixClient } from "@/lib/wix";
 import { WIX_MEDIA } from "@/lib/wix-media";
 
@@ -61,26 +61,22 @@ function fromWix(item: Record<string, unknown>): Maker | undefined {
 }
 
 /**
- * Every maker: the real ones from Wix first, in the order they were added, then
- * the placeholders. If Wix is unreachable or unconfigured, the page still
- * renders with the placeholders.
+ * Every maker from Wix, in the order they were added. If Wix is unreachable or
+ * unconfigured, the roster comes back empty rather than failing the page.
  * Memoized per request, since the home page asks for it twice.
  */
 export const getMakers = cache(async (): Promise<Maker[]> => {
-  let wixMakers: Maker[] = [];
-
   try {
     const { items } = await getWixClient()
       .items.query(LOCAL_MAKERS_COLLECTION)
       .ascending("_createdDate")
       .limit(1000)
       .find();
-    wixMakers = items.map(fromWix).filter((maker) => maker !== undefined);
+    return items.map(fromWix).filter((maker) => maker !== undefined);
   } catch (error) {
     console.error(`Loading the ${LOCAL_MAKERS_COLLECTION} collection failed`, error);
+    return [];
   }
-
-  return [...wixMakers, ...PLACEHOLDER_MAKERS];
 });
 
 /** The featured makers, topped up from the rest of the roster if too few are. */

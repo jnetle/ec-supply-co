@@ -1,7 +1,7 @@
 /**
- * The maker roster's shape, shared by the Wix `LocalMakers` collection (see
- * src/lib/makers.ts) and the placeholders below. `featured` picks the makers
- * shown in the home page spotlight.
+ * The maker roster's shape, loaded from the Wix `LocalMakers` collection (see
+ * src/lib/makers.ts). `featured` picks the makers shown in the home page
+ * spotlight.
  */
 
 export type Maker = {
@@ -18,78 +18,6 @@ export type Maker = {
   website?: string;
   featured?: boolean;
 };
-
-type Placeholder = Omit<Maker, "id" | "photo"> & {
-  /** Keys the stock portraits in public/assets/photos. */
-  photoId: number;
-};
-
-/**
- * Stand-ins from the design handoff, listed after the real makers from Wix
- * until the CMS holds the full roster. Delete them then.
- */
-const PLACEHOLDERS: Placeholder[] = [
-  {
-    name: "Oak + Iron Co.",
-    craft: "Woodwork",
-    since: 2017,
-    bio: "Cutting boards and stools from street trees the city takes down.",
-    photoId: 1062,
-  },
-  {
-    name: "Dev Patel",
-    craft: "Candles",
-    since: 2022,
-    bio: "Small-batch soy candles scented after Bay Area trails.",
-    photoId: 1080,
-  },
-  {
-    name: "Little Fern Studio",
-    craft: "Textiles",
-    since: 2020,
-    bio: "Quilted pouches and baby blankets from deadstock cotton.",
-    photoId: 1025,
-  },
-  {
-    name: "Jonah Reyes",
-    craft: "Ceramics",
-    since: 2021,
-    bio: "Speckled bud vases and planters, fired in a shared kiln in Richmond.",
-    photoId: 1074,
-  },
-  {
-    name: "Paper Kite",
-    craft: "Print",
-    since: 2019,
-    bio: "Risograph zines, cards and calendars with a soft spot for local birds.",
-    photoId: 1015,
-  },
-  {
-    name: "Aiyana Brooks",
-    craft: "Jewelry",
-    since: 2023,
-    bio: "Beaded earrings in colors pulled from her grandmother’s quilts.",
-    photoId: 1027,
-  },
-  {
-    name: "Elm Street Soap",
-    craft: "Bath + body",
-    since: 2016,
-    bio: "Cold-process soaps cured for six weeks, wrapped in paper she prints herself.",
-    photoId: 1060,
-  },
-];
-
-export const PLACEHOLDER_MAKERS: Maker[] = PLACEHOLDERS.map(
-  ({ photoId, ...maker }) => ({
-    ...maker,
-    id: `placeholder-${photoId}`,
-    photo: {
-      src: `/assets/photos/id-${photoId}-600-600.jpg`,
-      alt: `Portrait of ${maker.name}`,
-    },
-  }),
-);
 
 /** "Ceramics · since 2019", skipping whichever half the CMS left blank. */
 export function makerByline(maker: Maker) {
