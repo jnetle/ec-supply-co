@@ -99,34 +99,6 @@ const PLACEHOLDERS: Placeholder[] = [
     bio: "Chunky hand-knit hats and scarves, one colorway at a time.",
     photoId: 1005,
   },
-  {
-    name: "Sam Whitfield",
-    craft: "Leather",
-    since: 2018,
-    bio: "Wallets and key fobs stitched by hand with waxed linen thread.",
-    photoId: 1084,
-  },
-  {
-    name: "Fern + Fable",
-    craft: "Illustration",
-    since: 2023,
-    bio: "Picture-book style art prints for kids’ rooms.",
-    photoId: 1041,
-  },
-  {
-    name: "Clay Collective",
-    craft: "Ceramics",
-    since: 2022,
-    bio: "Four potters sharing a studio and a glaze shelf.",
-    photoId: 1050,
-  },
-  {
-    name: "Nadia Rahman",
-    craft: "Candles",
-    since: 2020,
-    bio: "Hand-poured beeswax tapers from a family apiary in Sonoma.",
-    photoId: 1036,
-  },
 ];
 
 export const PLACEHOLDER_MAKERS: Maker[] = PLACEHOLDERS.map(
