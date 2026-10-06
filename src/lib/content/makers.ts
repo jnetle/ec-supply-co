@@ -78,27 +78,6 @@ const PLACEHOLDERS: Placeholder[] = [
     bio: "Cold-process soaps cured for six weeks, wrapped in paper she prints herself.",
     photoId: 1060,
   },
-  {
-    name: "Tomás Ortega",
-    craft: "Woodwork",
-    since: 2020,
-    bio: "Hand-carved spoons and spatulas from cherry and walnut offcuts.",
-    photoId: 1069,
-  },
-  {
-    name: "Bay Leaf Botanicals",
-    craft: "Bath + body",
-    since: 2021,
-    bio: "Balms and salves from herbs grown in an El Cerrito backyard.",
-    photoId: 1043,
-  },
-  {
-    name: "Loop + Knot",
-    craft: "Textiles",
-    since: 2022,
-    bio: "Chunky hand-knit hats and scarves, one colorway at a time.",
-    photoId: 1005,
-  },
 ];
 
 export const PLACEHOLDER_MAKERS: Maker[] = PLACEHOLDERS.map(
