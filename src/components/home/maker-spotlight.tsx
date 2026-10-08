@@ -30,20 +30,14 @@ export async function MakerSpotlight() {
       />
 
       <div className={styles.header}>
-        <div>
-          <Eyebrow
-            color="var(--color-ecs-pink-deep)"
-            ink="#ffffff"
-            className="mb-[18px]"
-          >
-            Maker spotlight
-          </Eyebrow>
-          <h2 className={styles.heading}>Who made it</h2>
-        </div>
-
-        <Link href="/makers" className={styles.allLink}>
-          Meet all {makers.length} makers →
-        </Link>
+        <Eyebrow
+          color="var(--color-ecs-pink-deep)"
+          ink="#ffffff"
+          className="mb-[18px]"
+        >
+          Maker spotlight
+        </Eyebrow>
+        <h2 className={styles.heading}>Who made it</h2>
       </div>
 
       <div className={styles.grid}>
@@ -83,6 +77,14 @@ export async function MakerSpotlight() {
             <p className={styles.bio}>{maker.bio}</p>
           </article>
         ))}
+      </div>
+
+      {/* After the spotlight rather than beside the heading, so on a phone it
+          follows the four makers instead of sitting above them. */}
+      <div className={styles.allRow}>
+        <Link href="/makers" className={styles.allLink}>
+          Meet all {makers.length} makers →
+        </Link>
       </div>
 
       <div data-reveal className={styles.cta}>
