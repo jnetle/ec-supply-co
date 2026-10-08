@@ -26,7 +26,7 @@
   pointer-events: none;
   background: url(/assets/photo-grain.svg) 0 0 / 400px 400px;
   mix-blend-mode: multiply;
-  opacity: 0.18;
+  opacity: 0.26;
 }
 
 @media (min-resolution: 2dppx) {
