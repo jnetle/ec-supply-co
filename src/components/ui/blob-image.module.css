@@ -14,6 +14,27 @@
   object-fit: cover;
 }
 
+/* Pressed-paper grain over the photo. Multiplying a warm noise into it dims
+   the highlights and breaks up flat areas, which gives prints their matte
+   look. The tile is drawn at 400 units and shown at 400px on standard screens
+   but 200px on retina, so each grain is one device pixel rather than a
+   blocky 2×2 one. */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url(/assets/photo-grain.svg) 0 0 / 400px 400px;
+  mix-blend-mode: multiply;
+  opacity: 0.18;
+}
+
+@media (min-resolution: 2dppx) {
+  .frame::after {
+    background-size: 200px 200px;
+  }
+}
+
 /* Portraits breathe through the organic radii instead of holding one shape. */
 .morphing {
   animation: ecs-morph 18s ease-in-out infinite;

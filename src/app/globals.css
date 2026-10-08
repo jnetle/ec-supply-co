@@ -169,9 +169,14 @@ body::before {
   mix-blend-mode: multiply;
 }
 
-/* Photographs sit back into the warm page instead of on top of it. */
+/* Photographs sit back into the warm page instead of on top of it. The
+   shadow curve (#ecs-lift-shadows, in the root layout) runs first, on the
+   untouched photo, so very dark hair keeps its texture and blacks turn
+   matte. The curve already softens the photo, so contrast stays near 1:
+   any lower and every photo reads as washed out. */
 .washed {
-  filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
+  filter: url(#ecs-lift-shadows) saturate(0.6) contrast(1.04) brightness(1.04)
+    opacity(0.94);
 }
 
 @media (prefers-reduced-motion: reduce) {
