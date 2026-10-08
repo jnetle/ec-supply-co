@@ -154,18 +154,6 @@ section[id] {
   background: color-mix(in srgb, var(--color-ecs-marigold) 40%, transparent);
 }
 
-/* Pressed-paper grain over the whole site. */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 900;
-  background-image: url(/assets/paper-grain.svg);
-  mix-blend-mode: multiply;
-  opacity: var(--ec-grain, 0.34);
-}
-
 /* Soft sun-fade in the corners, like an old painted window. */
 body::before {
   content: "";
