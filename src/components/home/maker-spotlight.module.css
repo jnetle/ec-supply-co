@@ -13,11 +13,6 @@
 }
 
 .header {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 16px;
   margin-bottom: clamp(26px, 4vh, 48px);
 }
 
@@ -27,6 +22,10 @@
   line-height: 1;
   letter-spacing: 0.008em;
   text-transform: uppercase;
+}
+
+.allRow {
+  margin-top: clamp(30px, 5vh, 56px);
 }
 
 .allLink {
