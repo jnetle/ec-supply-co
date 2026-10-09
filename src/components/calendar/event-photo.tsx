@@ -1,6 +1,9 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { PhotoCredit } from "@/components/ui/photo-credit";
+import { photoCredit } from "@/lib/content/thanks";
+
 import type { DecoratedEvent } from "./event-model";
 
 import styles from "./event-photo.module.css";
@@ -19,6 +22,8 @@ type EventPhotoProps = {
  * calendar list. Decorative, since the event's title always sits beside it.
  */
 export function EventPhoto({ event, sizes, className = "" }: EventPhotoProps) {
+  const credit = photoCredit(event.photo);
+
   return (
     <div className={`${styles.photo} ${className}`}>
       <Image src={event.photo} alt="" fill sizes={sizes} />
@@ -34,6 +39,7 @@ export function EventPhoto({ event, sizes, className = "" }: EventPhotoProps) {
         <span className={styles.chipDow}>{event.dow}</span>
         <span className={styles.chipDay}>{event.day}</span>
       </div>
+      {credit && <PhotoCredit helper={credit} />}
     </div>
   );
 }

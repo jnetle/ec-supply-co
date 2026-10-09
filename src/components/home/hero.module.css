@@ -220,6 +220,13 @@
   .cue {
     display: none;
   }
+
+  /* The wordmark fills the short phone stage's bottom edge, so the photo
+     credit moves to the top corner, clear of it. */
+  .stage .credit {
+    top: 10px;
+    bottom: auto;
+  }
 }
 
 /* ── The Coming Soon sign ──────────────────────────────────────────────────

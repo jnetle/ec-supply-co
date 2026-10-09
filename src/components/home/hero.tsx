@@ -3,9 +3,11 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { PhotoCredit } from "@/components/ui/photo-credit";
 import { heroTrackVh, useHeroSequence } from "@/hooks/use-hero-sequence";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { photoCredit } from "@/lib/content/thanks";
 
 import styles from "./hero.module.css";
 
@@ -49,6 +51,9 @@ const SCROLL_DRIVEN_HERO = false;
 
 /** Must match the compact breakpoint in hero.module.css. */
 const COMPACT_QUERY = "(max-width: 620px)";
+
+const PHOTO_SRC = "/assets/photos/id-42-1600-1000.jpg";
+const PHOTO_CREDIT = photoCredit(PHOTO_SRC);
 
 export function Hero() {
   const reducedMotion = useReducedMotion();
@@ -94,7 +99,7 @@ export function Hero() {
       <div className={styles.stage}>
         <div className={styles.photo}>
           <Image
-            src="/assets/photos/id-42-1600-1000.jpg"
+            src={PHOTO_SRC}
             alt="The shop floor on an event night, seen from the sidewalk"
             fill
             priority
@@ -179,6 +184,14 @@ export function Hero() {
             <span className={styles.cueLine} />
           </div>
         ) : null}
+
+        {PHOTO_CREDIT && (
+          <PhotoCredit
+            helper={PHOTO_CREDIT}
+            variant="corner"
+            className={styles.credit}
+          />
+        )}
       </div>
     </section>
   );
