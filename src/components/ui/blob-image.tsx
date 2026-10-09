@@ -1,8 +1,10 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
+import { photoCredit } from "@/lib/content/thanks";
 import { isWixMedia } from "@/lib/wix-media";
 
+import { PhotoCredit } from "./photo-credit";
 import { WixImage } from "./wix-image";
 
 import styles from "./blob-image.module.css";
@@ -41,6 +43,8 @@ export function BlobImage({
   style,
   children,
 }: BlobImageProps) {
+  const credit = photoCredit(src);
+
   return (
     <div
       className={`washed ${styles.frame} ${morphing ? styles.morphing : ""} ${className}`}
@@ -73,6 +77,7 @@ export function BlobImage({
           />
         ))}
       {children}
+      {credit && <PhotoCredit helper={credit} />}
     </div>
   );
 }

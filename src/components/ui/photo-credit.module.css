@@ -1,0 +1,69 @@
+/* A photographer's credit, set inside the photo like a pencilled note on the
+   back of a print: small, quiet, and only loud enough to find. Sits above the
+   frame's grain overlay. */
+.credit {
+  position: absolute;
+  z-index: 1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-ecs-neutral-100) 82%, transparent);
+  color: var(--color-ecs-ink);
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+  max-width: calc(100% - 24px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 200ms ease;
+}
+
+.label {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 9.5px;
+}
+
+.credit:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Bottom-centre: the organic masks clip their corners, never their middle. */
+.hover {
+  bottom: 12px;
+  left: 50%;
+  translate: -50% 0;
+  opacity: 0;
+}
+
+*:hover > .hover,
+.hover:focus-visible {
+  opacity: 1;
+}
+
+/* With no hover to reveal it, the credit stays as a faint watermark. */
+@media (hover: none) {
+  .hover {
+    opacity: 0.72;
+  }
+}
+
+.corner {
+  right: 12px;
+  bottom: 12px;
+  opacity: 0.7;
+}
+
+.corner:hover,
+.corner:focus-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .credit {
+    transition: none;
+  }
+}

@@ -108,6 +108,11 @@ export const NAV_GROUPS: NavGroup[] = [
         note: "Keep the money close to home",
         href: "/manifesto",
       },
+      {
+        label: "Thank-yous",
+        note: "The people who built this with us",
+        href: "/thanks",
+      },
       { label: "Newsletter", note: "Hear it here first", href: "/#signup" },
     ],
   },
