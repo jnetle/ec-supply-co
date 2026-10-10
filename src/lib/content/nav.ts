@@ -109,9 +109,9 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/manifesto",
       },
       {
-        label: "Thank-yous",
-        note: "The people who built this with us",
-        href: "/thanks",
+        label: "How we built it",
+        note: "The wood, the hands, the history",
+        href: "/the-build",
       },
       { label: "Newsletter", note: "Hear it here first", href: "/#signup" },
     ],

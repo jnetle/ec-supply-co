@@ -23,7 +23,7 @@ export function PhotoCredit({
 }: PhotoCreditProps) {
   return (
     <Link
-      href={`/thanks#${helper.id}`}
+      href={`/the-build#${helper.id}`}
       className={`${styles.credit} ${styles[variant]} ${className}`}
     >
       <span className={styles.label}>Photo</span> {helper.name}
