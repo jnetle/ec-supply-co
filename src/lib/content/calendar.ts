@@ -394,7 +394,7 @@ export const CATEGORIES: Record<
   community: {
     label: "Community",
     color: "var(--color-ecs-marigold)",
-    ink: "#22201c",
+    ink: "var(--color-ecs-ink)",
   },
   popup: {
     label: "Food popup",

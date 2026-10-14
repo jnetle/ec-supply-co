@@ -24,14 +24,17 @@
   font-size: clamp(1.8rem, 4.2vw, 4rem);
   line-height: 1;
   letter-spacing: 0.008em;
+  font-family: var(--font-display);
+  font-weight: 400;
   text-transform: uppercase;
   text-wrap: pretty;
 }
 
 .kicker {
+  font-family: var(--font-heading);
   margin-top: 14px;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--band-kicker, inherit);

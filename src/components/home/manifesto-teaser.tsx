@@ -54,7 +54,7 @@ export function ManifestoTeaser() {
       <div data-reveal className={styles.inner}>
         <Eyebrow
           color="var(--color-ecs-marigold)"
-          ink="#22201c"
+          ink="var(--color-ecs-ink)"
           className="mb-[18px]"
         >
           What we believe

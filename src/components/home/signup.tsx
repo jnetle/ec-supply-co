@@ -35,7 +35,7 @@ export function Signup() {
           <div className={styles.copy}>
             <Eyebrow
               color="var(--color-ecs-marigold)"
-              ink="#22201c"
+              ink="var(--color-ecs-ink)"
               className="justify-self-start"
             >
               Still building

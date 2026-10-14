@@ -32,7 +32,7 @@ export const NAV_GROUPS: NavGroup[] = [
     key: "shop",
     label: "At the shop",
     color: "var(--color-ecs-marigold)",
-    ink: "#22201c",
+    ink: "var(--color-ecs-ink)",
     radius: "8px 17px 7px 15px",
     tilt: -1.4,
     align: "left",

@@ -33,7 +33,7 @@ export function Hennai() {
         {
           label: "Plants & cuttings",
           color: "var(--color-ecs-marigold)",
-          ink: "#22201c",
+          ink: "var(--color-ecs-ink)",
         },
         {
           label: "Seasonal edit",
@@ -93,7 +93,7 @@ export function Carts() {
         {
           label: "Rotating lineup",
           color: "var(--color-ecs-marigold)",
-          ink: "#22201c",
+          ink: "var(--color-ecs-ink)",
         },
         {
           label: "Food popups",
@@ -134,10 +134,10 @@ export function Tools() {
     <FeatureBand
       id="tools"
       background="var(--color-ecs-marigold)"
-      foreground="#22201c"
+      foreground="var(--color-ecs-ink)"
       eyebrow={{
         label: "Borrow, don't buy",
-        color: "#22201c",
+        color: "var(--color-ecs-ink)",
         ink: "var(--color-ecs-marigold)",
       }}
       heading="Tool library"
@@ -146,7 +146,7 @@ export function Tools() {
         "Take what you need for the weekend, bring it back when you are done. If you have never used the thing you are borrowing, somebody at the counter will show you.",
       ]}
       tags={[
-        { label: "Free to borrow", color: "#22201c", ink: "#ffffff" },
+        { label: "Free to borrow", color: "var(--color-ecs-ink)", ink: "#ffffff" },
         { label: "Weekend checkout", color: "#ffffff", ink: "#6b4a00" },
         {
           label: "Donations welcome",

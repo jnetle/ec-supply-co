@@ -77,7 +77,7 @@ export default function ManifestoPage() {
               style={
                 {
                   "--action-bg": "var(--color-ecs-marigold)",
-                  "--action-fg": "#22201c",
+                  "--action-fg": "var(--color-ecs-ink)",
                 } as CSSProperties
               }
             >

@@ -23,7 +23,7 @@ const PHASE_ONE = [
     title: 'Tool library',
     note: 'Borrow it, do not buy it twice',
     bg: 'var(--color-ecs-marigold)',
-    fg: '#22201c',
+    fg: 'var(--color-ecs-ink)',
   },
   {
     title: 'Maker shelves',

@@ -95,8 +95,8 @@
 .brandLine,
 .coWord,
 .suffix {
-  font-family: var(--font-heading);
-  font-weight: 700;
+  font-family: var(--font-hero);
+  font-weight: 400;
   font-size: clamp(1.3rem, 7.6vw, 7.9rem);
   letter-spacing: 0.012em;
   text-transform: uppercase;
@@ -169,6 +169,7 @@
 }
 
 .cue {
+  font-family: var(--font-heading);
   position: absolute;
   left: 50%;
   bottom: clamp(14px, 3vh, 30px);
@@ -283,8 +284,8 @@
 
 /* Reads "Coming Soon" with the "Co" of the wordmark underneath it. */
 .signText {
-  font-family: var(--font-heading);
-  font-weight: 700;
+  font-family: var(--font-hero);
+  font-weight: 400;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1;
