@@ -9,14 +9,17 @@
    is no utility to generate.
    ────────────────────────────────────────────────────────────────────── */
 @theme {
-  --font-heading: var(--font-jost), "Futura", system-ui, sans-serif;
-  --font-body: var(--font-bitter), Georgia, serif;
-  --font-script: var(--font-caveat), var(--font-bitter), cursive;
+  --font-heading: var(--font-rubik), system-ui, sans-serif;
+  --font-body: var(--font-rubik), system-ui, sans-serif;
+  --font-script: var(--font-caveat), var(--font-body), cursive;
+  --font-display: var(--font-grit-thick), var(--font-heading);
+  --font-headline: var(--font-rubik), var(--font-heading);
+  --font-hero: var(--font-grit-thick), var(--font-heading);
 
   /* Surfaces and ink */
   --color-ecs-bg: #f4e9d5;
   --color-ecs-surface: #fbf3e3;
-  --color-ecs-ink: #2a1f16;
+  --color-ecs-ink: #262424;
 
   /* Teal */
   --color-ecs-teal: #0b7a82;
@@ -68,15 +71,16 @@
 }
 
 :root {
-  --ec-ink: #2a1f16;
+  --ec-ink: var(--color-ecs-ink);
   --ec-vermilion: #f4562a;
 
   /* Hand-drawn extrude, as on the painted window lettering. */
   --ec-extrude: 0.016em 0.018em 0 var(--ec-ink), 0.032em 0.036em 0 var(--ec-ink),
     0.048em 0.054em 0 var(--ec-ink), 0.064em 0.072em 0 var(--ec-ink),
-    0.08em 0.09em 0 var(--ec-ink), 0.096em 0.108em 0.01em rgba(42, 31, 22, 0.55);
+    0.08em 0.09em 0 var(--ec-ink),
+    0.096em 0.108em 0.01em color-mix(in srgb, var(--ec-ink) 55%, transparent);
   --ec-extrude-sm: 0.02em 0.024em 0 var(--ec-ink), 0.04em 0.048em 0 var(--ec-ink),
-    0.058em 0.07em 0.008em rgba(42, 31, 22, 0.5);
+    0.058em 0.07em 0.008em color-mix(in srgb, var(--ec-ink) 50%, transparent);
 
   /* Hand-painted window lettering: cream face, solid colour block behind.
      --ec-x overrides the block colour per element. */
@@ -117,9 +121,9 @@ h2,
 h3,
 h4 {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.12;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
 }
 
 a {

@@ -89,7 +89,7 @@ export default function PrivateEventsPage() {
           <div>
             <Eyebrow
               color="var(--color-ecs-marigold)"
-              ink="#22201c"
+              ink="var(--color-ecs-ink)"
               className="mb-[18px]"
             >
               Classroom + event space rental

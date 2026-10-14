@@ -38,6 +38,9 @@
   line-height: 1;
   letter-spacing: 0.008em;
   text-wrap: pretty;
+  font-family: var(--font-headline);
+  font-weight: 800;
+  filter: url(#ink-rough);
 }
 
 .prose {
@@ -68,7 +71,7 @@
 
 .figcaption {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: clamp(14px, 1.05vw, 16px);
   line-height: 1.4;
   color: #fbf3e3;
@@ -84,7 +87,7 @@
 
 .rowLabel {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: clamp(12px, 0.95vw, 14px);
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -94,7 +97,7 @@
   grid-row: span 2;
   align-self: center;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--figure-value-size);
   line-height: 0.9;
   color: var(--row-color);

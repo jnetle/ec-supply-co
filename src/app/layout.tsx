@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Bitter, Caveat, Jost } from "next/font/google";
+import { Caveat, Rubik } from "next/font/google";
+import localFont from "next/font/local";
 
 import {
   SHARE_IMAGE,
@@ -9,27 +10,37 @@ import {
   SITE_URL,
 } from "@/lib/site";
 
+import { InkRoughFilter } from "@/components/site/ink-rough-filter";
+
 import "./globals.css";
 
 // Exposed as CSS variables so globals.css can bind them to the --font-*
 // theme tokens; nothing references these families by name.
-const jost = Jost({
-  variable: "--font-jost",
+// The site's sans. Regular for body text; SemiBold for headings, buttons and
+// labels; ExtraBold for the mixed-case headlines beside the all-caps Grit
+// Thick titles, which share its weight and round O. Variable, so every weight
+// comes from one file.
+const rubik = Rubik({
+  variable: "--font-rubik",
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
-
-const bitter = Bitter({
-  variable: "--font-bitter",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
 });
 
 const caveat = Caveat({
   variable: "--font-caveat",
   subsets: ["latin"],
   weight: ["600"],
+});
+
+// Texture Fonts' Grit Thick: one weight, capitals only, no en/em dash, ellipsis
+// or middle dot. Used via --font-hero for the homepage wordmark and via
+// --font-display wherever titles are set in capitals.
+const gritThick = localFont({
+  variable: "--font-grit-thick",
+  src: "./fonts/grit-thick.woff2",
+  display: "swap",
+  // Missing glyphs fall through to Rubik via --font-display, not to the
+  // adjusted Arial next/font would otherwise slot in first.
+  adjustFontFallback: false,
 });
 
 export const metadata: Metadata = {
@@ -59,9 +70,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${jost.variable} ${bitter.variable} ${caveat.variable}`}
+      className={`${caveat.variable} ${rubik.variable} ${gritThick.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <InkRoughFilter />
+        {children}
+      </body>
     </html>
   );
 }

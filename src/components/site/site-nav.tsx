@@ -31,9 +31,13 @@ export function SiteNav() {
               }
             >
               {group.label}
-              <span aria-hidden="true" className={styles.caret}>
-                ▾
-              </span>
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 10 6"
+                className={styles.caret}
+              >
+                <path d="M0 0h10L5 6z" fill="currentColor" />
+              </svg>
             </NavigationMenu.Trigger>
 
             <NavigationMenu.Content

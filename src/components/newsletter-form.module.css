@@ -31,13 +31,13 @@
 .button {
   cursor: pointer;
   background: var(--color-ecs-marigold);
-  color: #22201c;
+  color: var(--color-ecs-ink);
   border: none;
   border-radius: 999px;
   height: 56px;
   padding: 0 34px;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 18px;
   transition:
     background 220ms ease,
@@ -67,7 +67,7 @@
   flex: 1 1 440px;
   max-width: 620px;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: clamp(18px, 1.6vw, 22px);
   line-height: 1.4;
   color: var(--color-ecs-marigold);

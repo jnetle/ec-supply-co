@@ -32,6 +32,9 @@
 .name {
   margin: 16px 0 0;
   font-size: clamp(19px, 1.6vw, 22px);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  letter-spacing: -0.015em;
   line-height: 1.15;
 }
 
@@ -68,13 +71,14 @@
 
 .maker {
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 500;
   margin-top: 4px;
 }
 
 .craft {
+  font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-ecs-pink-deep);

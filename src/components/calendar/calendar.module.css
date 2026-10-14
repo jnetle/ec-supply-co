@@ -18,6 +18,8 @@
 .subscribeHeading {
   margin: 0;
   font-size: clamp(1.35rem, 2.5vw, 2rem);
+  font-family: var(--font-display);
+  font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -48,7 +50,7 @@
   border-radius: 999px;
   font-family: var(--font-heading);
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.04em;
   text-align: center;
   text-transform: uppercase;
@@ -139,6 +141,8 @@
 }
 
 .monthLabel {
+  font-family: var(--font-display);
+  font-weight: 400;
   margin: 0;
   font-size: clamp(1.2rem, 2.2vw, 1.9rem);
   line-height: 1;
@@ -162,8 +166,8 @@
   border: 2px solid var(--color-ecs-navy);
   background: transparent;
   color: var(--color-ecs-navy);
-  font-family: var(--font-body);
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-weight: 600;
   font-size: 13px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -237,8 +241,9 @@
 }
 
 .rowMeta {
+  font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-ecs-teal-deep);
@@ -247,7 +252,7 @@
 .rowTitle {
   margin: 4px 0 0;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: clamp(1.05rem, 1.7vw, 1.4rem);
   line-height: 1.15;
 }
@@ -302,7 +307,7 @@
   background: var(--cta-color);
   color: var(--cta-ink);
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -372,8 +377,9 @@
 }
 
 .weekday {
+  font-family: var(--font-heading);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-ecs-ply-ink);
@@ -395,7 +401,7 @@
 
 .cellDay {
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 600;
   font-size: 14px;
   color: var(--color-ecs-ply-ink);
 }
