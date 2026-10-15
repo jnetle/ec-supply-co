@@ -69,14 +69,9 @@ export const NAV_GROUPS: NavGroup[] = [
         href: "/calendar",
       },
       {
-        label: "Private workshops",
-        note: "Your group, after hours",
-        href: "/private-events#workshops",
-      },
-      {
-        label: "Rent the space",
-        note: "Meetings, classes + parties",
-        href: "/private-events#rental",
+        label: "Host with us",
+        note: "Private events, collabs + ideas",
+        href: "/host-with-us",
       },
     ],
   },

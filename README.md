@@ -11,7 +11,7 @@ events, the newsletter and the maker roster.
 | ----------------- | ----------------------------------------------------------------------------- |
 | `/`               | Home: scroll-driven hero, then the shop, manifesto, events, makers and signup |
 | `/calendar`       | Community calendar: month list + grid, filters, seat sign-ups                 |
-| `/private-events` | Private workshop and event-space rental inquiries                             |
+| `/host-with-us`   | Rent the room: private events, co-marketing workshops and pitched ideas       |
 | `/makers`         | Maker directory, from the Wix `LocalMakers` collection                        |
 | `/sell-with-us`   | Maker submission criteria and application                                     |
 | `/manifesto`      | The nine rules                                                                |

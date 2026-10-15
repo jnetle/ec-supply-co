@@ -45,7 +45,7 @@ export function Events() {
             Full calendar + sign-ups →
           </Link>
           <Link
-            href="/private-events"
+            href="/host-with-us"
             className={styles.action}
             style={
               { "--action-color": "var(--color-ecs-navy)" } as CSSProperties
@@ -188,7 +188,7 @@ function EmptyBoard() {
       {/* Revealed on a wrapper, since the reveal's inline transform would
           straighten the note's tilt. */}
       <div data-reveal className={styles.noteWrap}>
-        <Link href="/private-events" className={styles.note}>
+        <Link href="/host-with-us" className={styles.note}>
           <span className={styles.notePin} aria-hidden="true" />
           <span className={styles.noteKicker}>Open date</span>
           <span className={styles.noteTitle}>Your event here?</span>
