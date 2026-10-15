@@ -1,17 +1,24 @@
-import Link from "next/link";
+import Link from 'next/link';
 
-import { Blob } from "@/components/ui/blob";
-import { BlobImage } from "@/components/ui/blob-image";
-import { LinkIcon } from "@/components/ui/link-icon";
-import { Eyebrow } from "@/components/ui/eyebrow";
-import { WaveDivider } from "@/components/ui/wave-divider";
-import { MAKER_RADII, makerByline, makerMorphDelay } from "@/lib/content/makers";
-import { getMakers, getSpotlightMakers } from "@/lib/makers";
+import { Blob } from '@/components/ui/blob';
+import { BlobImage } from '@/components/ui/blob-image';
+import { LinkIcon } from '@/components/ui/link-icon';
+import { Eyebrow } from '@/components/ui/eyebrow';
+import { WaveDivider } from '@/components/ui/wave-divider';
+import {
+  MAKER_RADII,
+  makerByline,
+  makerMorphDelay,
+} from '@/lib/content/makers';
+import { getMakers, getSpotlightMakers } from '@/lib/makers';
 
-import styles from "./maker-spotlight.module.css";
+import styles from './maker-spotlight.module.css';
 
 export async function MakerSpotlight() {
-  const [makers, spotlight] = await Promise.all([getMakers(), getSpotlightMakers()]);
+  const [makers, spotlight] = await Promise.all([
+    getMakers(),
+    getSpotlightMakers(),
+  ]);
 
   return (
     <section id="makers" className={styles.section}>
@@ -22,10 +29,10 @@ export async function MakerSpotlight() {
         parallax={0.14}
         delay="1.2s"
         style={{
-          right: "-4%",
-          bottom: "-6%",
-          width: "clamp(120px,14vw,220px)",
-          height: "clamp(120px,14vw,220px)",
+          right: '-4%',
+          bottom: '-6%',
+          width: 'clamp(120px,14vw,220px)',
+          height: 'clamp(120px,14vw,220px)',
         }}
       />
 
@@ -45,7 +52,7 @@ export async function MakerSpotlight() {
           <article key={maker.id} className={styles.card}>
             <BlobImage
               src={maker.photo?.src}
-              alt={maker.photo?.alt ?? ""}
+              alt={maker.photo?.alt ?? ''}
               radius={MAKER_RADII[i % MAKER_RADII.length]}
               ratio="1/1"
               sizes="(max-width: 700px) 100vw, 230px"
@@ -72,7 +79,9 @@ export async function MakerSpotlight() {
                 maker.name
               )}
             </h3>
-            {maker.makerName && <div className={styles.maker}>{maker.makerName}</div>}
+            {maker.makerName && (
+              <div className={styles.maker}>{maker.makerName}</div>
+            )}
             <div className={styles.craft}>{makerByline(maker)}</div>
             <p className={styles.bio}>{maker.bio}</p>
           </article>
@@ -83,7 +92,7 @@ export async function MakerSpotlight() {
           follows the four makers instead of sitting above them. */}
       <div className={styles.allRow}>
         <Link href="/makers" className={styles.allLink}>
-          Meet all {makers.length} makers →
+          Meet all the makers →
         </Link>
       </div>
 

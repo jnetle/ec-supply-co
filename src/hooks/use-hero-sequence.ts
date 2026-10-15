@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 /* ── Scroll budget ──────────────────────────────────────────────────────── */
 
@@ -114,6 +114,8 @@ export function useHeroSequence({
   const washRef = useRef<HTMLDivElement>(null);
   const signRef = useRef<HTMLDivElement>(null);
   const signTextRef = useRef<HTMLSpanElement>(null);
+  // Set by the effect while autoplay is running; null otherwise.
+  const replayRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -465,7 +467,7 @@ export function useHeroSequence({
     }
     step(200, budget);
 
-    const playStart = performance.now();
+    let playStart = performance.now();
     const scripted = () => {
       const t = performance.now() - playStart;
       let pos = budget;
@@ -480,6 +482,18 @@ export function useHeroSequence({
       // Back from budget position to the progress render() expects.
       return LEAD + (pos / budget) * (1 - LEAD);
     };
+
+    // Restart the script from the top. The followers snap back rather than
+    // ease, so the sequence starts clean instead of rewinding on screen.
+    replayRef.current = autoplay
+      ? () => {
+          playStart = performance.now();
+          coFollow = 0;
+          wordFollow = 0;
+          signFollow = 0;
+          lastIndex = -1;
+        }
+      : null;
 
     const draw = () => {
       if (autoplay) {
@@ -558,6 +572,7 @@ export function useHeroSequence({
 
     return () => {
       cancelled = true;
+      replayRef.current = null;
       window.clearTimeout(settle);
       cancelAnimationFrame(rafId);
       observer.disconnect();
@@ -570,7 +585,10 @@ export function useHeroSequence({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, wordCount, showSign, autoplay]);
 
+  const replay = useCallback(() => replayRef.current?.(), []);
+
   return {
+    replay,
     trackRef,
     lockupRef,
     brandLineRef,

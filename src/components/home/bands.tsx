@@ -18,25 +18,25 @@ export function Hennai() {
         ink: "#ffffff",
       }}
       heading="Hennai Home + Garden"
-      kicker="The retail counter, curated"
+      kicker="Small corner, lots to find"
       kickerColor="#7a4d20"
       paragraphs={[
-        "Hennai runs the front counter — a tight, seasonal edit of things for the house and the yard. Terracotta pots, hand tools worth re-handling, cuttings in jars, linens, and whatever the season is doing.",
-        "They buy small and rotate often, so the shelf in November looks nothing like the shelf in April. Ask them anything about keeping a plant alive in an El Cerrito window.",
+        "Hennai packs one corner of the shop with candles and soaps, plants and garden tools, cookbooks, cards and craft kits, linens, and pieces for the table. Easy to browse in five minutes, hard to leave in five.",
+        "It all comes from small makers and independent brands, people building something of their own, just like Hennai. And it's priced to take home, not just admire, because well-made things shouldn't be a luxury.",
       ]}
       tags={[
         {
-          label: "Home goods",
+          label: "Home + garden",
           color: "var(--color-ecs-ply-ink)",
           ink: "#ffffff",
         },
         {
-          label: "Plants & cuttings",
+          label: "Paper + craft kits",
           color: "var(--color-ecs-marigold)",
           ink: "var(--color-ecs-ink)",
         },
         {
-          label: "Seasonal edit",
+          label: "Bath + body",
           color: "#ffffff",
           ink: "var(--color-ecs-ply-ink)",
         },
@@ -141,13 +141,15 @@ export function Tools() {
         ink: "var(--color-ecs-marigold)",
       }}
       heading="Tool library"
+      kicker="Keep the skill, skip the clutter"
+      kickerColor="#6b4a00"
       paragraphs={[
-        "Drills, sanders, a jigsaw, a tile cutter, a sewing machine, clamps in every size. Most of it was donated by neighbors who used it once and would rather it got used again.",
-        "Take what you need for the weekend, bring it back when you are done. If you have never used the thing you are borrowing, somebody at the counter will show you.",
+        "Learn the skill without storing the tool. Borrow what the job needs, do it yourself, and keep your closet and your cash. The broken thing gets fixed instead of tossed.",
+        "No hourly meter, so work at your own pace and bring it back when you're done. No question is too basic to ask, and the neighbor next to you probably has a tip.",
       ]}
       tags={[
         { label: "Free to borrow", color: "var(--color-ecs-ink)", ink: "#ffffff" },
-        { label: "Weekend checkout", color: "#ffffff", ink: "#6b4a00" },
+        { label: "On your schedule", color: "#ffffff", ink: "#6b4a00" },
         {
           label: "Donations welcome",
           color: "var(--color-ecs-red)",

@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
 
-import { MakerDirectory } from "@/components/makers/maker-directory";
-import { SiteFooter } from "@/components/site/site-footer";
-import { SiteHeader } from "@/components/site/site-header";
-import { PageIntro } from "@/components/ui/page-intro";
-import { ScrollEffects } from "@/components/ui/scroll-effects";
-import { SellWithUsBand } from "@/components/ui/sell-with-us-band";
-import { getMakers } from "@/lib/makers";
-import { pageMetadata } from "@/lib/site";
+import { MakerDirectory } from '@/components/makers/maker-directory';
+import { SiteFooter } from '@/components/site/site-footer';
+import { SiteHeader } from '@/components/site/site-header';
+import { PageIntro } from '@/components/ui/page-intro';
+import { ScrollEffects } from '@/components/ui/scroll-effects';
+import { SellWithUsBand } from '@/components/ui/sell-with-us-band';
+import { getMakers } from '@/lib/makers';
+import { pageMetadata } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata({
-  title: "Makers",
+  title: 'Makers',
   description:
-    "Every piece in the shop has a name attached. Meet the local makers in El Cerrito and the East Bay on our shelves right now.",
-  path: "/makers",
+    'Every piece in the shop has a name attached. Meet the local makers in El Cerrito and the East Bay on our shelves right now.',
+  path: '/makers',
 });
 
 // Picks up edits in the Wix CMS within five minutes.
@@ -28,7 +28,7 @@ export default async function MakersPage() {
 
       <main>
         <PageIntro
-          eyebrow={`${makers.length} makers`}
+          eyebrow="makers"
           eyebrowColor="var(--color-ecs-pink-deep)"
           eyebrowInk="#ffffff"
           title="Who made it"

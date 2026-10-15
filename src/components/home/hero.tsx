@@ -62,6 +62,7 @@ export function Hero() {
   const autoplay = !SCROLL_DRIVEN_HERO || compact;
 
   const {
+    replay,
     trackRef,
     lockupRef,
     brandLineRef,
@@ -183,6 +184,13 @@ export function Hero() {
             <span>Scroll</span>
             <span className={styles.cueLine} />
           </div>
+        ) : null}
+
+        {/* Only the autoplayed sequence has a start to go back to. */}
+        {autoplay && !reducedMotion ? (
+          <button type="button" className={styles.replay} onClick={replay}>
+            <span aria-hidden="true">↻</span> Replay
+          </button>
         ) : null}
 
         {PHOTO_CREDIT && (

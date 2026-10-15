@@ -19,16 +19,22 @@ export type Helper = {
 
 export const HELPERS: Helper[] = [
   {
-    id: "thelumberbaron",
-    name: "The Lumber Baron",
-    role: "Reclaimed wood",
-    link: { href: "https://instagram.com/thelumberbaron", label: "Instagram" },
+    id: "rachel",
+    name: "Rachel",
+    role: "Community builder, El Cerrito superfan. @thelittlehill",
+    link: { href: "https://www.instagram.com/thelittlehill/", label: "Instagram" },
   },
   {
-    id: "placeholder-photographer",
-    name: "Photographer name",
+    id: "thelumberbaron",
+    name: "The Lumber Baron",
+    role: "Reclaimed wood for the big table + shelves",
+    link: { href: "https://thelumberbaron.com/", label: "Website" },
+  },
+  {
+    id: "stephanie-dolen",
+    name: "Stephanie Dolen",
     role: "Photography",
-    link: { href: "https://instagram.com/", label: "Instagram" },
+    link: { href: "https://www.stephaniedolen.com/", label: "Website" },
   },
   {
     id: "placeholder-builder",
@@ -36,10 +42,16 @@ export const HELPERS: Helper[] = [
     role: "Shelving + carpentry",
   },
   {
-    id: "placeholder-painter",
-    name: "Sign painter name",
-    role: "Signage",
-    link: { href: "https://example.com/", label: "Website" },
+    id: "heather-hardison",
+    name: "Heather Hardison",
+    role: "Window sign design + painting",
+    link: { href: "https://www.instagram.com/heather_hardison/", label: "Instagram" },
+  },
+  {
+    id: "rookie-ceramics",
+    name: "Rookie Ceramics",
+    role: "Ceramic address numbers",
+    link: { href: "https://www.instagram.com/rookie.ceramics", label: "Instagram" },
   },
 ];
 
@@ -76,31 +88,30 @@ export const MADE_OF: MadeOfEntry[] = [
   {
     id: "shelves",
     name: "The shelves",
-    // TODO: where the wood came from, and who sourced it.
-    provenance: "Built from reclaimed wood.",
-    helpers: [],
+    // TODO: which high school, if we can name it.
+    provenance:
+      "Built from reclaimed high school bleacher seats, and home to the work of our Shelfie Members.",
+    helpers: ["thelumberbaron"],
     photo: {
-      src: "https://images.unsplash.com/photo-1765835065498-5df7ae12bcf2",
-      alt: "Tall wooden shelves lined with ceramics, behind a leafy plant.",
+      src: "/assets/photos/build/shelves.jpg",
+      alt: "Rows of warm, reclaimed-wood shelves on metal brackets along a cream wall, with a few books on the top shelf.",
     },
   },
   {
     id: "window-sign",
     name: "The window sign",
-    // TODO: the sign painter, once they're booked (add them to HELPERS).
-    provenance: "Hand-painted on the glass, coming soon.",
-    helpers: [],
+    provenance: "Designed and hand-painted right on the glass.",
+    helpers: ["heather-hardison"],
     photo: {
-      src: "https://images.unsplash.com/photo-1689643724283-2552a0f6b4d5",
-      alt: "The word hello hand-lettered in yellow on a shop window.",
+      src: "/assets/photos/build/window-sign.jpg",
+      alt: "Heather Hardison painting the El Cerrito Supply Co. sign on the shop's front window, seen from the sidewalk.",
     },
   },
   {
     id: "address-numbers",
     name: "The address numbers",
-    // TODO: who made them, if they'd like the credit (add them to HELPERS).
-    provenance: "Made of ceramic.",
-    helpers: [],
+    provenance: "Handmade in ceramic.",
+    helpers: ["rookie-ceramics"],
     photo: {
       src: "https://images.unsplash.com/photo-1779480391842-dfeeda2ca88e",
       alt: "A ceramic house number tile with a colorful mosaic border on a stucco wall.",
@@ -113,7 +124,7 @@ export const MADE_OF: MadeOfEntry[] = [
  * passes it. A photo left out here simply shows no credit.
  */
 export const PHOTO_CREDITS: Record<string, Helper["id"]> = {
-  // "/assets/photos/id-42-1600-1000.jpg": "placeholder-photographer",
+  // "/assets/photos/id-42-1600-1000.jpg": "stephanie-dolen",
 };
 
 export function photoCredit(src: string | undefined): Helper | undefined {

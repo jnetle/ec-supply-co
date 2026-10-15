@@ -24,6 +24,7 @@
   /* Teal */
   --color-ecs-teal: #0b7a82;
   --color-ecs-teal-deep: #0a3940;
+  --color-ecs-turquoise-dark: #0e6268;
   --color-ecs-teal-pale: #a6d4cf;
 
   /* Marigold */
@@ -31,6 +32,8 @@
   --color-ecs-marigold-pale: #f6dca6;
 
   /* Reds and pinks */
+  --color-ecs-logo-orange: #e84d07;
+  --color-ecs-logo-salmon: #ffa197;
   --color-ecs-red: #cc3a20;
   --color-ecs-warm-red: #ee8260;
   --color-ecs-vermilion: #f4562a;
@@ -40,6 +43,7 @@
 
   /* Woods, ply and the rest */
   --color-ecs-navy: #1c2540;
+  --color-ecs-cobalt: #0047ab;
   --color-ecs-jade: #2c8559;
   --color-ecs-wood: #c4844a;
   --color-ecs-wood-pale: #ecd6b2;

@@ -187,6 +187,36 @@
   pointer-events: none;
 }
 
+/* Mirrors the photo credit in the opposite corner: small, quiet, findable. */
+.replay {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--color-ecs-neutral-100) 82%, transparent);
+  color: var(--color-ecs-ink);
+  font-family: var(--font-heading);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 200ms ease;
+}
+
+.replay:hover,
+.replay:focus-visible {
+  opacity: 1;
+}
+
 .cueLine {
   display: block;
   width: 1.5px;
@@ -224,7 +254,8 @@
 
   /* The wordmark fills the short phone stage's bottom edge, so the photo
      credit moves to the top corner, clear of it. */
-  .stage .credit {
+  .stage .credit,
+  .replay {
     top: 10px;
     bottom: auto;
   }
