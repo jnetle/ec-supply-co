@@ -249,7 +249,11 @@
   will-change: transform, opacity;
 }
 
+/* Filmed like the shop glass (`film` in globals.css). Screen only lightens
+   a bright plank, so here the film shifts its hue instead. */
 .signPlank {
+  --film-strength: 0.45;
+  --film-blend: color;
   position: absolute;
   inset: 0;
   /* Well above the plank, so it swings from the poles rather than its middle. */
@@ -282,8 +286,11 @@
   right: 14%;
 }
 
-/* Reads "Coming Soon" with the "Co" of the wordmark underneath it. */
+/* Reads "Coming Soon" with the "Co" of the wordmark underneath it. Painted
+   over the film, not under it, so the lettering keeps its colour. */
 .signText {
+  position: relative;
+  z-index: 1;
   font-family: var(--font-hero);
   font-weight: 400;
   letter-spacing: 0.02em;

@@ -64,7 +64,7 @@
 }
 
 .instagram:hover {
-  background: var(--color-ecs-pink);
+  background: var(--ec-film);
   transform: translateY(-2px) rotate(-4deg);
 }
 

@@ -19,9 +19,8 @@
   line-height: 0.98;
   letter-spacing: 0.005em;
   text-wrap: pretty;
-  font-family: var(--font-headline);
-  font-weight: 800;
-  filter: url(#ink-rough);
+  font-family: var(--font-display);
+  font-weight: 400;
 }
 
 .lede {
@@ -86,7 +85,6 @@
   font-size: clamp(1.8rem, 4.6vw, 4rem);
   line-height: 1.03;
   letter-spacing: 0.005em;
-  filter: url(#ink-rough);
 }
 
 .actions {

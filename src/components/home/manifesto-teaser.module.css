@@ -38,9 +38,8 @@
   line-height: 1;
   letter-spacing: 0.008em;
   text-wrap: pretty;
-  font-family: var(--font-headline);
-  font-weight: 800;
-  filter: url(#ink-rough);
+  font-family: var(--font-display);
+  font-weight: 400;
 }
 
 .prose {

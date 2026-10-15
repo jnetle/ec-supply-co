@@ -27,7 +27,8 @@
   text-underline-offset: 3px;
 }
 
-/* The hours card reads as a painted sign hung slightly off true. */
+/* The hours card reads as a painted sign hung slightly off true, on a
+   pane of the shop's filmed glass (`film` in globals.css). */
 .hours {
   margin-top: 26px;
   background: var(--color-ecs-glass);
@@ -40,6 +41,7 @@
   gap: 9px;
   font-size: 14px;
   max-width: 340px;
+  --film-strength: 0.42;
 }
 
 .hoursTitle {

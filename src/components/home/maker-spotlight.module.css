@@ -107,7 +107,7 @@
 }
 
 .maker {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 500;
   margin-top: 4px;
 }
@@ -115,19 +115,20 @@
 .craft {
   font-family: var(--font-heading);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-ecs-pink-deep);
   margin-top: 6px;
 }
 
+/* Long-form reading over the dotted pink, so full body size and full ink. */
 .bio {
   margin: 10px 0 0;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.6;
   max-width: 38ch;
-  color: var(--color-ecs-neutral-800);
+  color: var(--color-ecs-ink);
 }
 
 .cta {

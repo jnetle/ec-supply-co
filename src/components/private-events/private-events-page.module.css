@@ -27,7 +27,6 @@
   text-wrap: pretty;
   font-family: var(--font-headline);
   font-weight: 800;
-  filter: url(#ink-rough);
 }
 
 .lede {

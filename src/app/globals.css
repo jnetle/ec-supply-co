@@ -9,12 +9,12 @@
    is no utility to generate.
    ────────────────────────────────────────────────────────────────────── */
 @theme {
-  --font-heading: var(--font-rubik), system-ui, sans-serif;
-  --font-body: var(--font-rubik), system-ui, sans-serif;
+  --font-heading: var(--font-figtree), system-ui, sans-serif;
+  --font-body: var(--font-figtree), system-ui, sans-serif;
   --font-script: var(--font-caveat), var(--font-body), cursive;
-  --font-display: var(--font-grit-thick), var(--font-heading);
-  --font-headline: var(--font-rubik), var(--font-heading);
-  --font-hero: var(--font-grit-thick), var(--font-heading);
+  --font-display: var(--font-hammersmith), var(--font-heading);
+  --font-headline: var(--font-figtree), var(--font-heading);
+  --font-hero: var(--font-hammersmith), var(--font-heading);
 
   /* Surfaces and ink */
   --color-ecs-bg: #f4e9d5;
@@ -173,6 +173,99 @@ body::before {
   mix-blend-mode: multiply;
 }
 
+/* ── Iridescent film ──────────────────────────────────────────────────────
+   The shop's glass panel, door and screens carry a dichroic film: mostly
+   clear, with a pale rainbow that slides across as you walk past. --ec-film
+   is that colour run: pearly, never a full-saturation rainbow. `.film`
+   lays it over any glass-like surface as a sheet that shifts as the
+   surface scrolls through the viewport, the way the real film shifts with
+   the viewing angle. --film-strength tunes it per surface.
+
+   The keyframe lives here, not in a module, because `.film` is a global
+   class (see the note on keyframes at the end of this file). */
+:root {
+  --ec-film: linear-gradient(
+    115deg,
+    #8ee6d8 0%,
+    #a9b6ff 17%,
+    #f2a9de 33%,
+    #ffe1a4 50%,
+    #a2f0cb 67%,
+    #9cc3ff 83%,
+    #8ee6d8 100%
+  );
+}
+
+@property --film-shift {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 30%;
+}
+
+/* Zero specificity, so a surface that is already positioned (the absolute
+   Coming Soon plank) keeps its own position. */
+:where(.film) {
+  position: relative;
+  isolation: isolate;
+}
+
+.film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  /* Two soft bands of colour with clear glass between them, and a white
+     glint where the light catches the pane. A continuous rainbow across the
+     whole sheet just greys dark glass out. */
+  background:
+    linear-gradient(
+      115deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.55) 48%,
+      transparent 56%
+    ),
+    linear-gradient(
+      115deg,
+      transparent 10%,
+      #8ee6d8 20%,
+      #a9b6ff 28%,
+      #f2a9de 36%,
+      transparent 46%,
+      transparent 56%,
+      #ffe1a4 64%,
+      #a2f0cb 72%,
+      #9cc3ff 80%,
+      transparent 90%
+    );
+  background-size:
+    260% 100%,
+    220% 100%;
+  background-position:
+    calc(100% - var(--film-shift)) 0,
+    var(--film-shift) 0;
+  mix-blend-mode: var(--film-blend, screen);
+  opacity: var(--film-strength, 0.4);
+}
+
+@supports (animation-timeline: view()) {
+  .film::after {
+    animation: ec-film-shift linear both;
+    /* A pane that never moves on screen, such as anything sticky, sets
+       this to scroll(root) so it shifts with the page instead. */
+    animation-timeline: var(--film-timeline, view());
+  }
+}
+
+@keyframes ec-film-shift {
+  from {
+    --film-shift: 0%;
+  }
+  to {
+    --film-shift: 100%;
+  }
+}
+
 /* Photographs sit back into the warm page instead of on top of it. */
 .washed {
   filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
@@ -189,6 +282,12 @@ body::before {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* A scroll-linked animation ignores the duration cap above; the film
+     holds still instead. */
+  .film::after {
+    animation: none;
   }
 }
 

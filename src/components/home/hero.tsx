@@ -165,7 +165,7 @@ export function Hero() {
 
             {SHOW_COMING_SOON_SIGN ? (
               <div ref={signRef} aria-hidden="true" className={styles.sign}>
-                <div className={styles.signPlank}>
+                <div className={`film ${styles.signPlank}`}>
                   <span className={styles.signPole} data-side="left" />
                   <span className={styles.signPole} data-side="right" />
                   <span ref={signTextRef} className={styles.signText}>

@@ -3,8 +3,10 @@
   padding: clamp(56px, 11vh, 140px) clamp(14px, 4vw, 52px);
 }
 
+/* Dark glass with the shop's iridescent film over it (`film` in globals.css). */
 .panel {
   position: relative;
+  --film-strength: 0.32;
   background: var(--color-ecs-teal-deep);
   color: var(--color-ecs-neutral-100);
   border-radius: clamp(28px, 3vw, 52px);
@@ -32,7 +34,6 @@
   text-wrap: pretty;
   font-family: var(--font-headline);
   font-weight: 800;
-  filter: url(#ink-rough);
 }
 
 .lede {
@@ -84,6 +85,7 @@
 }
 
 .instagram:hover {
-  background: var(--color-ecs-neutral-100);
+  background: var(--ec-film);
+  border-color: transparent;
   color: var(--color-ecs-teal-deep);
 }
