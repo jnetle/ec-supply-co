@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { SiteFooter } from "@/components/site/site-footer";
@@ -7,7 +6,7 @@ import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
 import { LinkIcon } from "@/components/ui/link-icon";
 import { HELPERS, MADE_OF } from "@/lib/content/thanks";
-import { pageMetadata, SITE_EMAIL } from "@/lib/site";
+import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/the-build/the-build-page.module.css";
 
@@ -130,43 +129,6 @@ export default function TheBuildPage() {
               </li>
             ))}
           </ul>
-        </section>
-
-        <section className={styles.band}>
-          <p className={styles.bandLine}>
-            Took a photo of the shop, or lent a hand?{" "}
-            <a href={`mailto:${SITE_EMAIL}`} className={styles.bandLink}>
-              Tell us
-            </a>{" "}
-            and we&rsquo;ll add you.
-          </p>
-
-          <div className={styles.actions}>
-            <Link
-              href="/makers"
-              className={styles.action}
-              style={
-                {
-                  "--action-bg": "var(--color-ecs-marigold)",
-                  "--action-fg": "var(--color-ecs-ink)",
-                } as CSSProperties
-              }
-            >
-              Meet the makers
-            </Link>
-            <Link
-              href="/sell-with-us"
-              className={styles.action}
-              style={
-                {
-                  "--action-bg": "var(--color-ecs-pink)",
-                  "--action-fg": "#4a1f30",
-                } as CSSProperties
-              }
-            >
-              Sell with us
-            </Link>
-          </div>
         </section>
       </main>
 

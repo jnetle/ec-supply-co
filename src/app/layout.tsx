@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Caveat, Figtree, Hammersmith_One } from "next/font/google";
+import { Caveat, Figtree, Hammersmith_One, Playfair_Display } from "next/font/google";
 
 import {
   SHARE_IMAGE,
@@ -36,6 +36,15 @@ const hammersmith = Hammersmith_One({
   weight: "400",
 });
 
+// Playfair Display: the vintage storefront serif that sits beside the cursive
+// tagline in the logo. Italic for the event host and board lines. Variable,
+// so no weights listed.
+const playfair = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_NAME,
@@ -63,7 +72,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${caveat.variable} ${figtree.variable} ${hammersmith.variable}`}
+      className={`${caveat.variable} ${figtree.variable} ${hammersmith.variable} ${playfair.variable}`}
     >
       <body>
         {children}
