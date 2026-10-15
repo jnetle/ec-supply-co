@@ -1,23 +1,56 @@
 import type { Metadata } from "next";
 
-import { InquiryForm } from "@/components/private-events/inquiry-form";
+import {
+  InquiryForm,
+  InquiryTypeLink,
+  type RentalType,
+} from "@/components/host-with-us/inquiry-form";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { Field } from "@/components/ui/field";
 import { PageIntro } from "@/components/ui/page-intro";
 import { WaveDivider } from "@/components/ui/wave-divider";
 import { pageMetadata } from "@/lib/site";
 
-import styles from "@/components/private-events/private-events-page.module.css";
+import styles from "@/components/host-with-us/host-with-us-page.module.css";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Private events",
+  title: "Host with us",
   description:
-    "Host a private workshop with us, or rent the space for your own meeting, class or party.",
-  path: "/private-events",
+    "Rent the shop after hours for a private event, run a co-marketing workshop with us, or pitch us an idea.",
+  path: "/host-with-us",
 });
+
+const WAYS: {
+  type: RentalType;
+  label: string;
+  title: string;
+  body: string;
+  cta: string;
+}[] = [
+  {
+    type: "private-event",
+    label: "Private event",
+    title: "The room is yours.",
+    body: "Birthdays, showers, book clubs, meetings or a class of your own. Rent the space after hours and bring your people.",
+    cta: "Plan a private event",
+  },
+  {
+    type: "co-marketing-workshop",
+    label: "Co-marketing workshop",
+    title: "Host it with us.",
+    body: "Run a workshop together with the shop. You bring the craft, we bring the room, and we both get the word out to our communities.",
+    cta: "Team up on a workshop",
+  },
+  {
+    type: "pitch-an-idea",
+    label: "Pitch an idea",
+    title: "Got something else?",
+    body: "A popup, a collab, a class that doesn't fit a box. Tell us what you have in mind and we'll figure it out together.",
+    cta: "Pitch us an idea",
+  },
+];
 
 const RENTAL_FACTS = [
   { value: "$75", unit: " / hour", note: "Rental rates start here" },
@@ -26,7 +59,7 @@ const RENTAL_FACTS = [
   { value: "Mornings + evenings", note: "Both are available" },
 ];
 
-export default function PrivateEventsPage() {
+export default function HostWithUsPage() {
   return (
     <>
       <SiteHeader />
@@ -37,52 +70,42 @@ export default function PrivateEventsPage() {
           eyebrowColor="var(--color-ecs-pink-deep)"
           eyebrowInk="#ffffff"
           title="Book the room."
-          lede="Host a private workshop with us, or rent the space for your own meeting, class or party."
+          lede="Use the shop after hours three ways: throw your own private event, team up with us on a co-marketing workshop, or pitch us an idea."
         />
 
-        <section id="workshops" className={`${styles.band} ${styles.workshops}`}>
+        <section id="ways" className={`${styles.band} ${styles.ways}`}>
           <WaveDivider edge="top" fill="var(--color-ecs-pink)" />
           <WaveDivider edge="bottom" fill="var(--color-ecs-pink)" />
 
-          <div>
+          <div className={styles.waysIntro}>
             <Eyebrow
               color="var(--color-ecs-pink-deep)"
               ink="#ffffff"
               className="mb-[18px]"
             >
-              Private workshops
+              Three ways to use the room
             </Eyebrow>
             <h2 className={styles.heading}>
-              Birthdays, showers, book clubs — or just for fun.
+              Rent it, run it with us, or tell us your idea.
             </h2>
-            <p className={styles.lede}>
-              We offer private workshop events outside of our normal operating
-              hours! Our private workshops can be for a birthday party, shower,
-              book club, or just for fun! Please reach out below, and we will
-              get back to you with options and/or availability.
-            </p>
-
-            <BlobImage
-              src="/assets/photos/id-106-1200-750.jpg"
-              alt="A group gathered around the workshop table"
-              radius="46% 54% 18% 22% / 38% 34% 8% 9%"
-              ratio="16/10"
-              sizes="(max-width: 800px) 100vw, 45vw"
-              className={styles.photo}
-            />
           </div>
 
-          <InquiryForm
-            name="workshop"
-            heading="Private workshop inquiry"
-            nameLegend="Name of contact"
-            confirmation="We will get back to you with options and availability."
-            submitBackground="var(--color-ecs-pink-deep)"
-            submitForeground="#ffffff"
-          />
+          <ol className={styles.cards}>
+            {WAYS.map((way, index) => (
+              <li key={way.type} className={styles.card}>
+                <span className={styles.cardNumber}>{index + 1}</span>
+                <span className={styles.cardLabel}>{way.label}</span>
+                <h3 className={styles.cardTitle}>{way.title}</h3>
+                <p className={styles.cardBody}>{way.body}</p>
+                <InquiryTypeLink type={way.type} className={styles.cardCta}>
+                  {way.cta} →
+                </InquiryTypeLink>
+              </li>
+            ))}
+          </ol>
         </section>
 
-        <section id="rental" className={`${styles.band} ${styles.rental}`}>
+        <section id="inquire" className={`${styles.band} ${styles.rental}`}>
           <WaveDivider edge="top" fill="var(--color-ecs-teal-deep)" />
           <WaveDivider edge="bottom" fill="var(--color-ecs-teal-deep)" />
 
@@ -92,14 +115,15 @@ export default function PrivateEventsPage() {
               ink="var(--color-ecs-ink)"
               className="mb-[18px]"
             >
-              Classroom + event space rental
+              The space
             </Eyebrow>
             <h2 className={styles.heading}>
-              Host your next meeting, class, shower or event.
+              One room, whatever you&rsquo;re planning.
             </h2>
             <p className={styles.lede}>
-              Are you looking for a place to host your next meeting, class,
-              shower, or event? Look no further!
+              Whichever way you use it, here&rsquo;s what you get. Pick your
+              rental type in the form and we&rsquo;ll get back to you with
+              options and availability.
             </p>
 
             <div className={styles.tiles}>
@@ -127,29 +151,9 @@ export default function PrivateEventsPage() {
           </div>
 
           <InquiryForm
-            name="rental"
-            heading="Event space rental inquiry"
-            nameLegend="Contact name"
-            confirmation="We will be in touch about availability and next steps."
             submitBackground="var(--color-ecs-magenta)"
             submitForeground="#ffffff"
-          >
-            <Field
-              id="rental-about"
-              label="Tell us about your event"
-              required
-              multiline
-            >
-              {(props) => <textarea {...props} name="about" required rows={4} />}
-            </Field>
-            <Field
-              id="rental-notes"
-              label="Any additional information"
-              multiline
-            >
-              {(props) => <textarea {...props} name="notes" rows={3} />}
-            </Field>
-          </InquiryForm>
+          />
         </section>
       </main>
 

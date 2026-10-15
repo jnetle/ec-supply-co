@@ -1,6 +1,6 @@
 /* The shared form language: pill inputs on a cream card, "(required)" set
-   inline in magenta. Used by the maker application and both private-event
-   inquiries. */
+   inline in magenta. Used by the maker application and the private-event
+   inquiry. */
 
 .card {
     max-width: 880px;
@@ -68,6 +68,11 @@
 .textarea {
     border-radius: 26px;
     resize: vertical;
+}
+
+.select {
+    padding-block: 0;
+    cursor: pointer;
 }
 
 .input:focus-visible,
