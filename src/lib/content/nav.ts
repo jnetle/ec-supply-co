@@ -31,8 +31,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     key: "shop",
     label: "At the shop",
-    color: "var(--color-ecs-marigold)",
-    ink: "var(--color-ecs-ink)",
+    color: "var(--color-ecs-turquoise-dark)",
+    ink: "#ffffff",
     radius: "8px 17px 7px 15px",
     tilt: -1.4,
     align: "left",
@@ -57,7 +57,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     key: "events",
     label: "Events + popups",
-    color: "var(--color-ecs-magenta)",
+    color: "var(--color-ecs-cobalt)",
     ink: "#ffffff",
     radius: "16px 8px 15px 7px",
     tilt: 1.3,
@@ -83,7 +83,7 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     key: "makers",
     label: "Makers",
-    color: "var(--color-ecs-pink)",
+    color: "var(--color-ecs-logo-salmon)",
     ink: "#4a1f30",
     radius: "15px 7px 17px 9px",
     tilt: -1.1,
@@ -96,8 +96,8 @@ export const NAV_GROUPS: NavGroup[] = [
   {
     key: "about",
     label: "About",
-    color: "var(--color-ecs-teal-pale)",
-    ink: "var(--color-ecs-teal-deep)",
+    color: "var(--color-ecs-marigold)",
+    ink: "var(--color-ecs-ink)",
     radius: "17px 9px 14px 8px",
     tilt: 1.6,
     align: "right",
