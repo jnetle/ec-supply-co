@@ -1,9 +1,9 @@
-import { NewsletterForm } from "@/components/newsletter-form";
-import { Blob } from "@/components/ui/blob";
-import { Eyebrow } from "@/components/ui/eyebrow";
-import { SHOP_ADDRESS } from "@/lib/content/nav";
+import { NewsletterForm } from '@/components/newsletter-form';
+import { Blob } from '@/components/ui/blob';
+import { Eyebrow } from '@/components/ui/eyebrow';
+import { SHOP_ADDRESS } from '@/lib/content/nav';
 
-import styles from "./signup.module.css";
+import styles from './signup.module.css';
 
 export function Signup() {
   return (
@@ -12,10 +12,10 @@ export function Signup() {
         color="rgba(255,178,13,0.20)"
         parallax={-0.22}
         style={{
-          left: "-4%",
-          top: "6%",
-          width: "clamp(120px,16vw,250px)",
-          height: "clamp(120px,16vw,250px)",
+          left: '-4%',
+          top: '6%',
+          width: 'clamp(120px,16vw,250px)',
+          height: 'clamp(120px,16vw,250px)',
         }}
       />
 
@@ -24,10 +24,10 @@ export function Signup() {
           color="rgba(255,178,13,0.10)"
           parallax={0.16}
           style={{
-            right: "-6%",
-            bottom: "-30%",
-            width: "clamp(180px,26vw,420px)",
-            height: "clamp(180px,26vw,420px)",
+            right: '-6%',
+            bottom: '-30%',
+            width: 'clamp(180px,26vw,420px)',
+            height: 'clamp(180px,26vw,420px)',
           }}
         />
 

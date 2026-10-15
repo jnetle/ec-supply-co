@@ -49,8 +49,9 @@
   transform: rotate(0deg) translateY(-2px);
 }
 
-/* Drawn rather than typed: Rubik has no ▾, and the fallback font's came out
-   a speck. Sized in em so it scales with the label. */
+/* Drawn rather than typed, so it never depends on the text font having a ▾
+   (Rubik had none, and the fallback's came out a speck). Sized in em so it
+   scales with the label. */
 .caret {
   display: block;
   flex: none;

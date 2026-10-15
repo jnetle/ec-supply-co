@@ -34,7 +34,7 @@ export function Visit() {
           <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
         </div>
 
-        <dl className={styles.hours}>
+        <dl className={`film ${styles.hours}`}>
           <div className={styles.hoursTitle}>Store hours</div>
           {HOURS.map((row) => (
             <div
