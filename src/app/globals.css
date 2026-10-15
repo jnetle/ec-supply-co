@@ -15,6 +15,7 @@
   --font-display: var(--font-hammersmith), var(--font-heading);
   --font-headline: var(--font-figtree), var(--font-heading);
   --font-hero: var(--font-hammersmith), var(--font-heading);
+  --font-serif: var(--font-playfair), Georgia, serif;
 
   /* Surfaces and ink */
   --color-ecs-bg: #f4e9d5;
