@@ -11,7 +11,9 @@ import { pageMetadata } from "@/lib/site";
 export const metadata: Metadata = pageMetadata({
   title: "Community calendar",
   description:
-    "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat.",
+    CALENDAR_EVENTS.length > 0
+      ? "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat."
+      : "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito are a later chapter, once the shop is up and running.",
   path: "/calendar",
 });
 
@@ -33,7 +35,7 @@ export default function CalendarPage() {
           lede={
             hasEvents
               ? "Workshops, classes, food popups and neighborhood nights at the shop. Pick something, save a seat."
-              : "Workshops, classes, food popups and neighborhood nights at the shop. The first ones are on the way."
+              : "Workshops, classes, food popups and neighborhood nights are a later chapter. First we’re getting the shop itself up and running."
           }
         />
         {hasEvents ? <CommunityCalendar /> : <EmptyCalendar />}

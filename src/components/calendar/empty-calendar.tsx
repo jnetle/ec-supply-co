@@ -8,7 +8,7 @@ import styles from "./empty-calendar.module.css";
 
 /**
  * Stands in for the calendar while nothing is scheduled: the home page's
- * feature band, saying what's coming instead of showing an empty month grid.
+ * feature band, saying it's a later phase instead of showing an empty month grid.
  */
 export function EmptyCalendar() {
   return (
@@ -18,33 +18,16 @@ export function EmptyCalendar() {
         background="var(--color-ecs-teal)"
         foreground="#ffffff"
         eyebrow={{
-          label: "Fresh flyers soon",
+          label: "Down the road",
           color: "#ffffff",
           ink: "var(--color-ecs-teal-deep)",
         }}
         heading="The board’s clear for now"
-        kicker="First workshops + popups on the way"
+        kicker="A later chapter, still taking shape"
         kickerColor="#ffffff"
         paragraphs={[
-          "We’re lining up the first round of workshops, food popups and neighborhood nights: classes taught by the makers down the street, guest cooks out front, maker markets and swap meets.",
-          "Get the newsletter and you’ll hear the moment they’re posted. Or bring your own idea to the room.",
-        ]}
-        tags={[
-          {
-            label: "Workshops + classes",
-            color: "#ffffff",
-            ink: "var(--color-ecs-teal-deep)",
-          },
-          {
-            label: "Food popups",
-            color: "var(--color-ecs-marigold)",
-            ink: "var(--color-ecs-ink)",
-          },
-          {
-            label: "Neighborhood nights",
-            color: "var(--color-ecs-teal-deep)",
-            ink: "#ffffff",
-          },
+          "Right now we’re focused on opening the shop: the retail counter, popup vendors, the tool library and maker shelves. A calendar of workshops, food popups and neighborhood nights comes after that, and we’ll shape it as we learn what the space wants to be.",
+          "Get the newsletter to follow along. Have an idea for a class or a night? Tell us. It helps us plan what comes next.",
         ]}
         actions={
           <>
