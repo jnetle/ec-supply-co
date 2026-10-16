@@ -13,6 +13,7 @@ import { StoreJsonLd } from "@/components/seo/store-json-ld";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
+import { HOME_EVENTS_ENABLED } from "@/lib/content/calendar";
 import { SITE_DESCRIPTION, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
@@ -39,7 +40,7 @@ export default function HomePage() {
         <Hennai />
         <Carts />
         <Tools />
-        <Events />
+        {HOME_EVENTS_ENABLED && <Events />}
         <MakerSpotlight />
         <Visit />
         <Signup />

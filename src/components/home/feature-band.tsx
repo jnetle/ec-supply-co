@@ -20,6 +20,8 @@ type FeatureBandProps = {
   kickerColor?: string;
   paragraphs: string[];
   tags?: BandTag[];
+  /** Links or buttons under the tags. */
+  actions?: ReactNode;
   /** The photo column. */
   media: ReactNode;
   /** Puts the photo column first on wide screens. */
@@ -38,6 +40,7 @@ export function FeatureBand({
   kickerColor,
   paragraphs,
   tags,
+  actions,
   media,
   mediaFirst = false,
   decoration,
@@ -80,6 +83,8 @@ export function FeatureBand({
             ))}
           </div>
         ) : null}
+
+        {actions ? <div className={styles.actions}>{actions}</div> : null}
       </div>
 
       <div

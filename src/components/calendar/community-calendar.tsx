@@ -11,9 +11,8 @@ import {
 import { LinkIcon } from "@/components/ui/link-icon";
 import {
   CALENDAR_EVENTS,
+  CALENDAR_SUBSCRIBE_ENABLED,
   CATEGORIES,
-  FIRST_MONTH,
-  LAST_MONTH,
   type EventCategory,
 } from "@/lib/content/calendar";
 
@@ -39,11 +38,26 @@ const FILTERS: { key: Filter; label: string; dot: string }[] = [
   { key: "community", label: "Community", dot: CATEGORIES.community.color },
 ];
 
-const MIN_INDEX = monthIndex(FIRST_MONTH.year, FIRST_MONTH.month);
-const MAX_INDEX = monthIndex(LAST_MONTH.year, LAST_MONTH.month);
+/** Every month that has at least one event. */
+const EVENT_MONTHS = CALENDAR_EVENTS.map((e) =>
+  monthIndex(Number(e.date.slice(0, 4)), Number(e.date.slice(5, 7)) - 1),
+);
 
 export function CommunityCalendar() {
-  // Start on the current month, clamped to the months that have events.
+  // Navigation spans only the months that have events; with none, it stays
+  // on the current month.
+  const [{ MIN_INDEX, MAX_INDEX }] = useState(() => {
+    const now = new Date();
+    const current = monthIndex(now.getFullYear(), now.getMonth());
+    return EVENT_MONTHS.length
+      ? {
+          MIN_INDEX: Math.min(...EVENT_MONTHS),
+          MAX_INDEX: Math.max(...EVENT_MONTHS),
+        }
+      : { MIN_INDEX: current, MAX_INDEX: current };
+  });
+
+  // Start on the current month, clamped to the navigable range.
   const [index, setIndex] = useState(() => {
     const now = new Date();
     return Math.min(
@@ -302,7 +316,7 @@ export function CommunityCalendar() {
         </div>
       </div>
 
-      <CalendarSubscriptions />
+      {CALENDAR_SUBSCRIBE_ENABLED && <CalendarSubscriptions />}
 
       <EventDialog
         event={selected}
