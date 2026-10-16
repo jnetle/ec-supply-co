@@ -8,6 +8,7 @@ import {
   ARC_WIDTH,
   STRAIGHT_BASELINE,
 } from "@/components/home/el-cerrito-arc";
+import { CAP_HEIGHT, WORD_GAP } from "@/components/home/logo-wordmark";
 
 /* ── Scroll budget ──────────────────────────────────────────────────────── */
 
@@ -103,13 +104,12 @@ type ArcGeometry = {
 };
 
 /*
- * The logo's own proportions, in its PDF points: the cap height of
- * "SUPPLY", the gap from the arch's lowest point down to those caps, and
- * how far right of the "SUPPLY CO." centre the arch is centred.
+ * The logo's own proportions, in its PDF points: the gap from the arch's
+ * lowest point down to the caps of "SUPPLY", and how far off the
+ * "SUPPLY CO." centre the arch is centred (it sits a touch left).
  */
-const LOGO_CAP = 155;
-const LOGO_ARC_GAP = 43.23;
-const LOGO_ARC_NUDGE = 4.07;
+const LOGO_ARC_GAP = 41.98;
+const LOGO_ARC_NUDGE = -3.78;
 /** The straight label's gap above "Supply", as a share of its caps. */
 const LABEL_GAP = 0.2;
 
@@ -275,8 +275,9 @@ export function useHeroSequence({
 
     /**
      * The rest-state "Supply Co.": "Supply" and "Co" as ranges, since the
-     * elements are inline-block and their boxes include slack the glyphs
-     * don't fill. Transforms must be cleared.
+     * elements are inline-block and their boxes include slack the letters
+     * don't fill, with the logo's space between them. Transforms must be
+     * cleared.
      */
     const measurePair = (brandLine: HTMLElement, coWord: HTMLElement) => {
       const brandRange = document.createRange();
@@ -285,8 +286,17 @@ export function useHeroSequence({
       coRange.selectNodeContents(coWord);
       const brand = brandRange.getBoundingClientRect();
       const co = coRange.getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(coWord).fontSize) * 0.26;
+      const gap = (measureCaps(brandLine).cap * WORD_GAP) / CAP_HEIGHT;
       return { brand, co, gap, width: brand.width + gap + co.width };
+    };
+
+    /**
+     * Where "Supply"'s caps sit, in px: the drawn word's box runs from the
+     * top of its caps to the baseline.
+     */
+    const measureCaps = (brandLine: HTMLElement) => {
+      const rect = (brandLine.querySelector("svg") ?? brandLine).getBoundingClientRect();
+      return { top: rect.top, cap: rect.height };
     };
 
     /**
@@ -305,26 +315,6 @@ export function useHeroSequence({
       return (lockup.getBoundingClientRect().width * NAME_WIDTH) / Math.max(1, nameWidth);
     };
 
-    /**
-     * Where "Supply"'s caps sit, in px: an empty inline-block rests on the
-     * baseline, and the font's own "H" gives the cap height.
-     */
-    const measureCaps = (brandLine: HTMLElement) => {
-      const probe = document.createElement("span");
-      probe.style.cssText = "display:inline-block;width:0;height:0";
-      brandLine.append(probe);
-      const baseline = probe.getBoundingClientRect().bottom;
-      probe.remove();
-      const style = getComputedStyle(brandLine);
-      const fontPx = parseFloat(style.fontSize) || 0;
-      const context = document.createElement("canvas").getContext("2d");
-      let cap = fontPx * 0.7;
-      if (context) {
-        context.font = `${style.fontWeight} ${style.fontSize} ${style.fontFamily}`;
-        cap = context.measureText("H").actualBoundingBoxAscent || cap;
-      }
-      return { top: baseline - cap, cap };
-    };
 
     /**
      * Places "El Cerrito" against the measured pair, in the logo's own
@@ -342,7 +332,7 @@ export function useHeroSequence({
       const { brand, width: pairWidth } = measurePair(brandLine, coWord);
       const lockupRect = lockup.getBoundingClientRect();
       const caps = measureCaps(brandLine);
-      const unit = caps.cap / LOGO_CAP;
+      const unit = caps.cap / CAP_HEIGHT;
       const capTop = caps.top - lockupRect.top;
       const brandLeft = brand.left - lockupRect.left;
 

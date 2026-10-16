@@ -155,27 +155,38 @@
   color: #fff;
 }
 
-/* Not positioned, so the dot still positions against .coWord. */
+/* A flex box's baseline is the letters' bottom edge, so "CO" and its dot
+   sit on the line like text. */
 .coFace {
-  display: inline-block;
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
   filter: url(#ecs-logo-extrude);
 }
 
+/* The logo's dot, hung just past the "O" and out of flow, so it doesn't
+   push the words over once "Co" has dropped. */
 .coDot {
   position: absolute;
   left: 100%;
-  top: 0;
+  bottom: 0;
+  display: flex;
+  padding-left: 0.003em;
 }
 
-/* An empty inline-block sits with its bottom on the baseline, so the dot
-   rests on the line like a period would. */
-.coDotMark {
+/* "Supply" and "Co." in the logo's own lettering, drawn as outlines. Their
+   height is set from the cap height in hero.tsx; their bottom edge is the
+   baseline. */
+.logoWord {
+  display: block;
+  width: auto;
+  overflow: visible;
+  fill: currentColor;
+}
+
+.brandLine .logoWord {
   display: inline-block;
-  width: 0.17em;
-  height: 0.17em;
-  margin-left: 0.05em;
-  border-radius: 50%;
-  background: currentColor;
+  vertical-align: baseline;
 }
 
 /* The window the cycling suffix paints in; its left edge is where the word
@@ -184,6 +195,10 @@
   position: relative;
   flex: 1;
   min-width: 0;
+  /* A letter's gap after "CO", as if the word runs on: the logo puts its
+     letters about 0.19em apart at this size, and the words' first letters
+     already start about 0.09em into their box. */
+  margin-left: 0.1em;
   height: clamp(1.3rem, 7.5vw, 7.9rem);
   /* The wordmark's size, so the clip below can be set in its ems. */
   font-size: clamp(1.3rem, 7.6vw, 7.9rem);
@@ -198,6 +213,9 @@
   top: 0;
   white-space: nowrap;
   line-height: 0.99;
+  /* The logo's letter spacing: its letters sit about 0.12 caps further
+     apart than Hammersmith One's, whose caps are 0.65em. */
+  letter-spacing: 0.075em;
   color: var(--suffix-color);
   filter: url(#ecs-word-extrude);
   opacity: 0;

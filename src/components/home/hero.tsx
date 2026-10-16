@@ -12,9 +12,33 @@ import { photoCredit } from "@/lib/content/thanks";
 import { ARC_HEIGHT, ARC_LETTERS, ARC_WIDTH } from "./el-cerrito-arc";
 import styles from "./hero.module.css";
 import {
+  CAP_HEIGHT,
+  CO,
+  DOT,
+  EXTRUDE_DEPTH,
+  SUPPLY,
+} from "./logo-wordmark";
+import {
   LOGO_EXTRUDE_DEPTH_EM,
   LogoExtrudeFilter,
 } from "./logo-extrude-filter";
+
+/** The logo lettering's cap height, in ems of the headline. */
+const LOGO_CAP_EM = 0.7;
+
+/** One word of the logo's own lettering, sized by its cap height. */
+function LogoWord({ word }: { word: { width: number; height: number; d: string } }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 ${word.width} ${word.height}`}
+      className={styles.logoWord}
+      style={{ height: `${(LOGO_CAP_EM * word.height) / CAP_HEIGHT}em` }}
+    >
+      <path d={word.d} />
+    </svg>
+  );
+}
 
 /** The headline's largest size (7.9rem), until it can be measured. */
 const DEFAULT_HEADLINE_PX = 126.4;
@@ -122,7 +146,10 @@ export function Hero() {
         } as CSSProperties
       }
     >
-      <LogoExtrudeFilter depth={headlinePx * LOGO_EXTRUDE_DEPTH_EM} />
+      {/* "Supply Co." at the logo's own depth, against its cap height. */}
+      <LogoExtrudeFilter
+        depth={(headlinePx * LOGO_CAP_EM * EXTRUDE_DEPTH) / CAP_HEIGHT}
+      />
       {/* White sides, with cream bottoms so the two faces still read apart. */}
       <LogoExtrudeFilter
         id={WORD_EXTRUDE_FILTER_ID}
@@ -166,9 +193,9 @@ export function Hero() {
             </svg>
 
             <h1 className={styles.heading}>
-              <span className="sr-only">El Cerrito </span>
+              <span className="sr-only">El Cerrito Supply</span>
               <span ref={brandLineRef} className={styles.brandLine}>
-                Supply
+                <LogoWord word={SUPPLY} />
               </span>
             </h1>
 
@@ -191,16 +218,17 @@ export function Hero() {
                 />
               </svg>
 
+              <span className="sr-only">Co</span>
+
               {/* The extrusion is drawn on the inner face, so the swell only
                   scales an already-drawn picture instead of redrawing the
                   filter at every in-between size, which made its edges
                   jitter. */}
               <span ref={coWordRef} className={styles.coWord}>
                 <span className={styles.coFace}>
-                  Co
-                  {/* A round dot, as in the logo; the font's period is square. */}
+                  <LogoWord word={CO} />
                   <span ref={coDotRef} className={styles.coDot}>
-                    <span className={styles.coDotMark} />
+                    <LogoWord word={DOT} />
                   </span>
                 </span>
               </span>
