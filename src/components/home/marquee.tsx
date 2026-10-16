@@ -3,6 +3,7 @@ import { Fragment } from "react";
 import styles from "./marquee.module.css";
 
 const ITEMS = [
+  "Built by neighbors",
   "Retail",
   "Coffee",
   "Food Popups",

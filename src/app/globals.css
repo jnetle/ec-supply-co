@@ -96,9 +96,6 @@
     0.052em 0.06em 0 var(--ec-x, var(--ec-vermilion)),
     0.065em 0.075em 0 var(--ec-x, var(--ec-vermilion)),
     0.072em 0.083em 0.012em rgba(40, 26, 16, 0.28);
-  --ec-extrude-cream: -0.013em -0.013em 0 #fbf3e3, 0.013em 0.015em 0 #fbf3e3,
-    0.026em 0.03em 0 #fbf3e3, 0.039em 0.045em 0 #fbf3e3, 0.052em 0.06em 0 #fbf3e3,
-    0.065em 0.075em 0 #fbf3e3, 0.072em 0.083em 0.012em rgba(40, 26, 16, 0.28);
   --ec-extrude-paint-sm: -0.014em -0.014em 0 var(--ec-x, var(--ec-vermilion)),
     0.016em 0.018em 0 var(--ec-x, var(--ec-vermilion)),
     0.032em 0.037em 0 var(--ec-x, var(--ec-vermilion)),

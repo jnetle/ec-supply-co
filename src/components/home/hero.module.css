@@ -66,22 +66,14 @@
   color: var(--color-ecs-neutral-100);
 }
 
-.kicker {
-  font-family: var(--font-script);
-  font-weight: 600;
-  font-size: clamp(22px, 2.6vw, 40px);
-  line-height: 1.1;
-  letter-spacing: 0.005em;
-  margin-bottom: clamp(16px, 3.1vh, 38px);
-  color: #fbf3e3;
-}
-
 /* The server can't measure the wordmark, so it sends the unscaled two-line
-   layout; the hook then scales it and lifts "Co" onto line one. Hidden until
-   then, so a refresh doesn't paint the big version and visibly shrink it. */
+   layout; the hook then scales it, lifts "Co" onto line one and arches "El
+   Cerrito" over both. Hidden until then, so a refresh doesn't paint the big
+   version and visibly shrink it. */
 .lockup {
   position: relative;
-  transform-origin: left top;
+  /* Shrinks toward the bottom left, so it stays anchored low on the photo. */
+  transform-origin: left bottom;
   will-change: transform;
   opacity: 0;
   transition: opacity 320ms ease;
@@ -91,7 +83,10 @@
   opacity: 1;
 }
 
-/* Both lines share the wordmark's size; only the extrude colour differs. */
+/* Every word of the wordmark shares its size, and is lettered white with
+   the logo's two-tone extrusion (logo-extrude-filter.tsx). The cycling
+   words invert it: their own colour, with white sides. */
+.arc,
 .brandLine,
 .coWord,
 .suffix {
@@ -102,12 +97,33 @@
   text-transform: uppercase;
 }
 
-.brandLine {
+/* "El Cerrito" in the logo's own lettering. Sized and placed entirely by
+   the hook from its natural spot at the lockup's top left, against the
+   measured caps of "Supply": hidden until then. */
+.arc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2em;
+  height: auto;
+  overflow: visible;
+  transform-origin: 0 0;
+  will-change: transform;
+  visibility: hidden;
+  pointer-events: none;
+  fill: #fff;
+}
+
+.heading {
   margin: 0;
   line-height: 0.95;
+}
+
+.brandLine {
+  display: inline-block;
   white-space: nowrap;
-  color: #fbf3e3;
-  text-shadow: var(--ec-extrude-paint);
+  color: #fff;
+  filter: url(#ecs-logo-extrude);
 }
 
 .secondLine {
@@ -136,14 +152,30 @@
   transform-origin: 50% 60%;
   will-change: transform;
   line-height: 0.99;
-  color: #fbf3e3;
-  text-shadow: var(--ec-extrude-paint);
+  color: #fff;
+}
+
+/* Not positioned, so the dot still positions against .coWord. */
+.coFace {
+  display: inline-block;
+  filter: url(#ecs-logo-extrude);
 }
 
 .coDot {
   position: absolute;
   left: 100%;
   top: 0;
+}
+
+/* An empty inline-block sits with its bottom on the baseline, so the dot
+   rests on the line like a period would. */
+.coDotMark {
+  display: inline-block;
+  width: 0.17em;
+  height: 0.17em;
+  margin-left: 0.05em;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 /* The window the cycling suffix paints in; its left edge is where the word
@@ -153,10 +185,13 @@
   flex: 1;
   min-width: 0;
   height: clamp(1.3rem, 7.5vw, 7.9rem);
-  overflow: hidden;
+  /* The wordmark's size, so the clip below can be set in its ems. */
+  font-size: clamp(1.3rem, 7.6vw, 7.9rem);
+  /* Clips the words as they slide in, but lets the extrusion hang past the
+     window's left and bottom edges rather than be cut flat. */
+  clip-path: inset(0 0 -0.12em -0.12em);
 }
 
-/* Inverted from the fixed letters: colour on a cream block. */
 .suffix {
   position: absolute;
   left: 0;
@@ -164,7 +199,7 @@
   white-space: nowrap;
   line-height: 0.99;
   color: var(--suffix-color);
-  text-shadow: var(--ec-extrude-cream);
+  filter: url(#ecs-word-extrude);
   opacity: 0;
 }
 
@@ -243,10 +278,6 @@
     padding-bottom: 14px;
   }
 
-  .kicker {
-    margin-bottom: 8px;
-  }
-
   /* No pinned scroll left to cue. */
   .cue {
     display: none;
@@ -299,12 +330,13 @@
   animation: ecs-sign-settle 7s ease-in-out infinite;
 }
 
-/* Tall enough to run off the top of the stage at any viewport height. */
+/* Tall enough to run off the top of the stage at any viewport height,
+   allowing for the lockup being drawn scaled down. */
 .signPole {
   position: absolute;
   bottom: 100%;
   width: 3px;
-  height: 100vh;
+  height: calc(100vh / var(--lockup-scale, 1));
   background: var(--color-ecs-teal-deep);
   border-radius: 999px;
 }
