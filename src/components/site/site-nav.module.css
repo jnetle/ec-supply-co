@@ -90,10 +90,14 @@
   min-width: 250px;
   max-width: 320px;
   background: var(--color-ecs-surface);
-  border: 3px solid var(--color-ecs-ply);
+  /* Edged in its own chip's colour, so each panel reads as hanging from that
+     chip, with the chips' hard ply drop under the soft shadow. */
+  border: 3px solid var(--chip-bg);
   border-radius: 22px;
   padding: 8px;
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--color-ecs-ink) 22%, transparent);
+  box-shadow:
+    0 6px 0 -2px color-mix(in srgb, var(--ec-shadow-ink) 26%, transparent),
+    0 14px 34px color-mix(in srgb, var(--color-ecs-ink) 22%, transparent);
   display: grid;
   gap: 2px;
   list-style: none;

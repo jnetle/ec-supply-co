@@ -18,18 +18,19 @@ export function SiteNav() {
     <NavigationMenu.Root className={styles.root} delayDuration={0}>
       <NavigationMenu.List className={styles.list}>
         {NAV_GROUPS.map((group) => (
-          <NavigationMenu.Item key={group.key} className={styles.group}>
-            <NavigationMenu.Trigger
-              className={styles.chip}
-              style={
-                {
-                  "--chip-bg": group.color,
-                  "--chip-fg": group.ink,
-                  "--chip-radius": group.radius,
-                  "--chip-tilt": `${group.tilt}deg`,
-                } as CSSProperties
-              }
-            >
+          <NavigationMenu.Item
+            key={group.key}
+            className={styles.group}
+            style={
+              {
+                "--chip-bg": group.color,
+                "--chip-fg": group.ink,
+                "--chip-radius": group.radius,
+                "--chip-tilt": `${group.tilt}deg`,
+              } as CSSProperties
+            }
+          >
+            <NavigationMenu.Trigger className={styles.chip}>
               {group.label}
               <svg
                 aria-hidden="true"
