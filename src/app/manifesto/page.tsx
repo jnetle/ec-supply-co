@@ -67,7 +67,7 @@ export default function ManifestoPage() {
               Come by the shop
             </Link>
             <Link
-              href="/#makers"
+              href="/makers"
               className={button({ tone: "marigold" })}
             >
               Meet the makers

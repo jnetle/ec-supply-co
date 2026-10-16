@@ -83,8 +83,8 @@ export default function TheBuildPage() {
                     <h3 className={styles.name}>{entry.name}</h3>
                     <p className={styles.note}>{entry.provenance}</p>
                     {helpers.length > 0 && (
-                      <p className={styles.via}>
-                        via{" "}
+                      <p className={styles.credit}>
+                        {entry.creditedAs}{" "}
                         {helpers.map((helper, j) => (
                           <span key={helper.id}>
                             {j > 0 && (j === helpers.length - 1 ? " and " : ", ")}

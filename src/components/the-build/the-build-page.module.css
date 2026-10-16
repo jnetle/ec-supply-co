@@ -91,12 +91,12 @@
   grid-area: 1 / 1 / 2 / 6;
 }
 
-.via {
+.credit {
   margin: 12px 0 0;
   font-size: 15px;
 }
 
-.via a {
+.credit a {
   font-family: var(--font-heading);
   font-weight: 600;
   color: var(--card-accent);

@@ -124,7 +124,7 @@ export const FOOTER_EXTRA_LINKS: Record<string, NavLink[]> = {
 };
 
 export const SHOP_ADDRESS = {
-  street: "7534A Fairmount Ave",
+  street: "7523A Fairmount Ave",
   city: "El Cerrito, CA 94530",
   locality: "El Cerrito",
   region: "CA",
