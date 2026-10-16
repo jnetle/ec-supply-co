@@ -38,7 +38,7 @@ export const NAV_GROUPS: NavGroup[] = [
     align: "left",
     links: [
       {
-        label: "Hennai Home + Garden",
+        label: "Hennai Modern Home + Garden",
         note: "Plants, pots + home goods",
         href: "/#hennai",
       },

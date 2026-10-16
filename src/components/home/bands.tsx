@@ -1,11 +1,40 @@
+import Image from "next/image";
+
 import { Blob } from "@/components/ui/blob";
 import { BlobImage } from "@/components/ui/blob-image";
 
 import { FeatureBand } from "./feature-band";
+import hennaiLogo from "../../../public/assets/brand/hennai-logo.svg";
 import styles from "./bands.module.css";
 
 /** Photo column is roughly half the page above the column break. */
 const HALF_COLUMN = "(max-width: 700px) 100vw, 50vw";
+
+/** Hennai's shelf: a few things you'd actually find there. `cell` places
+    each photo in bands.module.css; later photos sit on top of earlier ones. */
+const SHELF = [
+  {
+    cell: "shelfBase",
+    src: "/assets/photos/hennai/cheese-knives.jpg",
+    alt: "Walnut cheese knives on an oak board with olives and crackers",
+    radius: "38% 62% 30% 24% / 52% 48% 22% 26%",
+  },
+  {
+    cell: "shelfTop",
+    src: "/assets/photos/hennai/coaster-bowl.jpg",
+    alt: "Enamel coasters in a stone bowl, with a glass of wine resting on one",
+    // A tight top-left corner keeps the glass on its coaster in frame, and
+    // the parallax zoom would push it out again.
+    radius: "10% 50% 48% 52% / 10% 46% 54% 50%",
+    parallax: false,
+  },
+  {
+    cell: "shelfBottom",
+    src: "/assets/photos/hennai/cutting-vase.jpg",
+    alt: "A pothos cutting in a glass tube held by a pale blue frame",
+    radius: "44% 56% 50% 50% / 50% 46% 54% 50%",
+  },
+] as const;
 
 export function Hennai() {
   return (
@@ -17,9 +46,15 @@ export function Hennai() {
         color: "var(--color-ecs-ply-ink)",
         ink: "#ffffff",
       }}
-      heading="Hennai Home + Garden"
-      kicker="Small corner, lots to find"
-      kickerColor="var(--color-ecs-ply-ink)"
+      heading={
+        <span className={styles.logoRow}>
+          <Image
+            src={hennaiLogo}
+            alt="Hennai Modern Home + Garden"
+            className={styles.logo}
+          />
+        </span>
+      }
       paragraphs={[
         "Hennai packs one corner of the shop with candles and soaps, plants and garden tools, cookbooks, cards and craft kits, linens, and pieces for the table. Easy to browse in five minutes, hard to leave in five.",
         "It all comes from small makers and independent brands, people building something of their own, just like Hennai. And it's priced to take home, not just admire, because well-made things shouldn't be a luxury.",
@@ -42,29 +77,23 @@ export function Hennai() {
         },
       ]}
       media={
-        <div className={styles.collage}>
-          <BlobImage
-            src="/assets/photos/id-106-1200-750.jpg"
-            alt="The Hennai counter, seen across the shop floor"
-            radius="46% 54% 18% 22% / 38% 34% 8% 9%"
-            ratio="16/10"
-            sizes={HALF_COLUMN}
-            className={styles.collageWide}
-          />
-          <BlobImage
-            src="/assets/photos/id-152-700-700.jpg"
-            alt="Terracotta pots and hand tools on the Hennai shelf"
-            radius="52% 48% 40% 60% / 46% 56% 44% 54%"
-            ratio="1/1"
-            sizes="(max-width: 700px) 50vw, 25vw"
-          />
-          <BlobImage
-            src="/assets/photos/id-292-700-700.jpg"
-            alt="Linens and cuttings in jars"
-            radius="44% 56% 58% 42% / 54% 42% 58% 46%"
-            ratio="1/1"
-            sizes="(max-width: 700px) 50vw, 25vw"
-          />
+        <div className={styles.shelf}>
+          {SHELF.map((photo) => (
+            <BlobImage
+              key={photo.src}
+              src={photo.src}
+              alt={photo.alt}
+              radius={photo.radius}
+              ratio="auto"
+              parallax={"parallax" in photo ? photo.parallax : true}
+              sizes={
+                photo.cell === "shelfBase"
+                  ? HALF_COLUMN
+                  : "(max-width: 700px) 42vw, 21vw"
+              }
+              className={styles[photo.cell]}
+            />
+          ))}
         </div>
       }
     />
