@@ -4,7 +4,7 @@
   background-color: var(--color-ecs-pink);
   background-image: radial-gradient(
     circle,
-    rgba(140, 31, 76, 0.16) 1.7px,
+    color-mix(in srgb, var(--color-ecs-pink-deep) 16%, transparent) 1.7px,
     transparent 1.8px
   );
   background-size: 20px 20px;
@@ -130,7 +130,7 @@
 .ctaNote {
   font-size: 15px;
   line-height: 1.5;
-  color: #4b3a3f;
+  color: var(--color-ecs-plum-ink);
 }
 
 /* Full-bleed on small screens. */

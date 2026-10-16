@@ -30,7 +30,7 @@ export function ManifestoTeaser() {
       <WaveDivider edge="top" fill="var(--color-ecs-navy)" />
       <WaveDivider edge="bottom" fill="var(--color-ecs-navy)" />
       <Blob
-        color="rgba(255,178,13,0.16)"
+        color="color-mix(in srgb, var(--color-ecs-marigold) 16%, transparent)"
         parallax={0.2}
         delay="1.5s"
         style={{
@@ -41,7 +41,7 @@ export function ManifestoTeaser() {
         }}
       />
       <Blob
-        color="rgba(143,214,218,0.13)"
+        color="color-mix(in srgb, var(--color-ecs-teal-pale) 13%, transparent)"
         parallax={-0.18}
         delay="0.6s"
         style={{

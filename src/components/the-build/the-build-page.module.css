@@ -1,50 +1,19 @@
-/* How we built it (/the-build): the manifesto's header and closing band
-   around what the shop is made of and who helped. */
-.header {
-  padding: clamp(72px, 13vh, 170px) clamp(14px, 4vw, 52px) clamp(30px, 5vh, 64px);
-  max-width: 1180px;
-}
-
-.kicker {
-  font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--color-ecs-red);
-  margin-bottom: 18px;
-}
-
-.title {
-  margin: 0;
-  font-size: clamp(2.4rem, 7vw, 6.4rem);
-  line-height: 0.98;
-  letter-spacing: 0.005em;
-  text-wrap: pretty;
-  font-family: var(--font-headline);
-  font-weight: 800;
-}
-
-.lede {
-  margin: clamp(22px, 3.4vh, 38px) 0 0;
-  font-size: clamp(16px, 1.5vw, 21px);
-  line-height: 1.6;
-  max-width: 56ch;
-}
-
+/* How we built it (/the-build): what the shop is made of and who helped,
+   under the shared page intro. */
 /* "What the shop is made of". */
 .madeOf {
-  padding: 0 clamp(14px, 4vw, 52px) clamp(40px, 7vh, 96px);
+  padding: 0 clamp(18px, 4vw, 56px) clamp(40px, 7vh, 96px);
   max-width: 1400px;
 }
 
 .sectionTitle {
   margin: 0;
   font-size: clamp(1.7rem, 3.6vw, 2.8rem);
-  line-height: 1.05;
-  letter-spacing: 0.005em;
-  font-family: var(--font-headline);
-  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.008em;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 .pieces {
@@ -142,7 +111,7 @@
 
 /* "Who helped": a plain credits list, name then what they did. */
 .helpers {
-  padding: clamp(32px, 6vh, 72px) clamp(14px, 4vw, 52px) clamp(40px, 7vh, 96px);
+  padding: clamp(32px, 6vh, 72px) clamp(18px, 4vw, 56px) clamp(40px, 7vh, 96px);
   max-width: 1400px;
 }
 

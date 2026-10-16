@@ -29,7 +29,7 @@ const PHASE_ONE = [
     title: 'Maker shelves',
     note: 'Low-cost space to sell your work',
     bg: 'var(--color-ecs-pink)',
-    fg: '#4a1f30',
+    fg: 'var(--color-ecs-plum-ink)',
   },
 ];
 
@@ -39,7 +39,7 @@ export function About() {
       <WaveDivider edge="top" fill="var(--color-ecs-ply-pale)" />
       <WaveDivider edge="bottom" fill="var(--color-ecs-ply-pale)" />
       <Blob
-        color="rgba(232,51,31,0.16)"
+        color="color-mix(in srgb, var(--color-ecs-red) 16%, transparent)"
         parallax={-0.3}
         style={{
           right: '6%',

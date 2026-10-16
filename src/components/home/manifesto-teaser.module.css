@@ -67,8 +67,8 @@
   gap: clamp(14px, 2vh, 18px);
   padding: clamp(18px, 2vw, 26px);
   border-radius: clamp(18px, 2vw, 26px);
-  background: rgba(251, 243, 227, 0.07);
-  border: 2px solid rgba(251, 243, 227, 0.16);
+  background: color-mix(in srgb, var(--color-ecs-surface) 7%, transparent);
+  border: 2px solid color-mix(in srgb, var(--color-ecs-surface) 16%, transparent);
 }
 
 .figcaption {
@@ -76,7 +76,7 @@
   font-weight: 600;
   font-size: clamp(14px, 1.05vw, 16px);
   line-height: 1.4;
-  color: #fbf3e3;
+  color: var(--color-ecs-surface);
 }
 
 /* Label and bar share a column; the big percentage spans both rows. */
@@ -110,7 +110,7 @@
 .bar {
   height: 10px;
   border-radius: 999px;
-  background: rgba(251, 243, 227, 0.14);
+  background: color-mix(in srgb, var(--color-ecs-surface) 14%, transparent);
   overflow: hidden;
 }
 
@@ -124,7 +124,7 @@
 .source {
   font-size: 12px;
   line-height: 1.45;
-  color: #cfd6e0;
+  color: color-mix(in srgb, var(--color-ecs-surface) 78%, transparent);
 }
 
 .more {

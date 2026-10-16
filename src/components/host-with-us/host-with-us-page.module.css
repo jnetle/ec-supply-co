@@ -10,7 +10,7 @@
 
 .ways {
   background: var(--color-ecs-pink);
-  color: #2a1219;
+  color: var(--color-ecs-plum-ink);
   grid-template-columns: 1fr;
 }
 
@@ -37,7 +37,7 @@
   border: 3px solid var(--color-ecs-ply);
   border-radius: 28px;
   padding: clamp(22px, 3vw, 32px);
-  box-shadow: 0 8px 0 -3px rgba(99, 64, 28, 0.2);
+  box-shadow: 0 8px 0 -3px color-mix(in srgb, var(--color-ecs-ply-ink) 20%, transparent);
 }
 
 .cardNumber {
@@ -92,11 +92,12 @@
 .heading {
   margin: 0;
   font-size: clamp(1.8rem, 4vw, 3.4rem);
-  line-height: 1.02;
+  line-height: 1;
   letter-spacing: 0.008em;
   text-wrap: pretty;
-  font-family: var(--font-headline);
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-weight: 400;
+  text-transform: uppercase;
 }
 
 .lede {
@@ -115,8 +116,8 @@
 }
 
 .tile {
-  background: rgba(251, 243, 227, 0.1);
-  border: 2px solid rgba(251, 243, 227, 0.2);
+  background: color-mix(in srgb, var(--color-ecs-surface) 10%, transparent);
+  border: 2px solid color-mix(in srgb, var(--color-ecs-surface) 20%, transparent);
   border-radius: 22px;
   padding: 18px 20px;
 }

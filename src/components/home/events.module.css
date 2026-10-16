@@ -288,7 +288,7 @@
   margin-left: -8px;
   border-radius: 50%;
   background: var(--color-ecs-red);
-  box-shadow: 0 2px 3px rgb(0 0 0 / 0.3);
+  box-shadow: 0 2px 3px color-mix(in srgb, var(--ec-shadow-ink) 30%, transparent);
 }
 
 .noteKicker {

@@ -40,6 +40,7 @@
   --color-ecs-magenta: #bd336c;
   --color-ecs-pink: #e8a2ac;
   --color-ecs-pink-deep: #7d2445;
+  --color-ecs-plum-ink: #4a1f30;
 
   /* Woods, ply and the rest */
   --color-ecs-navy: #1c2540;
@@ -76,7 +77,9 @@
 
 :root {
   --ec-ink: var(--color-ecs-ink);
-  --ec-vermilion: #f4562a;
+  --ec-vermilion: var(--color-ecs-vermilion);
+  /* The near-black behind hard ply shadows and dimmed overlays. */
+  --ec-shadow-ink: #141210;
 
   /* Hand-drawn extrude, as on the painted window lettering. */
   --ec-extrude: 0.016em 0.018em 0 var(--ec-ink), 0.032em 0.036em 0 var(--ec-ink),

@@ -15,7 +15,7 @@ type EyebrowProps = {
 
 export function Eyebrow({
   children,
-  color = "#c23a21",
+  color = "var(--color-ecs-red)",
   ink = "#ffffff",
   radius = "16px 8px 14px 7px",
   className = "",

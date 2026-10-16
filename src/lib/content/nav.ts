@@ -79,7 +79,7 @@ export const NAV_GROUPS: NavGroup[] = [
     key: "makers",
     label: "Makers",
     color: "var(--color-ecs-logo-salmon)",
-    ink: "#4a1f30",
+    ink: "var(--color-ecs-plum-ink)",
     radius: "15px 7px 17px 9px",
     tilt: -1.1,
     align: "right",

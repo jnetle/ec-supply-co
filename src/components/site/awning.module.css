@@ -7,8 +7,8 @@
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  filter: drop-shadow(0 2px 1.5px rgba(20, 18, 16, 0.22))
-    drop-shadow(0 7px 9px rgba(20, 18, 16, 0.16));
+  filter: drop-shadow(0 2px 1.5px color-mix(in srgb, var(--ec-shadow-ink) 22%, transparent))
+    drop-shadow(0 7px 9px color-mix(in srgb, var(--ec-shadow-ink) 16%, transparent));
 }
 
 .art {

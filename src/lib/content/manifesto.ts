@@ -37,7 +37,7 @@ export const MANIFESTO_RULES: ManifestoRule[] = [
     title: "Tools get borrowed, not bought four times over.",
     body: "A block has no business owning six tile saws. The library is free with a library card, and the deposit comes back when the tool does.",
     background: "var(--color-ecs-wood-pale)",
-    numberColor: "#7a4d20",
+    numberColor: "var(--color-ecs-ply-ink)",
   },
   {
     number: "04",
