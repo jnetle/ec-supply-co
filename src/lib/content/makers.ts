@@ -1,7 +1,6 @@
 /**
  * The maker roster's shape, loaded from the Wix `LocalMakers` collection (see
- * src/lib/makers.ts). `featured` picks the makers shown in the home page
- * spotlight.
+ * src/lib/makers.ts). The home page spotlight rotates through everyone daily.
  */
 
 export type Maker = {
@@ -16,6 +15,7 @@ export type Maker = {
   bio: string;
   photo?: { src: string; alt: string };
   website?: string;
+  /** Wix's "featured" box. Unused: the spotlight rotates through everyone. */
   featured?: boolean;
 };
 

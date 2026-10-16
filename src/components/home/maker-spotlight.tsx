@@ -11,15 +11,12 @@ import {
   makerByline,
   makerMorphDelay,
 } from '@/lib/content/makers';
-import { getMakers, getSpotlightMakers } from '@/lib/makers';
+import { getSpotlightMakers } from '@/lib/makers';
 
 import styles from './maker-spotlight.module.css';
 
 export async function MakerSpotlight() {
-  const [makers, spotlight] = await Promise.all([
-    getMakers(),
-    getSpotlightMakers(),
-  ]);
+  const spotlight = await getSpotlightMakers();
 
   return (
     <section id="makers" className={styles.section}>
