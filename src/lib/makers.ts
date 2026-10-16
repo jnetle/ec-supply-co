@@ -2,6 +2,7 @@ import "server-only";
 
 import { cache } from "react";
 
+import { shopTodayKey } from "@/components/calendar/event-model";
 import type { Maker } from "@/lib/content/makers";
 import { getWixClient } from "@/lib/wix";
 import { WIX_MEDIA } from "@/lib/wix-media";
@@ -61,9 +62,10 @@ function fromWix(item: Record<string, unknown>): Maker | undefined {
 }
 
 /**
- * Every maker from Wix, in the order they were added. If Wix is unreachable or
- * unconfigured, the roster comes back empty rather than failing the page.
- * Memoized per request, since the home page asks for it twice.
+ * Every maker from Wix, in the order they were added. Pages show them through
+ * getSpotlightMakers or getDirectoryMakers, which rotate the order. If Wix is
+ * unreachable or unconfigured, the roster comes back empty rather than failing
+ * the page. Memoized per request.
  */
 export const getMakers = cache(async (): Promise<Maker[]> => {
   try {
@@ -79,11 +81,69 @@ export const getMakers = cache(async (): Promise<Maker[]> => {
   }
 });
 
-/** The featured makers, topped up from the rest of the roster if too few are. */
-export async function getSpotlightMakers(): Promise<Maker[]> {
-  const makers = await getMakers();
-  const featured = makers.filter((maker) => maker.featured);
-  const rest = makers.filter((maker) => !maker.featured);
+/** 2024-01-01, day 0 of the rotation. */
+const DAY_EPOCH = Date.UTC(2024, 0, 1);
+const DAY_MS = 24 * 60 * 60 * 1000;
 
-  return [...featured, ...rest].slice(0, SPOTLIGHT_SIZE);
+/** Whole days since the epoch, turning over at midnight Pacific. */
+function dayNumber(now: Date) {
+  return Math.round((Date.parse(shopTodayKey(now)) - DAY_EPOCH) / DAY_MS);
+}
+
+/** Fisher–Yates driven by mulberry32, so the same seed gives the same order. */
+function seededShuffle<T>(items: T[], seed: number): T[] {
+  let state = seed >>> 0;
+  const random = () => {
+    state = (state + 0x6d2b79f5) >>> 0;
+    let t = state;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+
+  const shuffled = [...items];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+// Sorted by id first, so the order doesn't hang on how Wix returns items.
+function byId(makers: Maker[]) {
+  return [...makers].sort((a, b) => a.id.localeCompare(b.id));
+}
+
+/**
+ * Four makers, changing daily. The roster is reshuffled once per cycle and the
+ * cycles are laid end to end, so each day takes the next four in line and
+ * everyone gets the same number of turns, whatever the roster's size. The
+ * reshuffle means nobody is stuck with the same weekday, card position or
+ * neighbours. Deterministic rather than random, so every render on a given day
+ * agrees.
+ */
+export async function getSpotlightMakers(now = new Date()): Promise<Maker[]> {
+  const makers = byId(await getMakers());
+  if (makers.length <= SPOTLIGHT_SIZE) return seededShuffle(makers, dayNumber(now));
+
+  const cycles = new Map<number, Maker[]>();
+  const inLine = (position: number) => {
+    const cycle = Math.floor(position / makers.length);
+    if (!cycles.has(cycle)) cycles.set(cycle, seededShuffle(makers, cycle));
+    return cycles.get(cycle)![position % makers.length];
+  };
+
+  // A day that straddles two cycles can meet the same maker twice; the repeat
+  // is skipped for whoever comes next.
+  const picked: Maker[] = [];
+  for (let p = dayNumber(now) * SPOTLIGHT_SIZE; picked.length < SPOTLIGHT_SIZE; p++) {
+    const maker = inLine(p);
+    if (!picked.includes(maker)) picked.push(maker);
+  }
+  return picked;
+}
+
+/** The whole roster in a fresh order each day, so nobody always heads the page. */
+export async function getDirectoryMakers(now = new Date()): Promise<Maker[]> {
+  return seededShuffle(byId(await getMakers()), dayNumber(now));
 }

@@ -21,8 +21,8 @@ export const metadata: Metadata = pageMetadata({
   path: "/",
 });
 
-// Picks up maker edits in the Wix CMS, and rolls the upcoming events forward,
-// within five minutes.
+// Picks up maker edits in the Wix CMS, turns the daily maker spotlight over,
+// and rolls the upcoming events forward, within five minutes.
 export const revalidate = 300;
 
 export default function HomePage() {

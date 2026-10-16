@@ -6,7 +6,7 @@ import { SiteHeader } from '@/components/site/site-header';
 import { PageIntro } from '@/components/ui/page-intro';
 import { ScrollEffects } from '@/components/ui/scroll-effects';
 import { SellWithUsBand } from '@/components/ui/sell-with-us-band';
-import { getMakers } from '@/lib/makers';
+import { getDirectoryMakers } from '@/lib/makers';
 import { pageMetadata } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata({
@@ -16,11 +16,12 @@ export const metadata: Metadata = pageMetadata({
   path: '/makers',
 });
 
-// Picks up edits in the Wix CMS within five minutes.
+// Picks up edits in the Wix CMS, and the day's new maker order, within five
+// minutes.
 export const revalidate = 300;
 
 export default async function MakersPage() {
-  const makers = await getMakers();
+  const makers = await getDirectoryMakers();
 
   return (
     <>
