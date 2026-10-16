@@ -54,7 +54,10 @@
   margin: 0;
 }
 
+/* A pane of the shop's filmed glass (`film` in globals.css), like the hours
+   card, but only a faint sheen so the figures stay easy to read. */
 .figure {
+  --film-strength: 0.12;
   /* The percentage's size also sets the column the bars share with it. */
   --figure-value-size: clamp(1.7rem, 2.8vw, 2.6rem);
 

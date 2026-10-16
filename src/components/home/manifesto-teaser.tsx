@@ -86,7 +86,7 @@ export function ManifestoTeaser() {
             </Link>
           </div>
 
-          <figure className={styles.figure}>
+          <figure className={`film ${styles.figure}`}>
             <figcaption className={styles.figcaption}>
               Share of revenue that recirculates in the local economy
             </figcaption>

@@ -1,17 +1,8 @@
 import { BlobImage } from "@/components/ui/blob-image";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SHOP_ADDRESS } from "@/lib/content/nav";
-import { SITE_EMAIL } from "@/lib/site";
 
 import styles from "./visit.module.css";
-
-const HOURS = [
-  { day: "Thu", hours: "12–7" },
-  { day: "Fri", hours: "12–9" },
-  { day: "Sat", hours: "10–8" },
-  { day: "Sun", hours: "10–5" },
-  { day: "Mon–Wed", hours: "Private events", closed: true },
-];
 
 export function Visit() {
   return (
@@ -24,28 +15,28 @@ export function Visit() {
         >
           Come by
         </Eyebrow>
-        <h2 className={styles.heading}>Thursday through Sunday</h2>
+        <h2 className={styles.heading}>Opening soon on Fairmount</h2>
 
         <div className={styles.address}>
           {SHOP_ADDRESS.street}
           <br />
           {SHOP_ADDRESS.city}
-          <br />
-          <a href={`mailto:${SITE_EMAIL}`}>{SITE_EMAIL}</a>
         </div>
 
-        <dl className={`film ${styles.hours}`}>
-          <div className={styles.hoursTitle}>Store hours</div>
-          {HOURS.map((row) => (
-            <div
-              key={row.day}
-              className={`${styles.hoursRow} ${row.closed ? styles.hoursClosed : ""}`}
-            >
-              <dt>{row.day}</dt>
-              <dd>{row.hours}</dd>
-            </div>
-          ))}
-        </dl>
+        {/* Holds the hours card's place until the hours are set. */}
+        <div className={`film ${styles.hours}`}>
+          <div className={styles.hoursTitle}>Hours coming soon</div>
+          <p className={styles.hoursNote}>
+            We&rsquo;re still setting our schedule. Get the newsletter or
+            follow along on Instagram to hear first when the doors open.
+          </p>
+          <div className={styles.hoursLinks}>
+            <a href="#signup">Get the newsletter</a>
+            <a href={SHOP_ADDRESS.instagram} target="_blank" rel="noreferrer">
+              Instagram
+            </a>
+          </div>
+        </div>
       </div>
 
       <div data-reveal>

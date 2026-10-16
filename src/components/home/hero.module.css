@@ -1,5 +1,7 @@
 .track {
   position: relative;
+  /* The sign's film shifts along this; see .signPlank::after. */
+  view-timeline: --hero-film block;
   /* Set by the component from the same formula the motion hook uses, so the
      height is right from first paint. If this and the hook disagreed, the
      document would grow after hydration and any in-flight anchor scroll
@@ -311,10 +313,11 @@
 }
 
 /* ── The Coming Soon sign ──────────────────────────────────────────────────
-   A painted plank hanging on two poles above the stage. Its box is sized
-   and placed by the hero hook against the live wordmark, so the values here
-   are only what measurement can't supply. It starts parked a full viewport
-   above its resting spot and is lowered as the hero scrolls. */
+   A frosted acrylic panel hung on two thin cables above the stage, with the
+   shop's iridescent film over it. Its box is sized and placed by the hero
+   hook against the live wordmark, so the values here are only what
+   measurement can't supply. It starts parked a full viewport above its
+   resting spot and is lowered as the hero scrolls. */
 .sign {
   position: absolute;
   left: 0;
@@ -329,56 +332,92 @@
   will-change: transform, opacity;
 }
 
-/* Filmed like the shop glass (`film` in globals.css). Screen only lightens
-   a bright plank, so here the film shifts its hue instead. */
+/* Filmed like the shop glass (`film` in globals.css), lettering included: a
+   plain overlay rather than screen, which would leave white letters
+   untouched. */
 .signPlank {
-  --film-strength: 0.45;
-  --film-blend: color;
+  --film-strength: 0.5;
+  --film-blend: normal;
   position: absolute;
   inset: 0;
-  /* Well above the plank, so it swings from the poles rather than its middle. */
+  /* Well above the plank, so it swings from the cables rather than its middle. */
   transform-origin: 50% -220px;
   display: grid;
   place-items: center;
-  background: var(--color-ecs-marigold);
-  color: var(--color-ecs-teal-deep);
-  border: 5px solid var(--color-ecs-teal-deep);
-  border-radius: 26px 14px 22px 16px;
-  box-shadow: 0 14px 0 -4px rgba(5, 63, 74, 0.34);
-  animation: ecs-sign-settle 7s ease-in-out infinite;
+  border-radius: 4px;
+  background: color-mix(in srgb, #fff 18%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 12px 26px rgba(20, 14, 8, 0.22);
+  animation: ecs-sign-settle 9s ease-in-out infinite;
 }
 
-/* Tall enough to run off the top of the stage at any viewport height,
-   allowing for the lockup being drawn scaled down. */
-.signPole {
+/* The stage's overflow: hidden makes it the film's nearest scroller, and it
+   never scrolls, so the default view() timeline would hold the film still.
+   It follows the hero instead, sweeping the whole way across as the hero
+   scrolls off, as the hours pane's film does as it passes. */
+.sign .signPlank::after {
+  animation-timeline: --hero-film;
+  animation-range: exit 0% exit 100%;
+}
+
+/* Fine steel cable, tall enough to run off the top of the stage at any
+   viewport height, allowing for the lockup being drawn scaled down. */
+.signCable {
   position: absolute;
   bottom: 100%;
-  width: 3px;
+  width: 1.5px;
   height: calc(100vh / var(--lockup-scale, 1));
-  background: var(--color-ecs-teal-deep);
-  border-radius: 999px;
+  background: linear-gradient(90deg, #8d969a, #e4e9eb 50%, #6f777b);
+  opacity: 0.85;
 }
 
-.signPole[data-side="left"] {
+.signCable[data-side="left"] {
   left: 14%;
 }
 
-.signPole[data-side="right"] {
+.signCable[data-side="right"] {
   right: 14%;
 }
 
-/* Reads "Coming Soon" with the "Co" of the wordmark underneath it. Painted
-   over the film, not under it, so the lettering keeps its colour. */
+/* Where each cable meets the panel: a small metal standoff cap, over the
+   film. */
+.signFitting {
+  position: absolute;
+  top: 10%;
+  z-index: 2;
+  height: 9%;
+  min-height: 5px;
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #b9c0c3 45%, #6b7376);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.signFitting[data-side="left"] {
+  left: calc(14% + 0.75px);
+}
+
+.signFitting[data-side="right"] {
+  left: calc(86% - 0.75px);
+}
+
+/* Reads "Coming Soon" with the "Co" of the wordmark underneath it. Left
+   under the film, so the film tints it too. */
 .signText {
   position: relative;
-  z-index: 1;
   font-family: var(--font-hero);
   font-weight: 400;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
-  text-shadow: var(--ec-extrude-paint-sm);
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(10, 30, 35, 0.35);
 }
 
 /* Declared here rather than in globals.css: the CSS Modules transformer
@@ -387,12 +426,12 @@
    keyframe has to live in the same module as the rule that uses it. */
 @keyframes ecs-sign-settle {
   0% {
-    transform: rotate(-0.7deg);
+    transform: rotate(-0.3deg);
   }
   50% {
-    transform: rotate(0.7deg);
+    transform: rotate(0.3deg);
   }
   100% {
-    transform: rotate(-0.7deg);
+    transform: rotate(-0.3deg);
   }
 }
