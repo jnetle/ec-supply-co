@@ -11,7 +11,6 @@
 @theme {
   --font-heading: var(--font-figtree), system-ui, sans-serif;
   --font-body: var(--font-figtree), system-ui, sans-serif;
-  --font-script: var(--font-caveat), var(--font-body), cursive;
   --font-display: var(--font-hammersmith), var(--font-heading);
   --font-headline: var(--font-figtree), var(--font-heading);
   --font-hero: var(--font-hammersmith), var(--font-heading);

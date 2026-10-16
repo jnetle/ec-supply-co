@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Caveat, Figtree, Hammersmith_One, Playfair_Display } from "next/font/google";
+import { Figtree, Hammersmith_One, Playfair_Display } from "next/font/google";
 
 import {
   SHARE_IMAGE,
@@ -20,12 +20,8 @@ import "./globals.css";
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
-});
-
-const caveat = Caveat({
-  variable: "--font-caveat",
-  subsets: ["latin"],
-  weight: ["600"],
+  // Italic for the homepage marquee.
+  style: ["normal", "italic"],
 });
 
 // Hammersmith One: one weight. Used via --font-hero for the homepage
@@ -72,7 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${caveat.variable} ${figtree.variable} ${hammersmith.variable} ${playfair.variable}`}
+      className={`${figtree.variable} ${hammersmith.variable} ${playfair.variable}`}
     >
       <body>
         {children}
