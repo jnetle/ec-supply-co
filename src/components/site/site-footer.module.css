@@ -30,16 +30,29 @@
   color: var(--color-ecs-marigold);
 }
 
+/* On hover the words turn to the shop's iridescent film (--ec-film), which
+   drifts across them while the pointer stays. The film's light run reads
+   well on the navy. Sized to the words so the whole run sits on them. */
 .link {
+  width: fit-content;
   color: var(--color-ecs-neutral-100);
   font-size: 15px;
   min-height: 28px;
   display: flex;
   align-items: center;
+  background-image: var(--ec-film);
+  background-size: 200% 100%;
+  background-position: 0% 0;
+  background-clip: text;
+  -webkit-background-clip: text;
+  transition: background-position 1200ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-.link:hover {
-  color: var(--color-ecs-marigold);
+.link:hover,
+.link:focus-visible {
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  background-position: 100% 0;
 }
 
 .follow {

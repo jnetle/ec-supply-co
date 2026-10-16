@@ -36,7 +36,6 @@
 
 .card {
   background: var(--color-ecs-surface);
-  border: 3px solid var(--color-ecs-ply);
   border-radius: 28px;
   overflow: hidden;
   transition:
@@ -91,7 +90,6 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
   background: var(--color-ecs-surface);
-  border: 3px solid var(--color-ecs-ply);
   border-radius: 28px;
   overflow: hidden;
   transition:
