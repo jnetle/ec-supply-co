@@ -9,7 +9,6 @@
     /* The card sits on bands of every colour, so it fixes its own ink rather
      than inheriting the band's. */
     color: var(--color-ecs-ink);
-    border: 3px solid var(--color-ecs-ply);
     border-radius: clamp(26px, 3vw, 44px);
     padding: clamp(26px, 5vw, 60px);
     box-shadow: 0 10px 0 -4px color-mix(in srgb, var(--color-ecs-ply-ink) 20%, transparent);

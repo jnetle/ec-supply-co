@@ -149,7 +149,6 @@
   align-items: center;
   gap: clamp(14px, 2vw, 24px);
   background: var(--color-ecs-surface);
-  border: 3px solid var(--color-ecs-ply);
   border-radius: 24px;
   padding: 12px clamp(12px, 1.6vw, 18px);
   opacity: var(--row-opacity, 1);
