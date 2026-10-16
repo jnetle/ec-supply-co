@@ -1,6 +1,9 @@
 /* Pegboard dots on ply — the wall behind the retail counter. */
 .section {
   position: relative;
+  /* The drifting blobs hang past the edges; without this, phones let the
+     whole page pan sideways. */
+  overflow-x: clip;
   background-color: var(--color-ecs-ply-pale);
   background-image: radial-gradient(
     circle,

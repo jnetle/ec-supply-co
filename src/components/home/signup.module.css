@@ -1,5 +1,8 @@
 .section {
   position: relative;
+  /* The drifting blobs hang past the edges; without this, phones let the
+     whole page pan sideways. */
+  overflow-x: clip;
   padding: clamp(56px, 11vh, 140px) clamp(14px, 4vw, 52px);
 }
 

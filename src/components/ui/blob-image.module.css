@@ -2,6 +2,9 @@
    effect and drifts inside this box, so the mask must clip. */
 .frame {
   position: relative;
+  /* Pinned so a min-height set alongside the aspect ratio can't widen the
+     frame past its column (260px × 16/10 is wider than a phone). */
+  width: 100%;
   min-width: 0;
   overflow: hidden;
   border-radius: var(--frame-radius);
