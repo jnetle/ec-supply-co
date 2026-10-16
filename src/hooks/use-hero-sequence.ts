@@ -2,6 +2,14 @@
 
 import { useCallback, useEffect, useRef } from "react";
 
+import {
+  ARC_HEIGHT,
+  ARC_LETTERS,
+  ARC_WIDTH,
+  STRAIGHT_BASELINE,
+} from "@/components/home/el-cerrito-arc";
+import { CAP_HEIGHT, WORD_GAP } from "@/components/home/logo-wordmark";
+
 /* ── Scroll budget ──────────────────────────────────────────────────────── */
 
 /** Scroll stops spent on "Co" dropping to line two (1 = one word's worth). */
@@ -68,7 +76,48 @@ export function heroTrackVh(wordCount: number, showSign: boolean) {
 }
 
 /** How far the "Co" has to travel to sit at the end of line one. */
-type CoGeometry = { dx: number; dy: number; scale: number };
+type CoGeometry = {
+  dx: number;
+  dy: number;
+  scale: number;
+  /**
+   * How far the lockup sits from its laid-out spot at rest, in screen px,
+   * so the rest-state logo is centered on the photo. It travels to the end
+   * offset as "Co" drops.
+   */
+  restX: number;
+  restY: number;
+  /** Lifts the settled, left-aligned lockup to halfway up the photo. */
+  endY: number;
+};
+
+/**
+ * Where "El Cerrito" sits: its box's top-left, in the lockup's own px.
+ * Arched over "Supply Co." at rest, as in the logo, and set straight above
+ * "Supply", flush left, once "Co" has dropped.
+ */
+type ArcGeometry = {
+  restX: number;
+  restY: number;
+  endX: number;
+  endY: number;
+};
+
+/*
+ * The logo's own proportions, in its PDF points: the gap from the arch's
+ * lowest point down to the caps of "SUPPLY", and how far off the
+ * "SUPPLY CO." centre the arch is centred (it sits a touch left).
+ */
+const LOGO_ARC_GAP = 41.98;
+const LOGO_ARC_NUDGE = -3.78;
+/** The straight label's gap above "Supply", as a share of its caps. */
+const LABEL_GAP = 0.2;
+
+/**
+ * The lettering keeps the size it had when the hero read "El Cerrito
+ * Supply Co." on one line, spanning this share of the column.
+ */
+const NAME_WIDTH = 0.75;
 
 type HeroOptions = {
   /** One CSS colour per word, cycled to tint the photo behind them. */
@@ -86,9 +135,12 @@ type HeroOptions = {
 };
 
 /**
- * The scroll-driven hero: the period morphs into a squiggle, "Co" drops to
- * its own line at 2.4× the word pace, and the suffixes cycle through — all
- * scrubbed directly off scroll position, with no snapping.
+ * The scroll-driven hero: it rests as the logo, "El Cerrito" arched over
+ * "Supply Co.", centered on the photo. The period morphs into a squiggle,
+ * "Co" drops to its own line at 2.4× the word pace while the whole lockup
+ * travels to the left edge, halfway up, and the arched letters settle onto
+ * a straight line above "Supply", and the suffixes cycle through — all scrubbed directly
+ * off scroll position, with no snapping.
  *
  * Driven by a rAF loop gated on an IntersectionObserver rather than scroll
  * events, because on mobile the scrolling element is often an ancestor
@@ -104,12 +156,12 @@ export function useHeroSequence({
   // The hook owns every element it animates; the component only attaches them.
   const trackRef = useRef<HTMLElement>(null);
   const lockupRef = useRef<HTMLDivElement>(null);
-  const brandLineRef = useRef<HTMLHeadingElement>(null);
+  const brandLineRef = useRef<HTMLSpanElement>(null);
+  const arcRef = useRef<SVGSVGElement>(null);
   const coWordRef = useRef<HTMLSpanElement>(null);
   const coDotRef = useRef<HTMLSpanElement>(null);
   const coWindowRef = useRef<HTMLDivElement>(null);
   const squiggleRef = useRef<SVGSVGElement>(null);
-  const kickerRef = useRef<HTMLDivElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
   const washRef = useRef<HTMLDivElement>(null);
   const signRef = useRef<HTMLDivElement>(null);
@@ -146,6 +198,7 @@ export function useHeroSequence({
     /* ── Geometry ─────────────────────────────────────────────────────── */
 
     let geometry: CoGeometry | null = null;
+    let arcGeometry: ArcGeometry | null = null;
     let suffixWidths: number[] = [];
     /** The plank's measured height, which sets how far above it parks. */
     let signHeight = 0;
@@ -159,6 +212,13 @@ export function useHeroSequence({
      * Must run with the lockup's transforms cleared, like the rest of the
      * geometry pass.
      */
+    /**
+     * A full viewport plus the plank, in the lockup's own px: the lockup is
+     * drawn scaled down, so a screen's height inside it is taller.
+     */
+    const parkDistance = () =>
+      (window.innerHeight + signHeight + 40) / Math.max(0.05, geometry?.scale ?? 1);
+
     const measureSign = (coWindow: HTMLElement, lockup: HTMLElement) => {
       const sign = signRef.current;
       if (!sign) return;
@@ -207,10 +267,145 @@ export function useHeroSequence({
       // measured, so it can't flash at the placeholder size.
       if (!signParked) {
         signParked = true;
-        sign.style.transform = `translate3d(0,${-(window.innerHeight + signHeight + 40)}px,0) rotate(1.6deg)`;
+        sign.style.transform = `translate3d(0,${-parkDistance()}px,0) rotate(1.6deg)`;
         sign.style.opacity = "1";
         sign.style.visibility = "visible";
       }
+    };
+
+    /**
+     * The rest-state "Supply Co.": "Supply" and "Co" as ranges, since the
+     * elements are inline-block and their boxes include slack the letters
+     * don't fill, with the logo's space between them. Transforms must be
+     * cleared.
+     */
+    const measurePair = (brandLine: HTMLElement, coWord: HTMLElement) => {
+      const brandRange = document.createRange();
+      brandRange.selectNodeContents(brandLine);
+      const coRange = document.createRange();
+      coRange.selectNodeContents(coWord);
+      const brand = brandRange.getBoundingClientRect();
+      const co = coRange.getBoundingClientRect();
+      const gap = (measureCaps(brandLine).cap * WORD_GAP) / CAP_HEIGHT;
+      return { brand, co, gap, width: brand.width + gap + co.width };
+    };
+
+    /**
+     * Where "Supply"'s caps sit, in px: the drawn word's box runs from the
+     * top of its caps to the baseline.
+     */
+    const measureCaps = (brandLine: HTMLElement) => {
+      const rect = (brandLine.querySelector("svg") ?? brandLine).getBoundingClientRect();
+      return { top: rect.top, cap: rect.height };
+    };
+
+    /**
+     * Sized as when the whole name sat on one line: "El Cerrito Supply" is
+     * set off-screen in the same lettering, and the scale makes it plus
+     * "Co." span NAME_WIDTH of the column.
+     */
+    const fitScale = (lockup: HTMLElement, brandLine: HTMLElement, coWord: HTMLElement) => {
+      const { co, gap } = measurePair(brandLine, coWord);
+      const probe = brandLine.cloneNode() as HTMLElement;
+      probe.textContent = "El Cerrito Supply";
+      probe.style.cssText = "position:absolute;left:0;top:0;visibility:hidden;filter:none";
+      lockup.append(probe);
+      const nameWidth = probe.getBoundingClientRect().width + gap + co.width;
+      probe.remove();
+      return (lockup.getBoundingClientRect().width * NAME_WIDTH) / Math.max(1, nameWidth);
+    };
+
+
+    /**
+     * Places "El Cerrito" against the measured pair, in the logo's own
+     * proportions. Must run with the lockup's transforms cleared. Returns
+     * the top of the rest-state arch, in the lockup's own px.
+     */
+    const measureArc = (
+      lockup: HTMLElement,
+      brandLine: HTMLElement,
+      coWord: HTMLElement,
+    ) => {
+      const arc = arcRef.current;
+      if (!arc) return null;
+
+      const { brand, width: pairWidth } = measurePair(brandLine, coWord);
+      const lockupRect = lockup.getBoundingClientRect();
+      const caps = measureCaps(brandLine);
+      const unit = caps.cap / CAP_HEIGHT;
+      const capTop = caps.top - lockupRect.top;
+      const brandLeft = brand.left - lockupRect.left;
+
+      arc.style.width = `${(ARC_WIDTH * unit).toFixed(1)}px`;
+      arcGeometry = {
+        restX: brandLeft + pairWidth / 2 + (LOGO_ARC_NUDGE - ARC_WIDTH / 2) * unit,
+        restY: capTop - (LOGO_ARC_GAP + ARC_HEIGHT) * unit,
+        endX: brandLeft,
+        endY: capTop - caps.cap * LABEL_GAP - STRAIGHT_BASELINE * unit,
+      };
+      return arcGeometry.restY;
+    };
+
+    /**
+     * Moves "El Cerrito" from arched and centered (0) to straight and flush
+     * left (1). Each letter glides down onto the line and, partway there,
+     * fades from its arched outline to its straight one; nothing is bent.
+     */
+    const placeArc = (along: number) => {
+      const arc = arcRef.current;
+      if (!arc || !arcGeometry) return;
+      const { restX, restY, endX, endY } = arcGeometry;
+      const x = restX + (endX - restX) * along;
+      const y = restY + (endY - restY) * along;
+      arc.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
+
+      const swap = clamp01((along - 0.3) / 0.4);
+      const fade = swap * swap * (3 - 2 * swap);
+      arc.querySelectorAll<SVGGElement>("g").forEach((letter, i) => {
+        const dy = ARC_LETTERS[i]?.dy ?? 0;
+        const [arched, straight] = letter.children;
+        arched?.setAttribute("transform", `translate(0 ${(dy * along).toFixed(2)})`);
+        arched?.setAttribute("opacity", (1 - fade).toFixed(3));
+        straight?.setAttribute("transform", `translate(0 ${(-dy * (1 - along)).toFixed(2)})`);
+        straight?.setAttribute("opacity", fade.toFixed(3));
+      });
+      // Shown once placed, so it can't flash in its natural spot.
+      arc.style.visibility = "visible";
+    };
+
+    /**
+     * The screen offset that puts a point of the lockup (in its own px,
+     * transforms cleared) at the middle of the photo, once the lockup is
+     * scaled about its bottom left. The photo is the stage less the strip
+     * tucked under the awning.
+     */
+    const toPhotoMiddle = (lockup: HTMLElement, scale: number, x: number, y: number) => {
+      const lockupRect = lockup.getBoundingClientRect();
+      const stage = lockup.closest<HTMLElement>("[data-hero-stage]");
+      if (!stage) return { x: 0, y: 0 };
+      const stageRect = stage.getBoundingClientRect();
+      const tuck = -Math.min(0, parseFloat(getComputedStyle(track).marginTop) || 0);
+      return {
+        x: stageRect.left + stageRect.width / 2 - (lockupRect.left + x * scale),
+        y:
+          (stageRect.top + tuck + stageRect.bottom) / 2 -
+          (lockupRect.bottom - (lockupRect.height - y) * scale),
+      };
+    };
+
+    /**
+     * The settled lockup's middle, in its own px: from the top of the
+     * straight label above "Supply" to the bottom of the word line and its
+     * squiggle.
+     */
+    const settledMiddle = (lockup: HTMLElement, brandLine: HTMLElement) => {
+      const lockupRect = lockup.getBoundingClientRect();
+      const brandRange = document.createRange();
+      brandRange.selectNodeContents(brandLine);
+      const fontPx = parseFloat(getComputedStyle(brandLine).fontSize) || 0;
+      const labelTop =
+        arcGeometry?.endY ?? brandRange.getBoundingClientRect().top - lockupRect.top - fontPx * 0.2;
+      return (labelTop + lockupRect.height) / 2;
     };
 
     if (!enabled) {
@@ -224,8 +419,9 @@ export function useHeroSequence({
       const words = coWindowRef.current?.querySelectorAll<HTMLElement>(
         "[data-suffix]",
       );
+      // The landed sign covers the last word, which has faded under it.
       words?.forEach((word, i) => {
-        word.style.opacity = i === wordCount - 1 ? "1" : "0";
+        word.style.opacity = i === wordCount - 1 && !showSign ? "1" : "0";
       });
 
       const squiggle = squiggleRef.current;
@@ -251,9 +447,30 @@ export function useHeroSequence({
         }
         if (squiggle) squiggle.style.opacity = "0";
       }
-      // Rests in its unscaled layout, so there is nothing to wait for.
-      lockup?.setAttribute("data-ready", "");
-      return;
+      // Rests at the end state: the label straight, sized like the
+      // animated version.
+      const settle = () => {
+        const brandLine = brandLineRef.current;
+        const coWord = coWordRef.current;
+        if (!lockup || !brandLine || !coWord) return;
+        lockup.style.transform = "none";
+        measureArc(lockup, brandLine, coWord);
+        placeArc(1);
+        const scale = fitScale(lockup, brandLine, coWord);
+        const lift = toPhotoMiddle(lockup, scale, 0, settledMiddle(lockup, brandLine)).y;
+        lockup.style.transform = `translate3d(0,${lift.toFixed(1)}px,0) scale(${scale.toFixed(4)})`;
+        lockup.style.setProperty("--lockup-scale", scale.toFixed(4));
+        lockup.setAttribute("data-ready", "");
+      };
+
+      settle();
+      let stillLive = true;
+      void document.fonts?.ready.then(() => stillLive && settle());
+      window.addEventListener("resize", settle);
+      return () => {
+        stillLive = false;
+        window.removeEventListener("resize", settle);
+      };
     }
 
     // Measured with the live transforms cleared, then restored — otherwise
@@ -270,23 +487,30 @@ export function useHeroSequence({
       lockup.style.transform = "none";
       coWord.style.transform = "none";
 
-      // Ranges rather than element rects: the elements are inline-block and
-      // their boxes include slack the glyphs don't fill.
-      const brandRange = document.createRange();
-      brandRange.selectNodeContents(brandLine);
-      const coRange = document.createRange();
-      coRange.selectNodeContents(coWord);
+      const { brand, co, gap, width: pairWidth } = measurePair(brandLine, coWord);
+      const scale = fitScale(lockup, brandLine, coWord);
 
-      const brand = brandRange.getBoundingClientRect();
-      const co = coRange.getBoundingClientRect();
       const lockupRect = lockup.getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(coWord).fontSize) * 0.26;
+      const arcTop =
+        measureArc(lockup, brandLine, coWord) ?? brand.top - lockupRect.top;
+
+      // At rest the logo's centre goes to the middle of the photo; settled,
+      // the left-aligned lockup is lifted to halfway up it.
+      const rest = toPhotoMiddle(
+        lockup,
+        scale,
+        brand.left - lockupRect.left + pairWidth / 2,
+        (arcTop + brand.bottom - lockupRect.top) / 2,
+      );
+      const end = toPhotoMiddle(lockup, scale, 0, settledMiddle(lockup, brandLine));
 
       geometry = {
         dx: brand.right + gap - co.left,
         dy: brand.top - co.top,
-        // The one-line name spans 75% of the column at rest.
-        scale: (lockupRect.width * 0.75) / Math.max(1, brand.width + gap + co.width),
+        scale,
+        restX: rest.x,
+        restY: rest.y,
+        endY: end.y,
       };
 
       const squiggle = squiggleRef.current;
@@ -360,19 +584,32 @@ export function useHeroSequence({
         const x = (geometry.dx * (1 - move)).toFixed(1);
         const y = (geometry.dy * (1 - move)).toFixed(1);
         coWord.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale.toFixed(4)})`;
+        placeArc(move);
         if (lockup) {
-          lockup.style.transform = `scale(${geometry.scale.toFixed(4)})`;
+          // Starts centered on the photo, and travels to the left edge,
+          // halfway up, as "Co" drops.
+          const homeX = (geometry.restX * (1 - move)).toFixed(1);
+          const homeY = (geometry.endY + (geometry.restY - geometry.endY) * (1 - move)).toFixed(1);
+          lockup.style.transform = `translate3d(${homeX}px,${homeY}px,0) scale(${geometry.scale.toFixed(4)})`;
+          // The sign's poles reach a screen up in the lockup's own px.
+          lockup.style.setProperty("--lockup-scale", geometry.scale.toFixed(4));
           // Shown only once it has been measured and scaled; see .lockup.
           lockup.setAttribute("data-ready", "");
         }
       }
 
+      // The last word gives way as the sign comes down over it, so only
+      // "Co" + "ming Soon" is left; signFollow is last frame's, which is
+      // close enough for a fade.
+      const signCover = showSign ? clamp01(signFollow / 0.6) : 0;
       coWindowRef.current
         ?.querySelectorAll<HTMLElement>("[data-suffix]")
         .forEach((el, i) => {
           const d = wordFollow - (i + 1);
           el.style.transform = `translate3d(0,${-d * 110}%,0)`;
-          el.style.opacity = Math.max(0, 1 - Math.abs(d) * 1.3).toFixed(3);
+          el.style.opacity = (
+            Math.max(0, 1 - Math.abs(d) * 1.3) * (1 - signCover)
+          ).toFixed(3);
         });
 
       const dot = coDotRef.current;
@@ -407,7 +644,7 @@ export function useHeroSequence({
         );
 
         const eased = 1 - Math.pow(1 - signFollow, 2);
-        const park = window.innerHeight + signHeight + 40;
+        const park = parkDistance();
         sign.style.transform = `translate3d(0,${((1 - eased) * -park).toFixed(1)}px,0) rotate(${(-3.4 + (1 - eased) * 5).toFixed(2)}deg)`;
 
         // The underline gives way as the plank comes down over it.
@@ -430,12 +667,6 @@ export function useHeroSequence({
       }
 
       if (autoplay) return;
-
-      const kicker = kickerRef.current;
-      if (kicker) {
-        kicker.style.opacity = Math.max(0, 1 - p * 2.6).toFixed(3);
-        kicker.style.transform = `translate3d(0,${(-p * 24).toFixed(1)}px,0)`;
-      }
 
       const cue = cueRef.current;
       if (cue) cue.style.opacity = (0.7 * Math.max(0, 1 - p * 3.4)).toFixed(3);
@@ -592,11 +823,11 @@ export function useHeroSequence({
     trackRef,
     lockupRef,
     brandLineRef,
+    arcRef,
     coWordRef,
     coDotRef,
     coWindowRef,
     squiggleRef,
-    kickerRef,
     cueRef,
     washRef,
     signRef,
