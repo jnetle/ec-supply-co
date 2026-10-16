@@ -128,14 +128,6 @@
 }
 
 .more {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
   margin-top: 20px;
-  font-weight: 600;
-  color: var(--color-ecs-marigold);
 }
 
-.more:hover {
-  color: var(--color-ecs-neutral-100);
-}

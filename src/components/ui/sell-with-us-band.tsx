@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { button } from "./button";
 import styles from "./sell-with-us-band.module.css";
 
 /** The recruitment banner that closes the makers directory. */
@@ -13,7 +14,13 @@ export function SellWithUsBand() {
             We review maker submissions in rounds throughout the year.
           </div>
         </div>
-        <Link href="/sell-with-us" className={styles.button}>
+        <Link
+          href="/sell-with-us"
+          className={button({
+            tone: "marigold",
+            size: "lg",
+          })}
+        >
           Sell with us →
         </Link>
       </div>

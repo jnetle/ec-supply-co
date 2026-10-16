@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { Blob } from '@/components/ui/blob';
 import { BlobImage } from '@/components/ui/blob-image';
+import { button } from '@/components/ui/button';
 import { LinkIcon } from '@/components/ui/link-icon';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { WaveDivider } from '@/components/ui/wave-divider';
@@ -91,7 +92,13 @@ export async function MakerSpotlight() {
       {/* After the spotlight rather than beside the heading, so on a phone it
           follows the four makers instead of sitting above them. */}
       <div className={styles.allRow}>
-        <Link href="/makers" className={styles.allLink}>
+        <Link
+          href="/makers"
+          className={button({
+            variant: 'outline',
+            tone: 'plum',
+          })}
+        >
           Meet all the makers →
         </Link>
       </div>
@@ -103,7 +110,13 @@ export async function MakerSpotlight() {
             We review maker submissions in rounds throughout the year.
           </div>
         </div>
-        <Link href="/sell-with-us" className={styles.ctaButton}>
+        <Link
+          href="/sell-with-us"
+          className={button({
+            tone: 'plum',
+            size: 'lg',
+          })}
+        >
           Sell with us →
         </Link>
       </div>

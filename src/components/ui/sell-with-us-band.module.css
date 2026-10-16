@@ -32,22 +32,3 @@
   line-height: 1.5;
 }
 
-.button {
-  display: inline-flex;
-  align-items: center;
-  min-height: 54px;
-  padding: 0 30px;
-  border-radius: 999px;
-  background: var(--color-ecs-marigold);
-  color: var(--color-ecs-ink);
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  transition: background 220ms ease;
-}
-
-.button:hover {
-  background: var(--color-ecs-marigold-pale);
-}

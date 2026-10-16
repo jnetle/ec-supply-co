@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 
+import { button } from '@/components/ui/button';
+
 import styles from './calendar.module.css';
 
 const FEED_PATH = '/api/events.ics';
@@ -94,7 +96,7 @@ export function CalendarSubscriptions() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(event) => setSubscriptionUrl(event, 'google')}
-          className={styles.subscribePrimary}
+          className={button({ tone: 'tealDeep', size: 'sm' })}
         >
           Google Calendar
           <span className="sr-only"> (opens in a new tab)</span>
@@ -102,7 +104,11 @@ export function CalendarSubscriptions() {
         <a
           href={FEED_PATH}
           onClick={(event) => setSubscriptionUrl(event, 'apple')}
-          className={styles.subscribeLink}
+          className={button({
+            variant: 'outline',
+            tone: 'tealDeep',
+            size: 'sm',
+          })}
         >
           Apple Calendar
         </a>
@@ -111,7 +117,11 @@ export function CalendarSubscriptions() {
           target="_blank"
           rel="noopener noreferrer"
           onClick={(event) => setSubscriptionUrl(event, 'outlook')}
-          className={styles.subscribeLink}
+          className={button({
+            variant: 'outline',
+            tone: 'tealDeep',
+            size: 'sm',
+          })}
         >
           Outlook
           <span className="sr-only"> (opens in a new tab)</span>
@@ -119,7 +129,11 @@ export function CalendarSubscriptions() {
         <button
           type="button"
           onClick={copyFeedUrl}
-          className={styles.subscribeLink}
+          className={button({
+            variant: 'outline',
+            tone: 'tealDeep',
+            size: 'sm',
+          })}
         >
           <CopyIcon state={copyState} />
           Copy feed link

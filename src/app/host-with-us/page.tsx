@@ -8,6 +8,7 @@ import {
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { PageIntro } from "@/components/ui/page-intro";
 import { WaveDivider } from "@/components/ui/wave-divider";
@@ -97,7 +98,13 @@ export default function HostWithUsPage() {
                 <span className={styles.cardLabel}>{way.label}</span>
                 <h3 className={styles.cardTitle}>{way.title}</h3>
                 <p className={styles.cardBody}>{way.body}</p>
-                <InquiryTypeLink type={way.type} className={styles.cardCta}>
+                <InquiryTypeLink type={way.type} className={button({
+                    variant: "link",
+                    tone: "magenta",
+                    size: "lg",
+                    className: styles.cardCta,
+                  })}
+                >
                   {way.cta} →
                 </InquiryTypeLink>
               </li>
@@ -150,10 +157,7 @@ export default function HostWithUsPage() {
             />
           </div>
 
-          <InquiryForm
-            submitBackground="var(--color-ecs-magenta)"
-            submitForeground="#ffffff"
-          />
+          <InquiryForm />
         </section>
       </main>
 

@@ -4,6 +4,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { useState, type CSSProperties } from "react";
 
+import { button } from "@/components/ui/button";
 import { NAV_GROUPS, SHOP_ADDRESS, VISIT_HREF } from "@/lib/content/nav";
 
 import styles from "./mobile-nav.module.css";
@@ -34,7 +35,15 @@ export function MobileNav() {
         <Dialog.Content className={styles.drawer}>
           <div className={styles.drawerHeader}>
             <Dialog.Title className="sr-only">Site menu</Dialog.Title>
-            <Dialog.Close className={styles.close} aria-label="Close menu">
+            <Dialog.Close
+              className={button({
+                variant: "outline",
+                tone: "ink",
+                size: "sm",
+                icon: true,
+              })}
+              aria-label="Close menu"
+            >
               <span aria-hidden="true">×</span>
             </Dialog.Close>
           </div>
@@ -63,7 +72,11 @@ export function MobileNav() {
 
           <Link
             href={VISIT_HREF}
-            className={styles.visit}
+            className={button({
+              tone: "red",
+              size: "lg",
+              className: styles.visit,
+            })}
             style={stagger(NAV_GROUPS.length + 1)}
             onClick={() => setOpen(false)}
           >

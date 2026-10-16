@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 
+import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
 import styles from "@/components/ui/form.module.css";
@@ -51,11 +52,6 @@ export function InquiryTypeLink({
   );
 }
 
-type InquiryFormProps = {
-  submitBackground: string;
-  submitForeground: string;
-};
-
 /**
  * One inquiry for every way to use the room. The rental type dropdown tells
  * us which kind it is.
@@ -63,10 +59,7 @@ type InquiryFormProps = {
  * TODO: wire the submit endpoint. The newsletter signup in
  * src/app/actions/newsletter.ts shows the shape.
  */
-export function InquiryForm({
-  submitBackground,
-  submitForeground,
-}: InquiryFormProps) {
+export function InquiryForm() {
   const [sent, setSent] = useState(false);
   const [type, setType] = useState("");
 
@@ -98,7 +91,7 @@ export function InquiryForm({
           </p>
           <button
             type="button"
-            className={styles.reset}
+            className={button({ variant: "outline", tone: "ply" })}
             onClick={() => {
               setSent(false);
               setType("");
@@ -198,11 +191,11 @@ export function InquiryForm({
 
           <button
             type="submit"
-            className={styles.submit}
-            style={{
-              "--submit-bg": submitBackground,
-              "--submit-fg": submitForeground,
-            } as React.CSSProperties}
+            className={button({
+              tone: "magenta",
+              size: "lg",
+              className: styles.submit,
+            })}
           >
             Send inquiry
           </button>
