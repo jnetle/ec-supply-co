@@ -3,6 +3,9 @@
    Tool library are all this shape. */
 .band {
   position: relative;
+  /* The drifting blobs hang past the edges; without this, phones let the
+     whole page pan sideways. */
+  overflow-x: clip;
   background-color: var(--band-bg);
   color: var(--band-fg);
   margin: clamp(30px, 6vh, 72px) 0;
