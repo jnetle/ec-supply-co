@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { Blob } from "@/components/ui/blob";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
 
@@ -81,7 +82,15 @@ export function ManifestoTeaser() {
               </p>
             </div>
 
-            <Link href="/manifesto" className={styles.more}>
+            <Link
+              href="/manifesto"
+              className={button({
+                variant: "link",
+                tone: "marigold",
+                size: "lg",
+                className: styles.more,
+              })}
+            >
               Read the full manifesto →
             </Link>
           </div>

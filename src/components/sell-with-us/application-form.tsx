@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { submitMakerApplication } from "@/app/actions/maker-application";
+import { button } from "@/components/ui/button";
 import { Field, Required } from "@/components/ui/field";
 import { initialMakerApplicationState } from "@/lib/maker-application";
 
@@ -83,7 +84,11 @@ function ApplicationFormFields({
       <div className={styles.sent} aria-live="polite">
         <h2 className={styles.sentTitle}>Thank you so much!</h2>
         <p className={styles.sentBody}>{state.message}</p>
-        <button type="button" className={styles.reset} onClick={onReset}>
+        <button
+          type="button"
+          className={button({ variant: "outline", tone: "ply" })}
+          onClick={onReset}
+        >
           Submit another
         </button>
       </div>
@@ -272,7 +277,16 @@ function ApplicationFormFields({
         className="sr-only"
       />
 
-      <button type="submit" className={styles.submit} disabled={pending}>
+      <button
+        type="submit"
+        aria-busy={pending}
+        disabled={pending}
+        className={button({
+          tone: "plum",
+          size: "lg",
+          className: styles.submit,
+        })}
+      >
         {pending ? "Submitting…" : "Submit application"}
       </button>
 

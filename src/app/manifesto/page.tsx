@@ -4,6 +4,7 @@ import type { CSSProperties } from "react";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { button } from "@/components/ui/button";
 import { MANIFESTO_RULES } from "@/lib/content/manifesto";
 import { pageMetadata } from "@/lib/site";
 
@@ -61,25 +62,13 @@ export default function ManifestoPage() {
           <div className={styles.actions}>
             <Link
               href="/#visit"
-              className={styles.action}
-              style={
-                {
-                  "--action-bg": "var(--color-ecs-teal)",
-                  "--action-fg": "#ffffff",
-                } as CSSProperties
-              }
+              className={button({ tone: "teal" })}
             >
               Come by the shop
             </Link>
             <Link
               href="/#makers"
-              className={styles.action}
-              style={
-                {
-                  "--action-bg": "var(--color-ecs-marigold)",
-                  "--action-fg": "var(--color-ecs-ink)",
-                } as CSSProperties
-              }
+              className={button({ tone: "marigold" })}
             >
               Meet the makers
             </Link>

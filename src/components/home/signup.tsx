@@ -1,5 +1,6 @@
 import { NewsletterForm } from '@/components/newsletter-form';
 import { Blob } from '@/components/ui/blob';
+import { button } from '@/components/ui/button';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { SHOP_ADDRESS } from '@/lib/content/nav';
 
@@ -57,7 +58,11 @@ export function Signup() {
                 href={SHOP_ADDRESS.instagram}
                 target="_blank"
                 rel="noopener"
-                className={styles.instagram}
+                className={button({
+                  variant: 'outline',
+                  tone: 'paper',
+                  size: 'lg',
+                })}
               >
                 Follow @elcerritosupplyco
               </a>

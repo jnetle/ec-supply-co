@@ -3,6 +3,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useState, type CSSProperties, type FormEvent } from "react";
 
+import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
 import formStyles from "@/components/ui/form.module.css";
@@ -74,7 +75,15 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
               } as CSSProperties
             }
           >
-            <Dialog.Close className={styles.close} aria-label="Close">
+            <Dialog.Close
+              className={button({
+                tone: "paper",
+                size: "sm",
+                icon: true,
+                className: styles.close,
+              })}
+              aria-label="Close"
+            >
               ×
             </Dialog.Close>
             <div className={styles.category}>{event.categoryLabel}</div>
@@ -166,13 +175,10 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
 
                 <button
                   type="submit"
-                  className={formStyles.submit}
-                  style={
-                    {
-                      "--submit-bg": "var(--color-ecs-teal)",
-                      "--submit-fg": "#ffffff",
-                    } as CSSProperties
-                  }
+                  className={button({
+                    size: "lg",
+                    className: formStyles.submit,
+                  })}
                 >
                   {isFull ? "Join waitlist" : "Save my seat"}
                 </button>

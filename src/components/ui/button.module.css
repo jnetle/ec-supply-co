@@ -1,0 +1,219 @@
+/* ──────────────────────────────────────────────────────────────────────────
+   Buttons. One look, one hover, everywhere. Use `button()` from ./button.ts
+   to build the class list; never restyle a button in a page module. A page
+   module may add layout to a button (margin, align-self, width) and nothing
+   else. The full rules are in CLAUDE.md under "Buttons".
+
+   Variants — pick by importance, not by colour:
+     solid    the one main action in a group
+     outline  the other actions beside it
+     link     quiet, inline-weight actions ("See the month view ↓")
+
+   Every solid and outline button behaves the same way: on hover or keyboard
+   focus it lifts 2px and casts a hard ply shadow, like a sign held off the
+   wall; an outline also fills in with its colour. On press it drops back
+   flat. A link only firms up its underline. Nothing darkens, lightens,
+   brightens, scales or tilts.
+
+   Colour comes from two variables. A tone class sets them from the palette;
+   data-driven colours (event categories) set them inline via
+   `buttonColors()`:
+     --btn-color  fill for solid; border, text and hover fill for outline
+     --btn-on     text that sits on --btn-color
+   ────────────────────────────────────────────────────────────────────── */
+
+.button {
+  --btn-color: var(--color-ecs-teal);
+  --btn-on: #ffffff;
+  --btn-lift: 0 5px 0 -2px color-mix(in srgb, var(--color-ecs-ink) 24%, transparent);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: var(--btn-height);
+  padding: 0 var(--btn-pad);
+  border: 2px solid var(--btn-color);
+  border-radius: 999px;
+  font-family: var(--font-heading);
+  font-size: var(--btn-text);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    box-shadow 220ms ease,
+    background-color 220ms ease,
+    color 220ms ease;
+}
+
+/* ── Sizes. 44px is the floor: nothing tappable is smaller. ── */
+.sm {
+  --btn-height: 44px;
+  --btn-pad: 18px;
+  --btn-text: 13px;
+}
+
+.md {
+  --btn-height: 48px;
+  --btn-pad: 24px;
+  --btn-text: 14px;
+}
+
+.lg {
+  --btn-height: 56px;
+  --btn-pad: 32px;
+  --btn-text: 16px;
+}
+
+/* A round button holding a single glyph or icon. Needs an aria-label. */
+.icon {
+  width: var(--btn-height);
+  padding: 0;
+  font-size: calc(var(--btn-text) * 1.4);
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+/* ── Variants ── */
+.solid {
+  background: var(--btn-color);
+  color: var(--btn-on);
+}
+
+.outline {
+  background: transparent;
+  color: var(--btn-color);
+}
+
+/* A toggle that is on reads as filled. */
+.outline[aria-pressed="true"] {
+  background: var(--btn-color);
+  color: var(--btn-on);
+}
+
+.link {
+  min-height: 44px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  color: var(--btn-color);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: color-mix(in srgb, currentColor 30%, transparent);
+  text-underline-offset: 5px;
+  transition: text-decoration-color 220ms ease;
+}
+
+/* ── Interaction. Hover only where there is a real pointer, so a tap on a
+   phone does not leave a button stuck in its lifted state. ── */
+@media (hover: hover) {
+  :is(.solid, .outline):hover:not(:disabled, [aria-disabled="true"]) {
+    transform: translateY(-2px);
+    box-shadow: var(--btn-lift);
+  }
+
+  .outline:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--btn-color);
+    color: var(--btn-on);
+  }
+
+  .link:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+:is(.solid, .outline):focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--btn-lift);
+  outline: 2px solid var(--btn-color);
+  outline-offset: 3px;
+}
+
+.outline:focus-visible {
+  background: var(--btn-color);
+  color: var(--btn-on);
+}
+
+.link:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+:is(.solid, .outline):active:not(:disabled, [aria-disabled="true"]) {
+  transform: translateY(0);
+  box-shadow: none;
+  transition-duration: 60ms;
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* A form that is sending says so with aria-busy, and waits rather than
+   refuses. */
+.button[aria-busy="true"] {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+/* ── Tones. Only these; a new one is a design decision, not a fix. ── */
+.teal {
+  --btn-color: var(--color-ecs-teal);
+  --btn-on: #ffffff;
+}
+
+.tealDeep {
+  --btn-color: var(--color-ecs-teal-deep);
+  --btn-on: #ffffff;
+}
+
+.magenta {
+  --btn-color: var(--color-ecs-magenta);
+  --btn-on: #ffffff;
+}
+
+.plum {
+  --btn-color: var(--color-ecs-pink-deep);
+  --btn-on: #ffffff;
+}
+
+.marigold {
+  --btn-color: var(--color-ecs-marigold);
+  --btn-on: var(--color-ecs-ink);
+}
+
+.red {
+  --btn-color: var(--color-ecs-red);
+  --btn-on: #ffffff;
+}
+
+.navy {
+  --btn-color: var(--color-ecs-navy);
+  --btn-on: #ffffff;
+}
+
+.ink {
+  --btn-color: var(--color-ecs-ink);
+  --btn-on: var(--color-ecs-surface);
+}
+
+.ply {
+  --btn-color: var(--color-ecs-ply-ink);
+  --btn-on: var(--color-ecs-surface);
+}
+
+/* For dark bands: cream button, dark-teal text when filled. */
+.paper {
+  --btn-color: var(--color-ecs-surface);
+  --btn-on: var(--color-ecs-teal-deep);
+}

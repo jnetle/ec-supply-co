@@ -155,27 +155,6 @@
   justify-content: flex-end;
 }
 
-.close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border: 2px solid var(--color-ecs-ink);
-  border-radius: 999px;
-  background: transparent;
-  color: var(--color-ecs-ink);
-  font-family: var(--font-heading);
-  font-size: 30px;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.close:focus-visible {
-  outline: 3px solid var(--color-ecs-teal);
-  outline-offset: 3px;
-}
-
 .groupLabel {
   display: flex;
   align-items: center;
@@ -208,19 +187,7 @@
 
 .visit {
   margin-top: 14px;
-  min-height: 52px;
-  display: inline-flex;
   width: 100%;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #c23a21;
-  color: #ffffff;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 17px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 }
 
 .address {

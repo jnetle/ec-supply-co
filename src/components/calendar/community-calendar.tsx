@@ -8,6 +8,7 @@ import {
   type CSSProperties,
 } from "react";
 
+import { button, buttonColors } from "@/components/ui/button";
 import { LinkIcon } from "@/components/ui/link-icon";
 import {
   CALENDAR_EVENTS,
@@ -37,6 +38,15 @@ const FILTERS: { key: Filter; label: string; dot: string }[] = [
   { key: "popup", label: "Food popups", dot: CATEGORIES.popup.color },
   { key: "community", label: "Community", dot: CATEGORIES.community.color },
 ];
+
+const arrowButton = button({
+  variant: "outline",
+  tone: "ply",
+  size: "sm",
+  icon: true,
+});
+const filterButton = button({ variant: "outline", tone: "navy", size: "sm" });
+const jumpLink = button({ variant: "link", tone: "teal" });
 
 /** Every month that has at least one event. */
 const EVENT_MONTHS = CALENDAR_EVENTS.map((e) =>
@@ -142,7 +152,7 @@ export function CommunityCalendar() {
             aria-label="Previous month"
             onClick={goPrev}
             disabled={atFirst}
-            className={styles.arrow}
+            className={arrowButton}
           >
             ←
           </button>
@@ -152,7 +162,7 @@ export function CommunityCalendar() {
             aria-label="Next month"
             onClick={goNext}
             disabled={atLast}
-            className={styles.arrow}
+            className={arrowButton}
           >
             →
           </button>
@@ -169,7 +179,7 @@ export function CommunityCalendar() {
               type="button"
               aria-pressed={filter === option.key}
               onClick={() => setFilter(option.key)}
-              className={styles.filter}
+              className={filterButton}
             >
               <span
                 className={styles.filterDot}
@@ -183,7 +193,7 @@ export function CommunityCalendar() {
 
       <div className={styles.listHeader}>
         <h3 className={styles.listHeading}>In {MONTHS[month]}</h3>
-        <a href="#month-view" className={styles.jumpLink}>
+        <a href="#month-view" className={jumpLink}>
           <CalendarIcon />
           See the month view ↓
         </a>
@@ -235,13 +245,12 @@ export function CommunityCalendar() {
                 type="button"
                 onClick={() => setSelectedId(event.id)}
                 disabled={event.past}
-                className={`${styles.rowCta} ${event.dropIn ? styles.rowCtaOutline : ""}`}
-                style={
-                  {
-                    "--cta-color": event.ctaColor,
-                    "--cta-ink": event.ctaInk,
-                  } as CSSProperties
-                }
+                className={button({
+                  variant: event.ctaVariant,
+                  tone: "custom",
+                  className: styles.rowCta,
+                })}
+                style={buttonColors(event.ctaColor, event.ctaInk)}
               >
                 {event.cta}
               </button>
@@ -257,7 +266,7 @@ export function CommunityCalendar() {
             aria-label="Previous month"
             onClick={() => shiftKeepingGrid(Math.max(MIN_INDEX, index - 1))}
             disabled={atFirst}
-            className={styles.arrow}
+            className={arrowButton}
           >
             ←
           </button>
@@ -267,12 +276,12 @@ export function CommunityCalendar() {
             aria-label="Next month"
             onClick={() => shiftKeepingGrid(Math.min(MAX_INDEX, index + 1))}
             disabled={atLast}
-            className={styles.arrow}
+            className={arrowButton}
           >
             →
           </button>
         </div>
-        <a href="#calendar" className={styles.jumpLink}>
+        <a href="#calendar" className={jumpLink}>
           ↑ Back to the list
         </a>
       </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { FeatureBand } from "@/components/home/feature-band";
 import { BlobImage } from "@/components/ui/blob-image";
+import { button } from "@/components/ui/button";
 
 import styles from "./empty-calendar.module.css";
 
@@ -47,10 +48,16 @@ export function EmptyCalendar() {
         ]}
         actions={
           <>
-            <Link href="/#signup" className={styles.primary}>
+            <Link href="/#signup" className={button({ tone: "paper" })}>
               Get the newsletter
             </Link>
-            <Link href="/host-with-us" className={styles.secondary}>
+            <Link
+              href="/host-with-us"
+              className={button({
+                variant: "outline",
+                tone: "paper",
+              })}
+            >
               Host an event →
             </Link>
           </>

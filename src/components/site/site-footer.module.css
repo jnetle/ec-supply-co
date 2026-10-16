@@ -49,25 +49,6 @@
   margin-bottom: clamp(16px, 3vh, 28px);
 }
 
-.instagram {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 999px;
-  background: var(--color-ecs-marigold);
-  color: var(--color-ecs-ink);
-  transition:
-    transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    background 220ms ease;
-}
-
-.instagram:hover {
-  background: var(--ec-film);
-  transform: translateY(-2px) rotate(-4deg);
-}
-
 .colophon {
   display: flex;
   flex-wrap: wrap;

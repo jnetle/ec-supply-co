@@ -8,6 +8,7 @@ import {
   shopTodayKey,
   upcomingEvents,
 } from "@/components/calendar/event-model";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import {
   CALENDAR_EVENTS,
@@ -40,19 +41,13 @@ export function Events() {
         <div className={styles.actions}>
           <Link
             href="/calendar"
-            className={styles.action}
-            style={
-              { "--action-color": "var(--color-ecs-magenta)" } as CSSProperties
-            }
+            className={button({ variant: "outline", tone: "magenta" })}
           >
             Full calendar + sign-ups →
           </Link>
           <Link
             href="/host-with-us"
-            className={styles.action}
-            style={
-              { "--action-color": "var(--color-ecs-navy)" } as CSSProperties
-            }
+            className={button({ variant: "outline", tone: "navy" })}
           >
             Book a private event
           </Link>
@@ -131,7 +126,10 @@ function FeaturedEvent({ event }: { event: DecoratedEvent }) {
           </div>
         </dl>
 
-        <Link href="/calendar" className={styles.featureCta}>
+        <Link
+          href="/calendar"
+          className={button({ className: styles.featureCta })}
+        >
           {event.cta === "Details" ? "See details" : event.cta} →
         </Link>
       </div>
@@ -159,11 +157,25 @@ function MoreOnTheWay() {
       </p>
       <div className={styles.moreLinks}>
         {CALENDAR_SUBSCRIBE_ENABLED && (
-          <Link href="/calendar#subscribe-heading" className={styles.moreLink}>
+          <Link
+            href="/calendar#subscribe-heading"
+            className={button({
+              variant: "outline",
+              tone: "tealDeep",
+              size: "sm",
+            })}
+          >
             Subscribe to the calendar
           </Link>
         )}
-        <Link href="#signup" className={styles.moreLink}>
+        <Link
+          href="#signup"
+          className={button({
+            variant: "outline",
+            tone: "tealDeep",
+            size: "sm",
+          })}
+        >
           Get the newsletter
         </Link>
       </div>
@@ -192,17 +204,30 @@ function EmptyBoard() {
           <div className={styles.moreLinks}>
             <Link
               href="/calendar#subscribe-heading"
-              className={styles.boardPrimary}
+              className={button({ tone: "magenta", size: "sm" })}
             >
               Subscribe to the calendar
             </Link>
-            <Link href="#signup" className={styles.moreLink}>
+            <Link
+              href="#signup"
+              className={button({
+                variant: "outline",
+                tone: "ply",
+                size: "sm",
+              })}
+            >
               Get the newsletter
             </Link>
           </div>
         ) : (
           <div className={styles.moreLinks}>
-            <Link href="#signup" className={styles.boardPrimary}>
+            <Link
+              href="#signup"
+              className={button({
+                tone: "magenta",
+                size: "sm",
+              })}
+            >
               Get the newsletter
             </Link>
           </div>

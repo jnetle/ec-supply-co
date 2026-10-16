@@ -3,39 +3,3 @@
   padding-bottom: clamp(36px, 6vh, 80px);
 }
 
-.primary,
-.secondary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 46px;
-  padding: 0 22px;
-  border-radius: 999px;
-  border: 2px solid #ffffff;
-  font-family: var(--font-heading);
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition:
-    background 220ms ease,
-    color 220ms ease;
-}
-
-.primary {
-  background: #ffffff;
-  color: var(--color-ecs-teal-deep);
-}
-
-.primary:hover {
-  background: var(--color-ecs-teal-pale);
-  border-color: var(--color-ecs-teal-pale);
-}
-
-.secondary {
-  color: #ffffff;
-}
-
-.secondary:hover {
-  background: #ffffff;
-  color: var(--color-ecs-teal-deep);
-}

@@ -66,26 +66,3 @@
   text-transform: uppercase;
 }
 
-.instagram {
-  font-family: var(--font-heading);
-  display: inline-flex;
-  align-items: center;
-  height: 56px;
-  padding: 0 26px;
-  border: 2px solid
-    color-mix(in srgb, var(--color-ecs-neutral-100) 45%, transparent);
-  border-radius: 999px;
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition:
-    background 220ms ease,
-    color 220ms ease;
-}
-
-.instagram:hover {
-  background: var(--ec-film);
-  border-color: transparent;
-  color: var(--color-ecs-teal-deep);
-}

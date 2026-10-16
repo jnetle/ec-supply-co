@@ -4,6 +4,7 @@ import { useActionState } from "react";
 
 import { subscribe } from "@/app/actions/newsletter";
 import { initialSubscribeState } from "@/lib/newsletter";
+import { button } from "@/components/ui/button";
 
 import styles from "./newsletter-form.module.css";
 
@@ -49,7 +50,12 @@ export function NewsletterForm() {
         className="sr-only"
       />
 
-      <button type="submit" disabled={pending} className={styles.button}>
+      <button
+        type="submit"
+        aria-busy={pending}
+        disabled={pending}
+        className={button({ tone: "marigold", size: "lg" })}
+      >
         {pending ? "Signing up…" : "Sign up"}
       </button>
 

@@ -80,6 +80,8 @@ export type DecoratedEvent = CalendarEvent & {
   priceLabel: string;
   spotsLabel: string;
   cta: string;
+  /** Drop-ins only need details, so their button steps back to an outline. */
+  ctaVariant: "solid" | "outline";
   ctaColor: string;
   ctaInk: string;
 };
@@ -136,18 +138,16 @@ export function decorate(
     priceLabel: event.price ? `$${event.price}` : "Free",
     spotsLabel,
     cta,
+    ctaVariant: dropIn && !past && !mine ? "outline" : "solid",
     ctaColor: past
       ? "var(--color-ecs-ply-pale)"
       : mine
         ? "var(--color-ecs-teal-pale)"
-        : dropIn
-          ? "transparent"
-          : "var(--color-ecs-teal)",
-    ctaInk:
-      past || mine || dropIn
-        ? past
-          ? "var(--color-ecs-ply-ink)"
-          : "var(--color-ecs-teal-deep)"
+        : "var(--color-ecs-teal)",
+    ctaInk: past
+      ? "var(--color-ecs-ply-ink)"
+      : mine
+        ? "var(--color-ecs-teal-deep)"
         : "#ffffff",
   };
 }
