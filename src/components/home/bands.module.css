@@ -1,11 +1,45 @@
-/* Hennai's photo column: one wide shot over two square details. */
-.collage {
+/* Hennai's photo column: the warm wood shot as a wide base, with the two
+   white-background shots pinned to opposite corners so they never sit side
+   by side. A 12-track square grid places them; the small photos overlap
+   the base and are cut out of it by a ring of the band's own colour. */
+.shelf {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(10px, 1.4vw, 18px);
+  aspect-ratio: 1;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-template-rows: repeat(12, minmax(0, 1fr));
 }
 
-.collageWide {
-  grid-column: 1 / -1;
+.shelfBase {
+  grid-area: 3 / 1 / 11 / 13;
+}
+
+.shelfTop,
+.shelfBottom {
+  box-shadow: 0 0 0 clamp(6px, 0.9vw, 12px) var(--band-bg);
+}
+
+.shelfTop {
+  grid-area: 1 / 8 / 6 / 13;
+}
+
+.shelfBottom {
+  grid-area: 8 / 1 / 13 / 6;
+}
+
+/* Hennai's logo stands in for the band heading, so it is sized like one:
+   big enough that "Modern home & garden" stays readable. The row repeats the
+   prose's font size and 52ch cap from feature-band.module.css, so the logo
+   centres over the paragraphs rather than the wider column. */
+.logoRow {
+  display: block;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.2vw, 17px);
+}
+
+.logo {
+  display: block;
+  width: clamp(220px, 24vw, 340px);
+  height: auto;
+  margin: 0 auto 10px;
 }

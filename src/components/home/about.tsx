@@ -9,7 +9,7 @@ import styles from './about.module.css';
 const PHASE_ONE = [
   {
     title: 'Retail counter',
-    note: 'Curated by Hennai Home + Garden',
+    note: 'Curated by Hennai Modern Home + Garden',
     bg: 'var(--color-ecs-ply-ink)',
     fg: '#ffffff',
   },

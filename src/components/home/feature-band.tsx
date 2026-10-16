@@ -14,7 +14,8 @@ type FeatureBandProps = {
   background: string;
   foreground?: string;
   eyebrow: { label: string; color: string; ink: string };
-  heading: string;
+  /** Usually text; a tenant's logo image can stand in for its name. */
+  heading: ReactNode;
   /** Small uppercase line under the heading. */
   kicker?: string;
   kickerColor?: string;
