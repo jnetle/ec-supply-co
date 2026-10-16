@@ -86,8 +86,9 @@
 }
 
 /* Every word of the wordmark shares its size, and is lettered white with
-   the logo's two-tone extrusion (logo-extrude-filter.tsx). The cycling
-   words invert it: their own colour, with white sides. */
+   the logo's two-tone extrusion: "Supply Co." draws the logo's own shapes
+   (logo-wordmark.ts), and the cycling words fake it with a filter
+   (logo-extrude-filter.tsx), inverted: their own colour, with white sides. */
 .arc,
 .brandLine,
 .coWord,
@@ -125,7 +126,6 @@
   display: inline-block;
   white-space: nowrap;
   color: #fff;
-  filter: url(#ecs-logo-extrude);
 }
 
 .secondLine {
@@ -163,7 +163,6 @@
   position: relative;
   display: inline-flex;
   align-items: flex-end;
-  filter: url(#ecs-logo-extrude);
 }
 
 /* The logo's dot, hung just past the "O" and out of flow, so it doesn't
@@ -184,6 +183,14 @@
   width: auto;
   overflow: visible;
   fill: currentColor;
+}
+
+.logoSide {
+  fill: var(--color-ecs-logo-salmon);
+}
+
+.logoBottom {
+  fill: var(--color-ecs-logo-orange);
 }
 
 .brandLine .logoWord {
