@@ -26,7 +26,7 @@ export async function MakerSpotlight() {
       <WaveDivider edge="top" fill="var(--color-ecs-pink)" />
       <WaveDivider edge="bottom" fill="var(--color-ecs-pink)" />
       <Blob
-        color="rgba(4,128,143,0.16)"
+        color="color-mix(in srgb, var(--color-ecs-teal) 16%, transparent)"
         parallax={0.14}
         delay="1.2s"
         style={{

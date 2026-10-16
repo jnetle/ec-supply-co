@@ -33,7 +33,7 @@
 .criteria {
   position: relative;
   background: var(--color-ecs-pink);
-  color: #2a1219;
+  color: var(--color-ecs-plum-ink);
   margin: clamp(20px, 4vh, 48px) 0;
   padding: clamp(44px, 8vh, 100px) clamp(18px, 4vw, 56px);
 }

@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { button } from "@/components/ui/button";
+import { PageIntro } from "@/components/ui/page-intro";
 import { MANIFESTO_RULES } from "@/lib/content/manifesto";
 import { pageMetadata } from "@/lib/site";
 
@@ -23,16 +24,13 @@ export default function ManifestoPage() {
       <SiteHeader />
 
       <main>
-        <header className={styles.header}>
-          <div className={styles.kicker}>The manifesto</div>
-          <h1 className={styles.title}>
-            Keep the money within walking distance.
-          </h1>
-          <p className={styles.lede}>
-            Nine things we decided in a folding-chair meeting in 2019, and
-            haven&rsquo;t found a good reason to change since.
-          </p>
-        </header>
+        <PageIntro
+          eyebrow="The manifesto"
+          eyebrowColor="var(--color-ecs-red)"
+          eyebrowInk="#ffffff"
+          title="Keep the money within walking distance."
+          lede="Nine things we decided in a folding-chair meeting in 2019, and haven’t found a good reason to change since."
+        />
 
         <section className={styles.grid}>
           {MANIFESTO_RULES.map((rule) => (
@@ -68,7 +66,7 @@ export default function ManifestoPage() {
             </Link>
             <Link
               href="/makers"
-              className={button({ tone: "marigold" })}
+              className={button({ variant: "outline", tone: "marigold" })}
             >
               Meet the makers
             </Link>

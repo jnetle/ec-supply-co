@@ -38,7 +38,7 @@ export const CATEGORIES: Record<
   workshop: {
     label: "Workshop",
     color: "var(--color-ecs-pink)",
-    ink: "#4a1f30",
+    ink: "var(--color-ecs-plum-ink)",
   },
   community: {
     label: "Community",

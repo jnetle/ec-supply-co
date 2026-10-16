@@ -19,7 +19,7 @@ export function Hennai() {
       }}
       heading="Hennai Home + Garden"
       kicker="Small corner, lots to find"
-      kickerColor="#7a4d20"
+      kickerColor="var(--color-ecs-ply-ink)"
       paragraphs={[
         "Hennai packs one corner of the shop with candles and soaps, plants and garden tools, cookbooks, cards and craft kits, linens, and pieces for the table. Easy to browse in five minutes, hard to leave in five.",
         "It all comes from small makers and independent brands, people building something of their own, just like Hennai. And it's priced to take home, not just admire, because well-made things shouldn't be a luxury.",
@@ -104,7 +104,7 @@ export function Carts() {
       mediaFirst
       decoration={
         <Blob
-          color="rgba(255,178,13,0.2)"
+          color="color-mix(in srgb, var(--color-ecs-marigold) 20%, transparent)"
           parallax={0.26}
           delay="0.9s"
           style={{
@@ -142,14 +142,14 @@ export function Tools() {
       }}
       heading="Tool library"
       kicker="Keep the skill, skip the clutter"
-      kickerColor="#6b4a00"
+      kickerColor="var(--color-ecs-ply-ink)"
       paragraphs={[
         "Learn the skill without storing the tool. Borrow what the job needs, do it yourself, and keep your closet and your cash. The broken thing gets fixed instead of tossed.",
         "No hourly meter, so work at your own pace and bring it back when you're done. No question is too basic to ask, and the neighbor next to you probably has a tip.",
       ]}
       tags={[
         { label: "Free to borrow", color: "var(--color-ecs-ink)", ink: "#ffffff" },
-        { label: "On your schedule", color: "#ffffff", ink: "#6b4a00" },
+        { label: "On your schedule", color: "#ffffff", ink: "var(--color-ecs-ply-ink)" },
         {
           label: "Donations welcome",
           color: "var(--color-ecs-red)",
@@ -158,7 +158,7 @@ export function Tools() {
       ]}
       decoration={
         <Blob
-          color="rgba(232,51,31,0.18)"
+          color="color-mix(in srgb, var(--color-ecs-red) 18%, transparent)"
           parallax={-0.24}
           delay="0.3s"
           style={{

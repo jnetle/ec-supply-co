@@ -7,7 +7,7 @@
   border-radius: var(--frame-radius);
   aspect-ratio: var(--frame-ratio);
   /* Shows only when there is no photo. */
-  background: rgba(140, 31, 76, 0.14);
+  background: color-mix(in srgb, var(--color-ecs-pink-deep) 14%, transparent);
 }
 
 .frame img {

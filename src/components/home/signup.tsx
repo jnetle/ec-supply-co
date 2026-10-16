@@ -10,7 +10,7 @@ export function Signup() {
   return (
     <section id="signup" className={styles.section}>
       <Blob
-        color="rgba(255,178,13,0.20)"
+        color="color-mix(in srgb, var(--color-ecs-marigold) 20%, transparent)"
         parallax={-0.22}
         style={{
           left: '-4%',
@@ -22,7 +22,7 @@ export function Signup() {
 
       <div data-reveal className={styles.panel}>
         <Blob
-          color="rgba(255,178,13,0.10)"
+          color="color-mix(in srgb, var(--color-ecs-marigold) 10%, transparent)"
           parallax={0.16}
           style={{
             right: '-6%',

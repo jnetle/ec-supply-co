@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
 import { LinkIcon } from "@/components/ui/link-icon";
+import { PageIntro } from "@/components/ui/page-intro";
 import { HELPERS, MADE_OF } from "@/lib/content/thanks";
 import { pageMetadata } from "@/lib/site";
 
@@ -36,16 +37,13 @@ export default function TheBuildPage() {
       <SiteHeader />
 
       <main>
-        <header className={styles.header}>
-          <div className={styles.kicker}>Thank you</div>
-          <h1 className={styles.title}>A lot of hands built this shop.</h1>
-          <p className={styles.lede}>
-            Before there was anything on the shelves, there were neighbors with
-            cameras, saws and paintbrushes who showed up anyway, and wood and
-            fixtures with a past of their own. Here&rsquo;s some of where it
-            all came from.
-          </p>
-        </header>
+        <PageIntro
+          eyebrow="Thank you"
+          eyebrowColor="var(--color-ecs-red)"
+          eyebrowInk="#ffffff"
+          title="A lot of hands built this shop."
+          lede="Before there was anything on the shelves, there were neighbors with cameras, saws and paintbrushes who showed up anyway, and wood and fixtures with a past of their own. Here’s some of where it all came from."
+        />
 
         <section className={styles.madeOf} aria-labelledby="made-of-heading">
           <h2 id="made-of-heading" className={styles.sectionTitle}>

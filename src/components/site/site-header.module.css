@@ -31,7 +31,7 @@
   box-sizing: border-box;
   background: var(--color-ecs-navy);
   border-radius: 0 0 clamp(12px, 1.1vw, 26px) clamp(12px, 1.1vw, 26px);
-  box-shadow: 0 clamp(4px, 0.4vw, 9px) 0 -2px rgba(20, 18, 16, 0.18);
+  box-shadow: 0 clamp(4px, 0.4vw, 9px) 0 -2px color-mix(in srgb, var(--ec-shadow-ink) 18%, transparent);
   transform: translate3d(0, 0, 0) rotate(-1.2deg);
   opacity: 1;
   transform-origin: 50% 0;

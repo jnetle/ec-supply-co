@@ -17,7 +17,7 @@
   border-radius: 0 0 14px 14px;
   background: var(--color-ecs-teal-deep);
   color: var(--color-ecs-bg);
-  box-shadow: 0 4px 0 -2px rgba(20, 18, 16, 0.18);
+  box-shadow: 0 4px 0 -2px color-mix(in srgb, var(--ec-shadow-ink) 18%, transparent);
   transform: rotate(1.4deg);
   transform-origin: 50% 0;
   cursor: pointer;
@@ -64,7 +64,7 @@
   position: fixed;
   inset: 0;
   z-index: 64;
-  background: rgba(20, 18, 16, 0.4);
+  background: color-mix(in srgb, var(--ec-shadow-ink) 40%, transparent);
 }
 
 /* Radix keeps the drawer mounted until its closing animation ends, so both
