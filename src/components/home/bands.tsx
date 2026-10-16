@@ -116,7 +116,7 @@ export function Carts() {
       kickerColor="#ffffff"
       paragraphs={[
         "Coffee purveyors and food vendors pop up through the week and cycle in and out, so there is usually something new to try.",
-        "Watch the calendar for food popups: guest chefs, bakers and taco nights. Walk up, no sign-up needed.",
+        "Walk up, no sign-up needed. Just see who’s out front today.",
       ]}
       tags={[
         {
