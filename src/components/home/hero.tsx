@@ -253,8 +253,10 @@ export function Hero() {
             {SHOW_COMING_SOON_SIGN ? (
               <div ref={signRef} aria-hidden="true" className={styles.sign}>
                 <div className={`film ${styles.signPlank}`}>
-                  <span className={styles.signPole} data-side="left" />
-                  <span className={styles.signPole} data-side="right" />
+                  <span className={styles.signCable} data-side="left" />
+                  <span className={styles.signCable} data-side="right" />
+                  <span className={styles.signFitting} data-side="left" />
+                  <span className={styles.signFitting} data-side="right" />
                   <span ref={signTextRef} className={styles.signText}>
                     ming Soon
                   </span>

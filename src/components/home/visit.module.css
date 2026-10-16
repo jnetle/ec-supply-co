@@ -21,13 +21,7 @@
   line-height: 1.7;
 }
 
-.address a {
-  color: var(--color-ecs-teal);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-/* The hours card reads as a painted sign hung slightly off true, on a
+/* The hours card (for now, a "coming soon" note in its place) reads as a painted sign hung slightly off true, on a
    pane of the shop's filmed glass (`film` in globals.css). */
 .hours {
   margin-top: 26px;
@@ -41,7 +35,8 @@
   gap: 9px;
   font-size: 14px;
   max-width: 340px;
-  --film-strength: 0.42;
+  /* Faint enough that the small print keeps AA contrast on every band. */
+  --film-strength: 0.2;
 }
 
 .hoursTitle {
@@ -54,20 +49,24 @@
   margin-bottom: 6px;
 }
 
-.hoursRow {
-  display: flex;
-  justify-content: space-between;
-}
-
-.hoursRow dt {
-  font-weight: 600;
-}
-
-.hoursRow dd {
+.hoursNote {
   margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
 }
 
-/* Closed days sit back without disappearing. */
-.hoursClosed {
-  opacity: 0.62;
+.hoursLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  margin-top: 4px;
+}
+
+.hoursLinks a {
+  font-weight: 600;
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-color: var(--color-ecs-marigold);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }

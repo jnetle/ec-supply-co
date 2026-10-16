@@ -300,6 +300,30 @@ export function useHeroSequence({
     };
 
     /**
+     * Closes the line gap so "Co" sits as far below the caps of "Supply" as
+     * the straight label sits above them (LABEL_GAP). Measured with the
+     * transforms cleared; must run before anything is placed against "Co".
+     */
+    const matchLineGap = (lockup: HTMLElement, brandLine: HTMLElement, coWord: HTMLElement) => {
+      const line = coWord.parentElement;
+      if (!line) return;
+      const prevLockup = lockup.style.transform;
+      const prevCo = coWord.style.transform;
+      lockup.style.transform = "none";
+      coWord.style.transform = "none";
+      line.style.marginTop = "";
+
+      const caps = measureCaps(brandLine);
+      const coTop = (coWord.querySelector("svg") ?? coWord).getBoundingClientRect().top;
+      const gap = coTop - (caps.top + caps.cap);
+      const base = parseFloat(getComputedStyle(line).marginTop) || 0;
+      line.style.marginTop = `${(base + caps.cap * LABEL_GAP - gap).toFixed(1)}px`;
+
+      lockup.style.transform = prevLockup;
+      coWord.style.transform = prevCo;
+    };
+
+    /**
      * Sized as when the whole name sat on one line: "El Cerrito Supply" is
      * set off-screen in the same lettering, and the scale makes it plus
      * "Co." span NAME_WIDTH of the column.
@@ -437,13 +461,17 @@ export function useHeroSequence({
         squiggle.style.clipPath = "none";
       }
 
+      if (lockup && brandLineRef.current && coWordRef.current) {
+        matchLineGap(lockup, brandLineRef.current, coWordRef.current);
+      }
+
       if (showSign && coWindow && lockup) {
         // The sequence ends with the sign landed and the underline already
         // given way to it, so that is where it rests.
         measureSign(coWindow, lockup);
         const sign = signRef.current;
         if (sign) {
-          sign.style.transform = "translate3d(0,0,0) rotate(-3.4deg)";
+          sign.style.transform = "translate3d(0,0,0) rotate(-1.2deg)";
         }
         if (squiggle) squiggle.style.opacity = "0";
       }
@@ -454,6 +482,8 @@ export function useHeroSequence({
         const coWord = coWordRef.current;
         if (!lockup || !brandLine || !coWord) return;
         lockup.style.transform = "none";
+        matchLineGap(lockup, brandLine, coWord);
+        if (showSign && coWindow) measureSign(coWindow, lockup);
         measureArc(lockup, brandLine, coWord);
         placeArc(1);
         const scale = fitScale(lockup, brandLine, coWord);
@@ -486,6 +516,7 @@ export function useHeroSequence({
       const prevCo = coWord.style.transform;
       lockup.style.transform = "none";
       coWord.style.transform = "none";
+      matchLineGap(lockup, brandLine, coWord);
 
       const { brand, co, gap, width: pairWidth } = measurePair(brandLine, coWord);
       const scale = fitScale(lockup, brandLine, coWord);
@@ -645,7 +676,7 @@ export function useHeroSequence({
 
         const eased = 1 - Math.pow(1 - signFollow, 2);
         const park = parkDistance();
-        sign.style.transform = `translate3d(0,${((1 - eased) * -park).toFixed(1)}px,0) rotate(${(-3.4 + (1 - eased) * 5).toFixed(2)}deg)`;
+        sign.style.transform = `translate3d(0,${((1 - eased) * -park).toFixed(1)}px,0) rotate(${(-1.2 + (1 - eased) * 2.8).toFixed(2)}deg)`;
 
         // The underline gives way as the plank comes down over it.
         if (squiggle) {

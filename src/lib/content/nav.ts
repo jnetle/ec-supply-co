@@ -120,7 +120,7 @@ export const VISIT_HREF = "/#visit";
  * The nav chips stay short; the footer can afford the extra row.
  */
 export const FOOTER_EXTRA_LINKS: Record<string, NavLink[]> = {
-  shop: [{ label: "Hours + directions", note: "", href: "/#visit" }],
+  shop: [{ label: "Find us", note: "", href: "/#visit" }],
 };
 
 export const SHOP_ADDRESS = {
@@ -129,6 +129,6 @@ export const SHOP_ADDRESS = {
   locality: "El Cerrito",
   region: "CA",
   postalCode: "94530",
-  hours: "Thu–Sun",
+  hours: "Opening soon",
   instagram: "https://instagram.com/elcerritosupplyco",
 };
