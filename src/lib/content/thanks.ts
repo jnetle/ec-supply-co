@@ -63,6 +63,8 @@ export type MadeOfEntry = {
   name: string;
   /** Where its materials came from. */
   provenance: string;
+  /** How the helpers are credited, e.g. "Built by" or "Sourced by". */
+  creditedAs: string;
   /** The helpers who sourced or built it, by `Helper["id"]`. */
   helpers: Helper["id"][];
   photo?: { src: string; alt: string };
@@ -70,8 +72,6 @@ export type MadeOfEntry = {
 
 /**
  * The stories behind the shop's fixtures, shown above the helpers on /the-build.
- *
- * PLACEHOLDERS: the photos are Unsplash stand-ins until the real ones come in.
  */
 export const MADE_OF: MadeOfEntry[] = [
   {
@@ -79,10 +79,11 @@ export const MADE_OF: MadeOfEntry[] = [
     name: "The big table",
     provenance:
       "Made from reclaimed wood flooring from the Sears Factory in San Leandro.",
+    creditedAs: "Sourced by",
     helpers: ["thelumberbaron"],
     photo: {
-      src: "https://images.unsplash.com/photo-1625744070229-bb3f58a97e03",
-      alt: "A long table of weathered reclaimed wood with metal chairs in a workshop.",
+      src: "/assets/photos/build/big-table.jpg",
+      alt: "A long table of honey-colored reclaimed wood flooring, still dotted with old nail holes, on black steel legs in the shop.",
     },
   },
   {
@@ -91,6 +92,7 @@ export const MADE_OF: MadeOfEntry[] = [
     // TODO: which high school, if we can name it.
     provenance:
       "Built from reclaimed high school bleacher seats, and home to the work of our Shelfie Members.",
+    creditedAs: "Sourced by",
     helpers: ["thelumberbaron"],
     photo: {
       src: "/assets/photos/build/shelves.jpg",
@@ -101,6 +103,7 @@ export const MADE_OF: MadeOfEntry[] = [
     id: "window-sign",
     name: "The window sign",
     provenance: "Designed and hand-painted right on the glass.",
+    creditedAs: "Painted by",
     helpers: ["heather-hardison"],
     photo: {
       src: "/assets/photos/build/window-sign.jpg",
@@ -110,11 +113,12 @@ export const MADE_OF: MadeOfEntry[] = [
   {
     id: "address-numbers",
     name: "The address numbers",
-    provenance: "Handmade in ceramic.",
+    provenance: "Each digit shaped by hand from clay.",
+    creditedAs: "Crafted by",
     helpers: ["rookie-ceramics"],
     photo: {
-      src: "https://images.unsplash.com/photo-1779480391842-dfeeda2ca88e",
-      alt: "A ceramic house number tile with a colorful mosaic border on a stucco wall.",
+      src: "/assets/photos/build/address-numbers.jpg",
+      alt: "Glossy red ceramic numbers reading 7523A, stacked down the shop's white door frame, with their reflection in the front window.",
     },
   },
 ];
