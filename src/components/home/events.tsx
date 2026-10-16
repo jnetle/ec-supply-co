@@ -9,7 +9,10 @@ import {
   upcomingEvents,
 } from "@/components/calendar/event-model";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import { CALENDAR_EVENTS } from "@/lib/content/calendar";
+import {
+  CALENDAR_EVENTS,
+  CALENDAR_SUBSCRIBE_ENABLED,
+} from "@/lib/content/calendar";
 
 import styles from "./events.module.css";
 
@@ -142,13 +145,24 @@ function MoreOnTheWay() {
     <aside data-reveal className={styles.more}>
       <p className={styles.moreKicker}>More on the way</p>
       <p className={styles.moreCopy}>
-        New workshops and popups land all season long. Subscribe once and
-        they&rsquo;ll show up in your calendar on their own.
+        {CALENDAR_SUBSCRIBE_ENABLED ? (
+          <>
+            New workshops and popups land all season long. Subscribe once and
+            they&rsquo;ll show up in your calendar on their own.
+          </>
+        ) : (
+          <>
+            New workshops and popups land all season long. Get the newsletter
+            to hear about them first.
+          </>
+        )}
       </p>
       <div className={styles.moreLinks}>
-        <Link href="/calendar#subscribe-heading" className={styles.moreLink}>
-          Subscribe to the calendar
-        </Link>
+        {CALENDAR_SUBSCRIBE_ENABLED && (
+          <Link href="/calendar#subscribe-heading" className={styles.moreLink}>
+            Subscribe to the calendar
+          </Link>
+        )}
         <Link href="#signup" className={styles.moreLink}>
           Get the newsletter
         </Link>
@@ -169,20 +183,30 @@ function EmptyBoard() {
         <h3 className={styles.boardTitle}>The board&rsquo;s clear for now</h3>
         <p className={styles.boardCopy}>
           We&rsquo;re lining up the next round of workshops, popups and
-          neighborhood nights. Subscribe to the calendar and they&rsquo;ll
-          appear the moment they&rsquo;re posted.
+          neighborhood nights.{" "}
+          {CALENDAR_SUBSCRIBE_ENABLED
+            ? "Subscribe to the calendar and they’ll appear the moment they’re posted."
+            : "Get the newsletter and you’ll hear the moment they’re posted."}
         </p>
-        <div className={styles.moreLinks}>
-          <Link
-            href="/calendar#subscribe-heading"
-            className={styles.boardPrimary}
-          >
-            Subscribe to the calendar
-          </Link>
-          <Link href="#signup" className={styles.moreLink}>
-            Get the newsletter
-          </Link>
-        </div>
+        {CALENDAR_SUBSCRIBE_ENABLED ? (
+          <div className={styles.moreLinks}>
+            <Link
+              href="/calendar#subscribe-heading"
+              className={styles.boardPrimary}
+            >
+              Subscribe to the calendar
+            </Link>
+            <Link href="#signup" className={styles.moreLink}>
+              Get the newsletter
+            </Link>
+          </div>
+        ) : (
+          <div className={styles.moreLinks}>
+            <Link href="#signup" className={styles.boardPrimary}>
+              Get the newsletter
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Revealed on a wrapper, since the reveal's inline transform would
