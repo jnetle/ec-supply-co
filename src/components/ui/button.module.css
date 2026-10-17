@@ -12,7 +12,9 @@
    Every solid and outline button behaves the same way: on hover or keyboard
    focus it lifts 2px and casts a hard ply shadow, like a sign held off the
    wall; an outline also fills in with its colour. On press it drops back
-   flat. A link only firms up its underline. Nothing darkens, lightens,
+   flat. While lifted, its edge also catches the shop's iridescent film
+   (--ec-film), which fades in and drifts along it like the logo sign's.
+   A link only firms up its underline. Nothing darkens, lightens,
    brightens, scales or tilts.
 
    Colour comes from two variables. A tone class sets them from the palette;
@@ -20,6 +22,9 @@
    `buttonColors()`:
      --btn-color  fill for solid; border, text and hover fill for outline
      --btn-on     text that sits on --btn-color
+
+   The `film` tone is the exception: a pearly film fill with ink text, for
+   at most one headline action per page. Solid only.
    ────────────────────────────────────────────────────────────────────── */
 
 .button {
@@ -49,7 +54,35 @@
     transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1),
     box-shadow 220ms ease,
     background-color 220ms ease,
-    color 220ms ease;
+    color 220ms ease,
+    background-position 1600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Zero specificity, so a page module that positions a button keeps its
+   own position. */
+:where(.button) {
+  position: relative;
+}
+
+/* The film edge: a ring masked out of a film sheet, laid over the border.
+   Hidden at rest; hover and focus fade it in and drift it along. */
+:is(.solid, .outline)::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  padding: 2px;
+  border-radius: inherit;
+  background-image: var(--ec-film);
+  background-size: 160% 100%;
+  background-position: 0% 0;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    background-position 1600ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 /* ── Sizes. 44px is the floor: nothing tappable is smaller. ── */
@@ -121,6 +154,15 @@
     box-shadow: var(--btn-lift);
   }
 
+  :is(.solid, .outline):hover:not(:disabled, [aria-disabled="true"])::before {
+    opacity: 1;
+    background-position: 100% 0;
+  }
+
+  .solid.film:hover:not(:disabled, [aria-disabled="true"]) {
+    background-position: 100% 0;
+  }
+
   .outline:hover:not(:disabled, [aria-disabled="true"]) {
     background: var(--btn-color);
     color: var(--btn-on);
@@ -136,6 +178,15 @@
   box-shadow: var(--btn-lift);
   outline: 2px solid var(--btn-color);
   outline-offset: 3px;
+}
+
+:is(.solid, .outline):focus-visible::before {
+  opacity: 1;
+  background-position: 100% 0;
+}
+
+.solid.film:focus-visible {
+  background-position: 100% 0;
 }
 
 .outline:focus-visible {
@@ -216,4 +267,17 @@
 .paper {
   --btn-color: var(--color-ecs-surface);
   --btn-on: var(--color-ecs-teal-deep);
+}
+
+/* A pearly film fill with ink text, for at most one headline action per
+   page (the newsletter submit). Solid only. The fill slides along on hover,
+   the way the film shifts with the angle; the pale stop rings focus. */
+.film {
+  --btn-color: #a9b6ff;
+  --btn-on: var(--color-ecs-ink);
+}
+
+.solid.film {
+  border-color: transparent;
+  background: var(--ec-film) 0% 0 / 160% 100%;
 }
