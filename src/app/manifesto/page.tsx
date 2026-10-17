@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { button } from "@/components/ui/button";
 import { PageIntro } from "@/components/ui/page-intro";
-import { MANIFESTO_RULES } from "@/lib/content/manifesto";
+import { MANIFESTO_ENABLED, MANIFESTO_RULES } from "@/lib/content/manifesto";
 import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/manifesto/manifesto-page.module.css";
@@ -19,6 +20,8 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default function ManifestoPage() {
+  if (!MANIFESTO_ENABLED) notFound();
+
   return (
     <>
       <SiteHeader />

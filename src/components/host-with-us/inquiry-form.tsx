@@ -9,6 +9,7 @@ import {
 
 import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
+import { CO_MARKETING_WORKSHOP_ENABLED } from "@/lib/content/host-with-us";
 
 import styles from "@/components/ui/form.module.css";
 
@@ -23,10 +24,16 @@ export const RENTAL_TYPES = [
 
 export type RentalType = (typeof RENTAL_TYPES)[number]["value"];
 
+/** The rental types on offer right now; hidden ones can't be picked or linked. */
+export const OFFERED_RENTAL_TYPES = RENTAL_TYPES.filter(
+  (type) =>
+    CO_MARKETING_WORKSHOP_ENABLED || type.value !== "co-marketing-workshop",
+);
+
 const CHOOSE_TYPE = "inquiry:choose-type";
 
 const isRentalType = (value: string | null): value is RentalType =>
-  RENTAL_TYPES.some((type) => type.value === value);
+  OFFERED_RENTAL_TYPES.some((type) => type.value === value);
 
 /**
  * Jumps to the form with the rental type already chosen. Elsewhere on the
@@ -160,7 +167,7 @@ export function InquiryForm() {
                 <option value="" disabled>
                   Choose one
                 </option>
-                {RENTAL_TYPES.map((type) => (
+                {OFFERED_RENTAL_TYPES.map((type) => (
                   <option key={type.value} value={type.value}>
                     {type.label}
                   </option>

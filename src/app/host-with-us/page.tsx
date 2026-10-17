@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import {
   InquiryForm,
@@ -12,14 +13,19 @@ import { button } from '@/components/ui/button';
 import { Eyebrow } from '@/components/ui/eyebrow';
 import { PageIntro } from '@/components/ui/page-intro';
 import { WaveDivider } from '@/components/ui/wave-divider';
+import {
+  CO_MARKETING_WORKSHOP_ENABLED,
+  HOST_WITH_US_ENABLED,
+} from '@/lib/content/host-with-us';
 import { pageMetadata } from '@/lib/site';
 
 import styles from '@/components/host-with-us/host-with-us-page.module.css';
 
 export const metadata: Metadata = pageMetadata({
   title: 'Host with us',
-  description:
-    'Rent the shop for a private event, run a co-marketing workshop with us, or pitch us an idea.',
+  description: CO_MARKETING_WORKSHOP_ENABLED
+    ? 'Rent the shop for a private event, run a co-marketing workshop with us, or pitch us an idea.'
+    : 'Rent the shop for a private event, or pitch us an idea.',
   path: '/host-with-us',
 });
 
@@ -53,6 +59,11 @@ const WAYS: {
   },
 ];
 
+const OFFERED_WAYS = WAYS.filter(
+  (way) =>
+    CO_MARKETING_WORKSHOP_ENABLED || way.type !== 'co-marketing-workshop',
+);
+
 const RENTAL_FACTS = [
   { value: '$75', unit: ' / hour', note: 'Rental rates start here' },
   { value: '12 seats', note: 'At our long center table' },
@@ -61,6 +72,8 @@ const RENTAL_FACTS = [
 ];
 
 export default function HostWithUsPage() {
+  if (!HOST_WITH_US_ENABLED) notFound();
+
   return (
     <>
       <SiteHeader />
@@ -71,7 +84,11 @@ export default function HostWithUsPage() {
           eyebrowColor="var(--color-ecs-pink-deep)"
           eyebrowInk="#ffffff"
           title="Book the space."
-          lede="Use the shop three ways: throw your own private event, team up with us on a co-marketing workshop, or pitch us an idea."
+          lede={
+            CO_MARKETING_WORKSHOP_ENABLED
+              ? 'Use the shop three ways: throw your own private event, team up with us on a co-marketing workshop, or pitch us an idea.'
+              : 'Use the shop two ways: throw your own private event, or pitch us an idea.'
+          }
         />
 
         <section id="ways" className={`${styles.band} ${styles.ways}`}>
@@ -84,15 +101,18 @@ export default function HostWithUsPage() {
               ink="#ffffff"
               className="mb-[18px]"
             >
-              Three ways to use the space
+              {CO_MARKETING_WORKSHOP_ENABLED ? 'Three' : 'Two'} ways to use
+              the space
             </Eyebrow>
             <h2 className={styles.heading}>
-              Rent it, run it with us, or tell us your idea.
+              {CO_MARKETING_WORKSHOP_ENABLED
+                ? 'Rent it, run it with us, or tell us your idea.'
+                : 'Rent it, or tell us your idea.'}
             </h2>
           </div>
 
           <ol className={styles.cards}>
-            {WAYS.map((way, index) => (
+            {OFFERED_WAYS.map((way, index) => (
               <li key={way.type} className={styles.card}>
                 <span className={styles.cardNumber}>{index + 1}</span>
                 <span className={styles.cardLabel}>{way.label}</span>

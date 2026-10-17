@@ -7,6 +7,13 @@
  * page deliberately departs from its own screenshots.
  */
 
+/**
+ * TODO: turn back on when the manifesto is ready to go public. Hidden for
+ * launch: /manifesto returns a 404, and the home page teaser, the nav and
+ * footer link and the sitemap entry are all gone.
+ */
+export const MANIFESTO_ENABLED = false;
+
 export type ManifestoRule = {
   number: string;
   title: string;
