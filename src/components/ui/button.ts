@@ -15,6 +15,8 @@ export type ButtonTone =
   | "ink"
   | "ply"
   | "paper"
+  /** Pearly film fill, ink text. One headline action per page; solid only. */
+  | "film"
   /** Colours come from `buttonColors()` on the element's style. */
   | "custom";
 

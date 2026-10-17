@@ -54,7 +54,7 @@ export function NewsletterForm() {
         type="submit"
         aria-busy={pending}
         disabled={pending}
-        className={button({ tone: "marigold", size: "lg" })}
+        className={button({ tone: "film", size: "lg" })}
       >
         {pending ? "Signing up…" : "Sign up"}
       </button>
