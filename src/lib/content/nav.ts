@@ -4,6 +4,9 @@
  * sitemap — so every consumer reads it from here instead.
  */
 
+import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
+import { MANIFESTO_ENABLED } from "@/lib/content/manifesto";
+
 export type NavLink = {
   label: string;
   /** Sub-label shown in the desktop dropdown; the drawer and footer omit it. */
@@ -68,11 +71,15 @@ export const NAV_GROUPS: NavGroup[] = [
         note: "Workshops, classes + popups",
         href: "/calendar",
       },
-      {
-        label: "Host with us",
-        note: "Private events, collabs + ideas",
-        href: "/host-with-us",
-      },
+      ...(HOST_WITH_US_ENABLED
+        ? [
+            {
+              label: "Host with us",
+              note: "Private events, collabs + ideas",
+              href: "/host-with-us",
+            },
+          ]
+        : []),
     ],
   },
   {
@@ -98,11 +105,15 @@ export const NAV_GROUPS: NavGroup[] = [
     align: "right",
     links: [
       { label: "Our story", note: "Why we are here", href: "/#about" },
-      {
-        label: "Manifesto",
-        note: "Keep the money close to home",
-        href: "/manifesto",
-      },
+      ...(MANIFESTO_ENABLED
+        ? [
+            {
+              label: "Manifesto",
+              note: "Keep the money close to home",
+              href: "/manifesto",
+            },
+          ]
+        : []),
       {
         label: "How we built it",
         note: "The wood, the hands, the history",

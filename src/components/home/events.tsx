@@ -14,6 +14,7 @@ import {
   CALENDAR_EVENTS,
   CALENDAR_SUBSCRIBE_ENABLED,
 } from "@/lib/content/calendar";
+import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 
 import styles from "./events.module.css";
 
@@ -45,12 +46,14 @@ export function Events() {
           >
             Full calendar + sign-ups →
           </Link>
-          <Link
-            href="/host-with-us"
-            className={button({ variant: "outline", tone: "navy" })}
-          >
-            Book a private event
-          </Link>
+          {HOST_WITH_US_ENABLED && (
+            <Link
+              href="/host-with-us"
+              className={button({ variant: "outline", tone: "navy" })}
+            >
+              Book a private event
+            </Link>
+          )}
         </div>
       </div>
 
@@ -236,17 +239,19 @@ function EmptyBoard() {
 
       {/* Revealed on a wrapper, since the reveal's inline transform would
           straighten the note's tilt. */}
-      <div data-reveal className={styles.noteWrap}>
-        <Link href="/host-with-us" className={styles.note}>
-          <span className={styles.notePin} aria-hidden="true" />
-          <span className={styles.noteKicker}>Open date</span>
-          <span className={styles.noteTitle}>Your event here?</span>
-          <span className={styles.noteCopy}>
-            Teach a class, throw a party or host a popup at the shop.
-          </span>
-          <span className={styles.noteCta}>Book the space →</span>
-        </Link>
-      </div>
+      {HOST_WITH_US_ENABLED && (
+        <div data-reveal className={styles.noteWrap}>
+          <Link href="/host-with-us" className={styles.note}>
+            <span className={styles.notePin} aria-hidden="true" />
+            <span className={styles.noteKicker}>Open date</span>
+            <span className={styles.noteTitle}>Your event here?</span>
+            <span className={styles.noteCopy}>
+              Teach a class, throw a party or host a popup at the shop.
+            </span>
+            <span className={styles.noteCta}>Book the space →</span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

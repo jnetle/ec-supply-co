@@ -3,6 +3,7 @@ import Link from "next/link";
 import { FeatureBand } from "@/components/home/feature-band";
 import { BlobImage } from "@/components/ui/blob-image";
 import { button } from "@/components/ui/button";
+import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 
 import styles from "./empty-calendar.module.css";
 
@@ -27,22 +28,26 @@ export function EmptyCalendar() {
         kickerColor="#ffffff"
         paragraphs={[
           "Right now we’re focused on opening the shop: the retail counter, popup vendors, the tool library and maker shelves. A calendar of workshops, food popups and neighborhood nights comes after that, and we’ll shape it as we learn what the space wants to be.",
-          "Get the newsletter to follow along. Have an idea for a class or a night? Tell us. It helps us plan what comes next.",
+          HOST_WITH_US_ENABLED
+            ? "Get the newsletter to follow along. Have an idea for a class or a night? Tell us. It helps us plan what comes next."
+            : "Get the newsletter to follow along.",
         ]}
         actions={
           <>
             <Link href="/#signup" className={button({ tone: "paper" })}>
               Get the newsletter
             </Link>
-            <Link
-              href="/host-with-us"
-              className={button({
-                variant: "outline",
-                tone: "paper",
-              })}
-            >
-              Host an event →
-            </Link>
+            {HOST_WITH_US_ENABLED && (
+              <Link
+                href="/host-with-us"
+                className={button({
+                  variant: "outline",
+                  tone: "paper",
+                })}
+              >
+                Host an event →
+              </Link>
+            )}
           </>
         }
         media={
