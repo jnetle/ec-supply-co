@@ -1,4 +1,5 @@
 import { BlobImage } from "@/components/ui/blob-image";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SHOP_ADDRESS } from "@/lib/content/nav";
 
@@ -22,6 +23,18 @@ export function Visit() {
           <br />
           {SHOP_ADDRESS.city}
         </div>
+
+        <a
+          href={SHOP_ADDRESS.maps}
+          target="_blank"
+          rel="noreferrer"
+          className={button({
+            variant: "link",
+            className: styles.directions,
+          })}
+        >
+          Get directions
+        </a>
 
         {/* Holds the hours card's place until the hours are set. */}
         <div className={`film ${styles.hours}`}>

@@ -21,6 +21,10 @@
   line-height: 1.7;
 }
 
+.directions {
+  margin-top: 4px;
+}
+
 /* The hours card (for now, a "coming soon" note in its place) reads as a painted sign hung slightly off true, on a
    pane of the shop's filmed glass (`film` in globals.css). */
 .hours {
