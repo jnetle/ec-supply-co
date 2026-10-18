@@ -10,6 +10,7 @@
   position: relative;
   background: var(--color-ecs-teal-deep);
   color: var(--color-ecs-neutral-100);
+  --ecs-focus-ring: var(--color-ecs-neutral-100);
   border-radius: clamp(28px, 3vw, 52px);
   padding: clamp(38px, 7vh, 96px) clamp(24px, 5vw, 80px);
   overflow: hidden;

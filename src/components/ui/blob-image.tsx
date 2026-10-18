@@ -24,6 +24,8 @@ type BlobImageProps = {
   morphing?: boolean;
   /** Staggers the morph between neighbouring portraits. */
   delay?: string;
+  /** Loads at once and first, for a photo that is the page's LCP. */
+  eager?: boolean;
   className?: string;
   style?: CSSProperties;
   /** Overlay content pinned inside the mask, such as a date badge. */
@@ -39,11 +41,15 @@ export function BlobImage({
   parallax = true,
   morphing = false,
   delay,
+  eager = false,
   className = "",
   style,
   children,
 }: BlobImageProps) {
   const credit = photoCredit(src);
+  const loading = eager
+    ? ({ loading: "eager", fetchPriority: "high" } as const)
+    : {};
 
   return (
     <div
@@ -65,6 +71,7 @@ export function BlobImage({
             alt={alt}
             fill
             sizes={sizes}
+            {...loading}
             data-parallax-img={parallax ? "1" : undefined}
           />
         ) : (
@@ -73,6 +80,7 @@ export function BlobImage({
             alt={alt}
             fill
             sizes={sizes}
+            {...loading}
             data-parallax-img={parallax ? "1" : undefined}
           />
         ))}

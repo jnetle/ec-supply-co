@@ -28,7 +28,12 @@ const PIECE_RADII = [
 const CARD_COLORS = [
   { background: "var(--color-ecs-surface)", accent: "var(--color-ecs-teal)" },
   { background: "var(--color-ecs-teal-pale)", accent: "var(--color-ecs-teal-deep)" },
-  { background: "var(--color-ecs-pink)", accent: "var(--color-ecs-pink-deep)" },
+  // Teal focus rings drop under 3:1 on the pink card.
+  {
+    background: "var(--color-ecs-pink)",
+    accent: "var(--color-ecs-pink-deep)",
+    ring: "var(--color-ecs-ink)",
+  },
 ];
 
 export default function TheBuildPage() {
@@ -66,6 +71,7 @@ export default function TheBuildPage() {
                     {
                       "--card-bg": colors.background,
                       "--card-accent": colors.accent,
+                      "--ecs-focus-ring": colors.ring,
                     } as CSSProperties
                   }
                 >
@@ -75,6 +81,7 @@ export default function TheBuildPage() {
                     radius={PIECE_RADII[i % PIECE_RADII.length]}
                     ratio="4/3"
                     sizes="(max-width: 700px) 92vw, 720px"
+                    eager={i === 0}
                     className={styles.piecePhoto}
                   />
                   <div className={styles.pieceText}>

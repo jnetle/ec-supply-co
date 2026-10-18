@@ -1,6 +1,7 @@
 .section {
   position: relative;
   background-color: var(--color-ecs-pink);
+  --ecs-focus-ring: var(--color-ecs-ink);
   background-image: radial-gradient(
     circle,
     color-mix(in srgb, var(--color-ecs-pink-deep) 16%, transparent) 1.7px,

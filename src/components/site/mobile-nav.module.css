@@ -24,7 +24,7 @@
 }
 
 .burger:focus-visible {
-  outline: 3px solid var(--color-ecs-marigold);
+  outline: 3px solid var(--color-ecs-teal);
   outline-offset: 3px;
 }
 
