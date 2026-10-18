@@ -1,5 +1,7 @@
 "use server";
 
+import { track } from "@vercel/analytics/server";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 import { env } from "@/lib/env";
@@ -127,6 +129,10 @@ export async function submitMakerApplication(
     console.error("Maker application submission failed", error);
     return { status: "error", message: FAILURE_MESSAGE };
   }
+
+  // Counted here, after Wix accepts it, so honeypot hits and failed sends
+  // never show up. No form values are sent: the event is just a tally.
+  await track("Maker application", undefined, { headers: await headers() });
 
   return { status: "success", message: SUCCESS_MESSAGE };
 }

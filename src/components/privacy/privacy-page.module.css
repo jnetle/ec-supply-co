@@ -1,0 +1,50 @@
+/* Privacy (/privacy): a single column of policy text under the shared page
+   intro, set like the sell-with-us prose. */
+.policy {
+  display: grid;
+  gap: clamp(28px, 4vh, 44px);
+  max-width: 64ch;
+  padding: 0 clamp(18px, 4vw, 56px) clamp(56px, 10vh, 120px);
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.65;
+}
+
+.effective {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-ecs-neutral-700);
+}
+
+.policy h2 {
+  margin: 0 0 10px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+  line-height: 1.1;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+}
+
+.policy p {
+  margin: 0;
+}
+
+.policy p + p,
+.policy p + ul,
+.policy ul + p {
+  margin-top: 12px;
+}
+
+.policy ul {
+  margin: 0;
+  padding-left: 1.2em;
+  list-style: disc;
+  display: grid;
+  gap: 8px;
+}
+
+.policy a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}

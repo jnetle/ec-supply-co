@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Figtree, Hammersmith_One, Playfair_Display } from "next/font/google";
 
 import {
@@ -72,6 +73,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body>
         {children}
+        {/* Cookieless page views; see /privacy. */}
+        <Analytics />
       </body>
     </html>
   );
