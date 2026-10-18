@@ -1,0 +1,393 @@
+/* The 404 and error pages: page-intro copy on the left, the illustration
+   hung on the right. Stacks on phones, art below the actions. Title and
+   lede match page-intro.module.css. */
+.scene {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  align-items: center;
+  gap: clamp(32px, 6vw, 88px);
+  max-width: 1180px;
+  padding: clamp(44px, 8vh, 110px) clamp(18px, 4vw, 56px) clamp(56px, 10vh, 120px);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(2.4rem, 7vw, 6.2rem);
+  line-height: 0.96;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: clamp(16px, 2.4vh, 26px) 0 0;
+  max-width: 46ch;
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.6;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 14px;
+  margin-top: clamp(24px, 4vh, 36px);
+}
+
+.footnote {
+  margin: 18px 0 0;
+  font-size: 13px;
+  color: var(--color-ecs-neutral-700);
+}
+
+.art {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+@media (max-width: 760px) {
+  .scene {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── The 404: a maker's hang tag, the piece itself long gone ─────────────
+   Kraft card with clipped top corners, threaded on a twine loop through a
+   reinforced hole, and a red SOLD stamp across it. The paper is drawn on
+   ::after so the clip doesn't cut off the twine or the shadow. It rocks
+   gently, like the eyebrows. */
+.tag {
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 320px);
+  margin-top: 70px;
+  /* Room at the foot for the stamp, clear of the handwriting. */
+  padding: 64px 28px 96px;
+  color: var(--color-ecs-ply-ink);
+  text-align: center;
+  filter: drop-shadow(0 12px 22px color-mix(in srgb, #2e2b25 22%, transparent));
+  transform-origin: 50% -70px;
+  animation: ecs-card-rock 8s ease-in-out infinite;
+}
+
+.tag::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  clip-path: polygon(22% 0, 78% 0, 100% 16%, 100% 100%, 0 100%, 0 16%);
+  border-radius: 0 0 6px 9px;
+  background:
+    radial-gradient(
+      circle at 50% 30px,
+      var(--color-ecs-bg) 0 7px,
+      var(--color-ecs-ply) 7px 12px,
+      transparent 12.5px
+    ),
+    var(--color-ecs-wood-pale);
+}
+
+/* The twine: a long loop dropping through the hole. */
+.tag::before {
+  content: "";
+  position: absolute;
+  top: -70px;
+  left: 50%;
+  width: 22px;
+  height: 104px;
+  translate: -50% 0;
+  border: 2px solid var(--color-ecs-wood);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.tagKicker,
+.tagLabel {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.tagLabel {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 2px solid var(--color-ecs-red);
+}
+
+.tagNumber {
+  --ec-x: var(--color-ecs-red);
+  display: block;
+  margin: 6px 0 18px;
+  font-family: var(--font-hero);
+  font-size: clamp(3.4rem, 5.6vw, 4.3rem);
+  line-height: 0.9;
+  white-space: nowrap;
+  color: var(--color-ecs-surface);
+  text-shadow: var(--ec-extrude-paint);
+}
+
+.tagLine {
+  margin: 0;
+  padding: 6px 0;
+  border-top: 1px dashed color-mix(in srgb, var(--color-ecs-ply-ink) 35%, transparent);
+  font-size: 14px;
+}
+
+/* Written in by the maker. */
+.tagHand {
+  font-style: italic;
+  font-size: 16px;
+  color: var(--color-ecs-navy);
+}
+
+.tagPrice {
+  font-weight: 700;
+  text-decoration-color: var(--color-ecs-red);
+  text-decoration-thickness: 2px;
+}
+
+.stamp {
+  position: absolute;
+  right: 30px;
+  bottom: 26px;
+  padding: 6px 14px 3px;
+  border: 3px solid var(--color-ecs-red);
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-ecs-red);
+  mix-blend-mode: multiply;
+  opacity: 0.85;
+  rotate: -9deg;
+  animation: ecs-stamp 600ms cubic-bezier(0.3, 1.6, 0.5, 1) 500ms both;
+}
+
+/* The global reduced-motion cap shortens the thump but keeps its delay,
+   which would leave the stamp invisible for a beat. Just show it. */
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    animation: none;
+  }
+}
+
+@keyframes ecs-card-rock {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(-1.4deg);
+  }
+}
+
+@keyframes ecs-stamp {
+  from {
+    opacity: 0;
+    scale: 1.8;
+  }
+  to {
+    opacity: 0.85;
+    scale: 1;
+  }
+}
+
+/* ── The 404's maker introduction ─────────────────────────────────────────
+   One maker from today's spotlight, set like a spotlight card turned on
+   its side. */
+.makerIntro {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  max-width: 520px;
+  margin-top: clamp(32px, 5vh, 48px);
+  padding-top: 24px;
+  border-top: 2px dashed var(--color-ecs-neutral-300);
+}
+
+.makerText {
+  min-width: 0;
+}
+
+.makerLabel {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ecs-neutral-700);
+}
+
+.makerName {
+  margin: 4px 0 0;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+
+.makerLink {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+  transition: text-decoration-color 220ms ease;
+}
+
+.makerLink:hover,
+.makerLink:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* The cue that the name leads to the maker's own site. */
+.linkBadge {
+  display: inline-grid;
+  place-items: center;
+  width: 1.15em;
+  height: 1.15em;
+  border-radius: 999px;
+  background: var(--color-ecs-pink-deep);
+  color: #ffffff;
+  vertical-align: 0.08em;
+}
+
+.makerCraft {
+  margin: 6px 0 0;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ecs-pink-deep);
+}
+
+.makerBio {
+  display: -webkit-box;
+  margin: 6px 0 0;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+@media (max-width: 400px) {
+  .makerIntro {
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* ── The error page: the restocking sign ─────────────────────────────────
+   A dark glass pane under the shop's iridescent film (`film` in
+   globals.css), hung on two steel cables with standoff caps, the same
+   hardware as the hero's Coming Soon sign. Plain lettering, and only the
+   faintest settle as it hangs. */
+.hanger {
+  display: grid;
+  width: min(100%, 360px);
+  padding-top: 96px;
+}
+
+.pane {
+  --film-strength: 0.32;
+  position: relative;
+  padding: 48px 28px 40px;
+  border-radius: 4px;
+  background: var(--color-ecs-glass);
+  color: #ffffff;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 30px rgba(20, 14, 8, 0.24);
+  /* Well above the pane, so it swings from the cables rather than its middle. */
+  transform-origin: 50% -220px;
+  animation: ecs-pane-settle 9s ease-in-out infinite;
+}
+
+/* Fine steel cable, fading out as it runs up off the scene. */
+.cable {
+  position: absolute;
+  bottom: 100%;
+  width: 1.5px;
+  height: 96px;
+  background: linear-gradient(90deg, #8d969a, #e4e9eb 50%, #6f777b);
+  opacity: 0.85;
+  mask-image: linear-gradient(to top, #000 55%, transparent);
+}
+
+.cable[data-side="left"] {
+  left: 14%;
+}
+
+.cable[data-side="right"] {
+  right: 14%;
+}
+
+/* Where each cable meets the pane: a small metal standoff cap. */
+.fitting {
+  position: absolute;
+  top: 14px;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #b9c0c3 45%, #6b7376);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.fitting[data-side="left"] {
+  left: calc(14% + 0.75px);
+}
+
+.fitting[data-side="right"] {
+  left: calc(86% - 0.75px);
+}
+
+.paneTitle {
+  display: block;
+  font-family: var(--font-hero);
+  font-size: clamp(2.2rem, 4.6vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.paneRule {
+  display: block;
+  width: 48px;
+  height: 2px;
+  margin: 18px auto 16px;
+  background: var(--color-ecs-marigold);
+}
+
+.paneNote {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, #ffffff 80%, transparent);
+}
+
+@keyframes ecs-pane-settle {
+  0%,
+  100% {
+    transform: rotate(-0.4deg);
+  }
+  50% {
+    transform: rotate(0.4deg);
+  }
+}
