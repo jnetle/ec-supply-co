@@ -289,162 +289,105 @@
 }
 
 /* ── The error page: the restocking sign ─────────────────────────────────
-   A marigold card hung on a string from a nail, over a crate of wrapped
-   pieces on their way back to the shelves. */
+   A dark glass pane under the shop's iridescent film (`film` in
+   globals.css), hung on two steel cables with standoff caps, the same
+   hardware as the hero's Coming Soon sign. Plain lettering, and only the
+   faintest settle as it hangs. */
 .hanger {
-  position: relative;
   display: grid;
-  justify-items: center;
-  width: min(100%, 340px);
-  padding-top: 64px;
+  width: min(100%, 360px);
+  padding-top: 96px;
 }
 
-.nail {
+.pane {
+  --film-strength: 0.32;
+  position: relative;
+  padding: 48px 28px 40px;
+  border-radius: 4px;
+  background: var(--color-ecs-glass);
+  color: #ffffff;
+  text-align: center;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 14px 30px rgba(20, 14, 8, 0.24);
+  /* Well above the pane, so it swings from the cables rather than its middle. */
+  transform-origin: 50% -220px;
+  animation: ecs-pane-settle 9s ease-in-out infinite;
+}
+
+/* Fine steel cable, fading out as it runs up off the scene. */
+.cable {
   position: absolute;
-  top: 0;
-  width: 14px;
-  height: 14px;
+  bottom: 100%;
+  width: 1.5px;
+  height: 96px;
+  background: linear-gradient(90deg, #8d969a, #e4e9eb 50%, #6f777b);
+  opacity: 0.85;
+  mask-image: linear-gradient(to top, #000 55%, transparent);
+}
+
+.cable[data-side="left"] {
+  left: 14%;
+}
+
+.cable[data-side="right"] {
+  right: 14%;
+}
+
+/* Where each cable meets the pane: a small metal standoff cap. */
+.fitting {
+  position: absolute;
+  top: 14px;
+  z-index: 2;
+  width: 9px;
+  height: 9px;
+  translate: -50% 0;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #fff, #b9c0c3 45%, #6b7376);
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  z-index: 2;
 }
 
-.sign {
-  position: relative;
-  width: 100%;
-  padding: 26px 24px 24px;
-  border-radius: 14px 8px 16px 9px;
-  background: var(--color-ecs-marigold);
-  color: var(--color-ecs-ink);
-  text-align: center;
-  box-shadow: var(--shadow-ecs-lg);
-  transform-origin: 50% -64px;
-  animation: ecs-sign-swing 6s ease-in-out infinite;
+.fitting[data-side="left"] {
+  left: calc(14% + 0.75px);
 }
 
-/* The string: two sides of a triangle meeting at the nail, 57px up and
-   60px in from each knot. */
-.sign::before,
-.sign::after {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  width: 2px;
-  height: 83px;
-  background: var(--color-ecs-ply-ink);
-  transform-origin: 50% 100%;
+.fitting[data-side="right"] {
+  left: calc(86% - 0.75px);
 }
 
-.sign::before {
-  left: calc(50% - 61px);
-  rotate: 46deg;
-}
-
-.sign::after {
-  right: calc(50% - 61px);
-  rotate: -46deg;
-}
-
-.signTitle {
-  --ec-x: var(--color-ecs-red);
+.paneTitle {
   display: block;
   font-family: var(--font-hero);
-  font-size: clamp(2.2rem, 5vw, 3rem);
-  line-height: 0.95;
+  font-size: clamp(2.2rem, 4.6vw, 2.9rem);
+  line-height: 1;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--color-ecs-surface);
-  text-shadow: var(--ec-extrude-paint);
 }
 
-/* A wooden crate of wrapped pieces, set down mid-restock. The crate's
-   front is ::after, laid over the pieces so only their tops show, each
-   bobbing a little out of step. */
-.crate {
-  position: relative;
-  width: 172px;
-  height: 52px;
-  margin: 74px auto 18px;
+.paneRule {
+  display: block;
+  width: 48px;
+  height: 2px;
+  margin: 18px auto 16px;
+  background: var(--color-ecs-marigold);
 }
 
-.crate::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border: 3px solid var(--color-ecs-ply-ink);
-  border-radius: 4px;
-  background: repeating-linear-gradient(
-    to bottom,
-    var(--color-ecs-ply) 0 18px,
-    var(--color-ecs-ply-ink) 18px 21px
-  );
-}
-
-/* Kraft paper tied with twine both ways. */
-.crateItem {
-  position: absolute;
-  bottom: 14px;
-  background:
-    linear-gradient(
-      90deg,
-      transparent calc(50% - 1px),
-      var(--color-ecs-wood) calc(50% - 1px) calc(50% + 1px),
-      transparent calc(50% + 1px)
-    ),
-    linear-gradient(
-      transparent 34%,
-      var(--color-ecs-wood) 34% 38%,
-      transparent 38%
-    ),
-    var(--color-ecs-wood-pale);
-  box-shadow: inset -4px 0 0 color-mix(in srgb, var(--color-ecs-ply-ink) 14%, transparent);
-  animation: ecs-bob 2.8s ease-in-out infinite alternate;
-}
-
-.crateTall {
-  left: 16px;
-  width: 38px;
-  height: 84px;
-  border-radius: 10px 10px 4px 4px;
-}
-
-.crateRound {
-  left: 62px;
-  width: 58px;
-  height: 66px;
-  border-radius: 50% 50% 12px 12px;
-  animation-delay: -1s;
-}
-
-.crateShort {
-  left: 124px;
-  width: 34px;
-  height: 58px;
-  border-radius: 6px;
-  animation-delay: -1.9s;
-}
-
-.signNote {
+.paneNote {
   margin: 0;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
+  color: color-mix(in srgb, #ffffff 80%, transparent);
 }
 
-@keyframes ecs-sign-swing {
+@keyframes ecs-pane-settle {
   0%,
   100% {
-    transform: rotate(-2.5deg);
+    transform: rotate(-0.4deg);
   }
   50% {
-    transform: rotate(2.5deg);
-  }
-}
-
-@keyframes ecs-bob {
-  to {
-    translate: 0 -6px;
+    transform: rotate(0.4deg);
   }
 }
