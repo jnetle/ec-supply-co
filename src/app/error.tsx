@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 
 import { ErrorScene } from "@/components/errors/error-scene";
-import { KilnSign } from "@/components/errors/kiln-sign";
+import { RestockSign } from "@/components/errors/restock-sign";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { button } from "@/components/ui/button";
@@ -26,7 +26,7 @@ export default function ErrorPage({ error, retry }: ErrorProps) {
   return (
     <>
       {/* Error boundaries can't export metadata. */}
-      <title>Still in the studio · El Cerrito Supply Co.</title>
+      <title>Restocking · El Cerrito Supply Co.</title>
       <SiteHeader />
 
       <main>
@@ -34,8 +34,8 @@ export default function ErrorPage({ error, retry }: ErrorProps) {
           eyebrow="Something broke"
           eyebrowColor="var(--color-ecs-marigold)"
           eyebrowInk="var(--color-ecs-ink)"
-          title="Still in the studio."
-          lede="This page isn't quite finished. The glaze is still wet. Give it another go, and if it keeps happening, let us know."
+          title="Restocking the shelves."
+          lede="This page is off the shelf for a moment while we restock it. Give it another go, and if it keeps happening, let us know."
           actions={
             <>
               <button type="button" onClick={retry} className={button()}>
@@ -47,7 +47,7 @@ export default function ErrorPage({ error, retry }: ErrorProps) {
             </>
           }
           footnote={error.digest && <>Reference: {error.digest}</>}
-          art={<KilnSign />}
+          art={<RestockSign />}
         />
       </main>
 

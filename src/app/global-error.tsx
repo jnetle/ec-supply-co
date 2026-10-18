@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 import { ErrorScene } from "@/components/errors/error-scene";
-import { KilnSign } from "@/components/errors/kiln-sign";
+import { RestockSign } from "@/components/errors/restock-sign";
 import { button } from "@/components/ui/button";
 import { FONT_VARIABLES } from "@/lib/fonts";
 
@@ -28,14 +28,14 @@ export default function GlobalError({ error, retry }: GlobalErrorProps) {
   return (
     <html lang="en" className={FONT_VARIABLES}>
       <body>
-        <title>Still in the studio · El Cerrito Supply Co.</title>
+        <title>Restocking · El Cerrito Supply Co.</title>
         <main>
           <ErrorScene
             eyebrow="Something broke"
             eyebrowColor="var(--color-ecs-marigold)"
             eyebrowInk="var(--color-ecs-ink)"
-            title="Still in the studio."
-            lede="The whole site's still in the kiln. Give it another go, and if it keeps happening, let us know."
+            title="Restocking the shelves."
+            lede="The whole shop's restocking for a moment. Give it another go, and if it keeps happening, let us know."
             actions={
               <>
                 <button type="button" onClick={retry} className={button()}>
@@ -49,7 +49,7 @@ export default function GlobalError({ error, retry }: GlobalErrorProps) {
               </>
             }
             footnote={error.digest && <>Reference: {error.digest}</>}
-            art={<KilnSign />}
+            art={<RestockSign />}
           />
         </main>
       </body>
