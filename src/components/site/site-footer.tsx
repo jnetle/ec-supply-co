@@ -50,6 +50,9 @@ export function SiteFooter() {
           © {new Date().getFullYear()} El Cerrito Supply Co. All Rights
           Reserved.
         </span>
+        <Link href="/privacy" className={styles.colophonLink}>
+          Privacy
+        </Link>
       </div>
     </footer>
   );

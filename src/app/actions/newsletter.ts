@@ -1,5 +1,8 @@
 "use server";
 
+import { track } from "@vercel/analytics/server";
+import { headers } from "next/headers";
+
 import { env } from "@/lib/env";
 import type { SubscribeState } from "@/lib/newsletter";
 import { getWixClient } from "@/lib/wix";
@@ -43,6 +46,10 @@ export async function subscribe(
     console.error("Newsletter subscription failed", error);
     return { status: "error", message: FAILURE_MESSAGE };
   }
+
+  // Counted here, after Wix accepts it, so honeypot hits and failed sends
+  // never show up. No form values are sent: the event is just a tally.
+  await track("Newsletter signup", undefined, { headers: await headers() });
 
   return { status: "success", message: SUCCESS_MESSAGE };
 }

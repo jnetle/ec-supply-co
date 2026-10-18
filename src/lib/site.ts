@@ -4,7 +4,7 @@ import { vercel } from "@/lib/env";
 
 export const SITE_URL = "https://www.elcerritosupplyco.com";
 export const SITE_NAME = "El Cerrito Supply Co.";
-export const SITE_EMAIL = "hello@elcerritosupplyco.com";
+export const SITE_EMAIL = "info@elcerritosupplyco.com";
 export const SITE_DESCRIPTION =
   "Built by neighbors, at 7523A Fairmount Ave in El Cerrito. Local makers, workshops, a tool library and a place to sit down.";
 

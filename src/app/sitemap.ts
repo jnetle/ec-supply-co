@@ -35,6 +35,7 @@ const ROUTES: Route[] = [
     : []),
   { path: "/sell-with-us", changeFrequency: "monthly", priority: 0.6 },
   { path: "/the-build", changeFrequency: "monthly", priority: 0.4 },
+  { path: "/privacy", changeFrequency: "monthly", priority: 0.1 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
