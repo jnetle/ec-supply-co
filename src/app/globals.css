@@ -14,7 +14,6 @@
   --font-display: var(--font-hammersmith), var(--font-heading);
   --font-headline: var(--font-figtree), var(--font-heading);
   --font-hero: var(--font-hammersmith), var(--font-heading);
-  --font-serif: var(--font-playfair), Georgia, serif;
 
   /* Surfaces and ink */
   --color-ecs-bg: #f4e9d5;
@@ -144,8 +143,10 @@ img {
   outline: none;
 }
 
+/* Dark and pink surfaces set --ecs-focus-ring, since teal drops under 3:1
+   against them. */
 :focus-visible {
-  outline: 2px solid var(--color-ecs-teal);
+  outline: 2px solid var(--ecs-focus-ring, var(--color-ecs-teal));
   outline-offset: 2px;
 }
 

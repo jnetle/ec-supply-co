@@ -70,19 +70,26 @@ function ApplicationFormFields({
     initialMakerApplicationState,
   );
   const [values, setValues] = useState(EMPTY_APPLICATION);
+  const sentTitleRef = useRef<HTMLHeadingElement>(null);
 
   const updateValue = (name: keyof ApplicationFormValues, value: string) => {
     setValues((current) => ({ ...current, [name]: value }));
   };
 
   useEffect(() => {
-    if (state.status === "success") scrollToTop();
+    if (state.status !== "success") return;
+    scrollToTop();
+    // The submit button that had focus is gone; land on the thank-you
+    // instead. scrollToTop already handles the scroll.
+    sentTitleRef.current?.focus({ preventScroll: true });
   }, [state.status, scrollToTop]);
 
   if (state.status === "success") {
     return (
       <div className={styles.sent} aria-live="polite">
-        <h2 className={styles.sentTitle}>Thank you so much!</h2>
+        <h2 ref={sentTitleRef} tabIndex={-1} className={styles.sentTitle}>
+          Thank you so much!
+        </h2>
         <p className={styles.sentBody}>{state.message}</p>
         <button
           type="button"

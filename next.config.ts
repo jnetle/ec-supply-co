@@ -1,7 +1,14 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    // The whole stylesheet is ~18KB, so shipping it in the HTML costs less
+    // than the render-blocking requests it replaces.
+    inlineCss: true,
+  },
   images: {
+    // AVIF is about 20% smaller than WebP; browsers without it get WebP.
+    formats: ["image/avif", "image/webp"],
     // Placeholder photos on /the-build, served straight from Unsplash.
     remotePatterns: [new URL("https://images.unsplash.com/photo-**")],
   },

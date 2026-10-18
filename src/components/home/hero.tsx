@@ -167,7 +167,8 @@ export function Hero() {
             src={PHOTO_SRC}
             alt="The shop floor on an event night, seen from the sidewalk"
             fill
-            priority
+            loading="eager"
+            fetchPriority="high"
             sizes="100vw"
           />
         </div>
@@ -196,7 +197,7 @@ export function Hero() {
             </svg>
 
             <h1 className={styles.heading}>
-              <span className="sr-only">El Cerrito Supply</span>
+              <span className="sr-only">El Cerrito Supply Co.</span>
               <span ref={brandLineRef} className={styles.brandLine}>
                 <LogoWord word={SUPPLY} />
               </span>
@@ -220,8 +221,6 @@ export function Hero() {
                   vectorEffect="non-scaling-stroke"
                 />
               </svg>
-
-              <span className="sr-only">Co</span>
 
               {/* The extrusion is part of each word's outlines, so the swell
                   scales it with the letters. */}

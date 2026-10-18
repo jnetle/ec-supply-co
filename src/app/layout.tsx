@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { Figtree, Hammersmith_One, Playfair_Display } from "next/font/google";
+import { Figtree, Hammersmith_One } from "next/font/google";
 
 import {
   SHARE_IMAGE,
@@ -21,7 +21,7 @@ import "./globals.css";
 const figtree = Figtree({
   variable: "--font-figtree",
   subsets: ["latin"],
-  // Italic for the homepage marquee.
+  // Italic for the homepage marquee and the events' host and board lines.
   style: ["normal", "italic"],
 });
 
@@ -31,15 +31,6 @@ const hammersmith = Hammersmith_One({
   variable: "--font-hammersmith",
   subsets: ["latin"],
   weight: "400",
-});
-
-// Playfair Display: the vintage storefront serif that sits beside the cursive
-// tagline in the logo. Italic for the event host and board lines. Variable,
-// so no weights listed.
-const playfair = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -69,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${figtree.variable} ${hammersmith.variable} ${playfair.variable}`}
+      className={`${figtree.variable} ${hammersmith.variable}`}
     >
       <body>
         {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 
 import { subscribe } from "@/app/actions/newsletter";
 import { initialSubscribeState } from "@/lib/newsletter";
@@ -13,10 +13,22 @@ export function NewsletterForm() {
     subscribe,
     initialSubscribeState,
   );
+  const successRef = useRef<HTMLParagraphElement>(null);
+
+  // The form, and the button that had focus, are gone; keep keyboard and
+  // screen reader users on the confirmation instead of the top of the page.
+  useEffect(() => {
+    if (state.status === "success") successRef.current?.focus();
+  }, [state.status]);
 
   if (state.status === "success") {
     return (
-      <p aria-live="polite" className={styles.success}>
+      <p
+        ref={successRef}
+        tabIndex={-1}
+        aria-live="polite"
+        className={styles.success}
+      >
         {state.message}
       </p>
     );

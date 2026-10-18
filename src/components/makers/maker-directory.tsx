@@ -28,6 +28,7 @@ export function MakerDirectory({ makers }: { makers: Maker[] }) {
               parallax={false}
               morphing
               delay={makerMorphDelay(i)}
+              eager={i < 2}
             />
             <h2 className={styles.name}>
               {maker.website ? (

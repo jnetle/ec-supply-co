@@ -31,6 +31,7 @@
   margin-top: 26px;
   background: var(--color-ecs-glass);
   color: #ffffff;
+  --ecs-focus-ring: #ffffff;
   border: 5px solid var(--color-ecs-ply);
   border-radius: 34px 18px 30px 20px;
   padding: 22px 24px 24px;

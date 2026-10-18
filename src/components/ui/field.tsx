@@ -11,7 +11,11 @@ type FieldProps = {
   label: ReactNode;
   required?: boolean;
   hint?: string;
-  children: (props: { id: string; className: string }) => ReactNode;
+  children: (props: {
+    id: string;
+    className: string;
+    "aria-describedby"?: string;
+  }) => ReactNode;
   id: string;
   multiline?: boolean;
 };
@@ -28,6 +32,8 @@ export function Field({
   id,
   multiline = false,
 }: FieldProps) {
+  const hintId = hint ? `${id}-hint` : undefined;
+
   return (
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
@@ -36,8 +42,13 @@ export function Field({
       {children({
         id,
         className: multiline ? styles.textarea : styles.input,
+        "aria-describedby": hintId,
       })}
-      {hint ? <span className={styles.hint}>{hint}</span> : null}
+      {hint ? (
+        <span id={hintId} className={styles.hint}>
+          {hint}
+        </span>
+      ) : null}
     </div>
   );
 }

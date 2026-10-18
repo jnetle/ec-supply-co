@@ -57,6 +57,7 @@ export function EmptyCalendar() {
             radius="46% 54% 18% 22% / 38% 34% 8% 9%"
             ratio="16/10"
             sizes="(max-width: 700px) 100vw, 50vw"
+            eager
             style={{ minHeight: "260px" }}
           />
         }
