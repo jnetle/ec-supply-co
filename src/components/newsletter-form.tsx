@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from "react";
 
 import { subscribe } from "@/app/actions/newsletter";
+import { MAX_EMAIL_LENGTH } from "@/lib/form-limits";
 import { initialSubscribeState } from "@/lib/newsletter";
 import { button } from "@/components/ui/button";
 
@@ -45,6 +46,7 @@ export function NewsletterForm() {
         name="email"
         type="email"
         required
+        maxLength={MAX_EMAIL_LENGTH}
         autoComplete="email"
         placeholder="you@example.com"
         aria-describedby="newsletter-message"

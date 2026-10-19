@@ -24,3 +24,20 @@ export function getWixClient(): WixClient {
 
   return wixClient;
 }
+
+/**
+ * The parts of a Wix SDK error that are safe to log. The error object itself
+ * carries the original request, so logging it whole would put visitors'
+ * form values in the server logs.
+ */
+export function describeWixError(error: unknown) {
+  if (typeof error !== "object" || error === null) return { error };
+
+  const { status, requestId, details } = error as {
+    status?: number;
+    requestId?: string;
+    details?: { applicationError?: { code?: string } };
+  };
+
+  return { status, requestId, code: details?.applicationError?.code };
+}
