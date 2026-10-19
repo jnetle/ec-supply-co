@@ -8,6 +8,7 @@ import { RestockSign } from "@/components/errors/restock-sign";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { button } from "@/components/ui/button";
+import { SITE_NAME } from "@/lib/site";
 
 type ErrorProps = {
   error: Error & { digest?: string };
@@ -26,7 +27,7 @@ export default function ErrorPage({ error, retry }: ErrorProps) {
   return (
     <>
       {/* Error boundaries can't export metadata. */}
-      <title>Restocking · El Cerrito Supply Co.</title>
+      <title>{`Restocking · ${SITE_NAME}`}</title>
       <SiteHeader />
 
       <main>

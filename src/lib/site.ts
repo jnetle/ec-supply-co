@@ -6,18 +6,17 @@ export const SITE_URL = "https://www.elcerritosupplyco.com";
 export const SITE_NAME = "El Cerrito Supply Co.";
 export const SITE_EMAIL = "info@elcerritosupplyco.com";
 export const SITE_DESCRIPTION =
-  "Built by neighbors, at 7523A Fairmount Ave in El Cerrito. Local makers, workshops, a tool library and a place to sit down.";
+  "Local makers, a tool library and a place to sit down, built by neighbors at 7523A Fairmount Ave in El Cerrito.";
 
 /**
- * The link-preview image for every page. Temporary until the wordmark is
- * settled: replace public/og-image.jpg (ideally 1200×630) and update the
- * size and alt text here.
+ * The link-preview image for every page: the logo lockup and address,
+ * rendered by `npm run og:image`. Keep the size and alt text in step with it.
  */
 export const SHARE_IMAGE = {
-  url: "/og-image.jpg",
+  url: "/og-image.png",
   width: 1200,
-  height: 900,
-  alt: "The El Cerrito Supply Co. storefront on Fairmount Ave",
+  height: 630,
+  alt: "El Cerrito Supply Co., 7523A Fairmount Ave, El Cerrito, CA",
 };
 
 /**
@@ -27,14 +26,26 @@ export const SHARE_IMAGE = {
  * vercel.app address. Read at build time — redeploy after attaching the domain.
  */
 export function allowIndexing(): boolean {
+  const host = vercel.productionHost();
+  // Vercel reports the shortest production domain, so with both the apex and
+  // www attached this is the apex even though the site is served on www.
   return (
-    vercel.isProduction() && vercel.productionHost() === new URL(SITE_URL).host
+    vercel.isProduction() &&
+    host !== undefined &&
+    withoutWww(host) === withoutWww(new URL(SITE_URL).host)
   );
 }
 
+function withoutWww(host: string): string {
+  return host.replace(/^www\./, "");
+}
+
 type PageMetadataInput = {
-  /** Omit on the home page so the layout's default title is used. */
-  title?: string;
+  /**
+   * Filled into the layout's "%s · El Cerrito Supply Co." template. Pass
+   * `{ absolute }` for a title that skips it, as the home page does.
+   */
+  title: string | { absolute: string };
   description: string;
   /** Route path, e.g. "/makers". Resolved against `metadataBase`. */
   path: string;
@@ -50,17 +61,26 @@ export function pageMetadata({
   description,
   path,
 }: PageMetadataInput): Metadata {
+  const fullTitle =
+    typeof title === "string" ? `${title} · ${SITE_NAME}` : title.absolute;
+
   return {
-    ...(title && { title }),
+    title,
     description,
     alternates: { canonical: path },
     openGraph: {
-      title: title ? `${title} · ${SITE_NAME}` : SITE_NAME,
+      title: fullTitle,
       description,
       url: path,
       siteName: SITE_NAME,
       locale: "en_US",
       type: "website",
+      images: [SHARE_IMAGE],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
       images: [SHARE_IMAGE],
     },
   };

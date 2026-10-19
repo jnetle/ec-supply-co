@@ -9,6 +9,8 @@ export function GET() {
         "public, max-age=300, s-maxage=300, stale-while-revalidate=3600",
       "Content-Disposition": 'inline; filename="el-cerrito-supply-events.ics"',
       "Content-Type": "text/calendar; charset=utf-8",
+      // Fetchable for calendar apps, but never listed in search results.
+      "X-Robots-Tag": "noindex",
     },
   });
 }

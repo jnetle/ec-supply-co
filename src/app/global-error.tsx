@@ -6,6 +6,7 @@ import { ErrorScene } from "@/components/errors/error-scene";
 import { RestockSign } from "@/components/errors/restock-sign";
 import { button } from "@/components/ui/button";
 import { FONT_VARIABLES } from "@/lib/fonts";
+import { SITE_NAME } from "@/lib/site";
 
 import "./globals.css";
 
@@ -28,7 +29,7 @@ export default function GlobalError({ error, retry }: GlobalErrorProps) {
   return (
     <html lang="en" className={FONT_VARIABLES}>
       <body>
-        <title>Restocking · El Cerrito Supply Co.</title>
+        <title>{`Restocking · ${SITE_NAME}`}</title>
         <main>
           <ErrorScene
             eyebrow="Something broke"

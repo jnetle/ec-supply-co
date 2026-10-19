@@ -8,14 +8,20 @@ import { PageIntro } from "@/components/ui/page-intro";
 import { CALENDAR_EVENTS } from "@/lib/content/calendar";
 import { pageMetadata } from "@/lib/site";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Community calendar",
-  description:
-    CALENDAR_EVENTS.length > 0
-      ? "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat."
-      : "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito are a later chapter, once the shop is up and running.",
-  path: "/calendar",
-});
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: "Community calendar",
+    description:
+      CALENDAR_EVENTS.length > 0
+        ? "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat."
+        : "Workshops, classes and neighborhood nights at our El Cerrito shop are coming once we open.",
+    path: "/calendar",
+  }),
+  // An empty calendar is thin content; keep it out of search until it fills.
+  ...(CALENDAR_EVENTS.length === 0 && {
+    robots: { index: false, follow: true },
+  }),
+};
 
 export default function CalendarPage() {
   const hasEvents = CALENDAR_EVENTS.length > 0;

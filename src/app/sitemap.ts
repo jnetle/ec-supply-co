@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { CALENDAR_EVENTS } from "@/lib/content/calendar";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 import { MANIFESTO_ENABLED } from "@/lib/content/manifesto";
 import { SITE_URL } from "@/lib/site";
@@ -14,7 +15,16 @@ type Route = {
 const ROUTES: Route[] = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/makers", changeFrequency: "weekly", priority: 0.8 },
-  { path: "/calendar", changeFrequency: "weekly", priority: 0.8 },
+  // Left out while empty, when the page is noindex.
+  ...(CALENDAR_EVENTS.length > 0
+    ? [
+        {
+          path: "/calendar",
+          changeFrequency: "weekly",
+          priority: 0.8,
+        } as const,
+      ]
+    : []),
   ...(MANIFESTO_ENABLED
     ? [
         {

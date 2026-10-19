@@ -10,7 +10,7 @@ import { getDirectoryMakers } from '@/lib/makers';
 import { pageMetadata } from '@/lib/site';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Makers',
+  title: 'Local makers',
   description:
     'Every piece in the shop has a name attached. Meet the local makers in El Cerrito and the East Bay on our shelves right now.',
   path: '/makers',
