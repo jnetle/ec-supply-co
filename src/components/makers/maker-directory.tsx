@@ -3,6 +3,7 @@ import { LinkIcon } from "@/components/ui/link-icon";
 import { WaveDivider } from "@/components/ui/wave-divider";
 import {
   MAKER_RADII,
+  NO_MAKERS_NOTE,
   makerByline,
   makerMorphDelay,
   type Maker,
@@ -15,6 +16,8 @@ export function MakerDirectory({ makers }: { makers: Maker[] }) {
     <section id="directory" className={styles.section}>
       <WaveDivider edge="top" fill="var(--color-ecs-pink)" />
       <WaveDivider edge="bottom" fill="var(--color-ecs-pink)" />
+
+      {makers.length === 0 && <p className={styles.empty}>{NO_MAKERS_NOTE}</p>}
 
       <div className={styles.grid}>
         {makers.map((maker, i) => (
