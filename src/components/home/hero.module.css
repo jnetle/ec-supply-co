@@ -39,26 +39,15 @@
   object-fit: cover;
 }
 
-.scrim {
+/* A light, neutral shade over the whole photo so the white wordmark and
+   the words animating around it hold up on bright shots. Plain black, so
+   it dims the photo without shifting the photographer's colours. */
+.photo::after {
+  content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, #3a3227 46%, transparent) 0%,
-    color-mix(in srgb, #3a3227 24%, transparent) 42%,
-    color-mix(in srgb, #241f18 72%, transparent) 100%
-  );
-}
-
-/* Tints the photo to match whichever word is currently on screen. */
-.wash {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: var(--color-ecs-teal-deep);
-  opacity: 0.13;
-  transition: background 800ms ease;
+  background: color-mix(in srgb, #000 24%, transparent);
 }
 
 .content {
@@ -301,7 +290,7 @@
   .stage {
     position: relative;
     height: auto;
-    aspect-ratio: 1600 / 1000;
+    aspect-ratio: 1798 / 1199;
     padding-bottom: 14px;
   }
 

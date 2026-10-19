@@ -119,9 +119,15 @@ const LABEL_GAP = 0.2;
  */
 const NAME_WIDTH = 0.75;
 
+/**
+ * How far down the photo the wordmark's middle sits, as a share of its
+ * height. Well above centre, at eye level: the hero photo's horizon is
+ * high, so a centred wordmark reads as sitting low, and here the whole
+ * lockup, cycling words included, clears the sofa back.
+ */
+const EYE_LINE = 0.28;
+
 type HeroOptions = {
-  /** One CSS colour per word, cycled to tint the photo behind them. */
-  washColors: string[];
   wordCount: number;
   enabled: boolean;
   /** Whether the hanging sign is lowered after the words finish. */
@@ -147,7 +153,6 @@ type HeroOptions = {
  * container and window 'scroll' never fires.
  */
 export function useHeroSequence({
-  washColors,
   wordCount,
   enabled,
   showSign,
@@ -163,7 +168,6 @@ export function useHeroSequence({
   const coWindowRef = useRef<HTMLDivElement>(null);
   const squiggleRef = useRef<SVGSVGElement>(null);
   const cueRef = useRef<HTMLDivElement>(null);
-  const washRef = useRef<HTMLDivElement>(null);
   const signRef = useRef<HTMLDivElement>(null);
   const signTextRef = useRef<HTMLSpanElement>(null);
   // Set by the effect while autoplay is running; null otherwise.
@@ -399,7 +403,7 @@ export function useHeroSequence({
 
     /**
      * The screen offset that puts a point of the lockup (in its own px,
-     * transforms cleared) at the middle of the photo, once the lockup is
+     * transforms cleared) on the photo's eye line, once the lockup is
      * scaled about its bottom left. The photo is the stage less the strip
      * tucked under the awning.
      */
@@ -412,7 +416,7 @@ export function useHeroSequence({
       return {
         x: stageRect.left + stageRect.width / 2 - (lockupRect.left + x * scale),
         y:
-          (stageRect.top + tuck + stageRect.bottom) / 2 -
+          stageRect.top + tuck + (stageRect.bottom - stageRect.top - tuck) * EYE_LINE -
           (lockupRect.bottom - (lockupRect.height - y) * scale),
       };
     };
@@ -579,7 +583,6 @@ export function useHeroSequence({
     let wordFollow = 0;
     let signFollow = 0;
     let lastFrame = 0;
-    let lastIndex = -1;
 
     const render = (p: number) => {
       const posRaw = Math.max(0, (p - LEAD) / (1 - LEAD)) * budget;
@@ -687,16 +690,6 @@ export function useHeroSequence({
         }
       }
 
-      const index = Math.min(wordCount, Math.round(wordFollow));
-      if (index !== lastIndex) {
-        lastIndex = index;
-        const wash = washRef.current;
-        if (wash) {
-          wash.style.background =
-            washColors[Math.max(0, index - 1) % washColors.length];
-        }
-      }
-
       if (autoplay) return;
 
       const cue = cueRef.current;
@@ -753,7 +746,6 @@ export function useHeroSequence({
           coFollow = 0;
           wordFollow = 0;
           signFollow = 0;
-          lastIndex = -1;
         }
       : null;
 
@@ -843,8 +835,6 @@ export function useHeroSequence({
       window.removeEventListener("wheel", onWheel);
       window.removeEventListener("resize", onResize);
     };
-    // washColors is a module constant at the call site.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, wordCount, showSign, autoplay]);
 
   const replay = useCallback(() => replayRef.current?.(), []);
@@ -860,7 +850,6 @@ export function useHeroSequence({
     coWindowRef,
     squiggleRef,
     cueRef,
-    washRef,
     signRef,
     signTextRef,
   };

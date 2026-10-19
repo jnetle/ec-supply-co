@@ -24,6 +24,9 @@ const PIECE_RADII = [
   "44% 56% 20% 20% / 40% 36% 8% 10%",
 ];
 
+/** The same shape stood upright, for portrait photos; the arch stays shallow. */
+const PORTRAIT_RADIUS = "48% 52% 20% 18% / 26% 28% 7% 8%";
+
 /** Card fills, rotated so neighbours never match; the manifesto's palette. */
 const CARD_COLORS = [
   { background: "var(--color-ecs-surface)", accent: "var(--color-ecs-teal)" },
@@ -66,7 +69,7 @@ export default function TheBuildPage() {
                 <article
                   key={entry.id}
                   id={entry.id}
-                  className={styles.piece}
+                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""}`}
                   style={
                     {
                       "--card-bg": colors.background,
@@ -78,8 +81,15 @@ export default function TheBuildPage() {
                   <BlobImage
                     src={entry.photo?.src}
                     alt={entry.photo?.alt ?? ""}
-                    radius={PIECE_RADII[i % PIECE_RADII.length]}
-                    ratio="4/3"
+                    radius={
+                      entry.photo?.portrait
+                        ? PORTRAIT_RADIUS
+                        : PIECE_RADII[i % PIECE_RADII.length]
+                    }
+                    ratio={entry.photo?.portrait ? "2/3" : "4/3"}
+                    // Parallax overscales the photo, which would crop the
+                    // very edges a portrait frame exists to show.
+                    parallax={!entry.photo?.portrait}
                     sizes="(max-width: 700px) 92vw, 720px"
                     eager={i === 0}
                     className={styles.piecePhoto}

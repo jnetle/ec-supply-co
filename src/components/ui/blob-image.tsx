@@ -53,7 +53,7 @@ export function BlobImage({
 
   return (
     <div
-      className={`washed ${styles.frame} ${morphing ? styles.morphing : ""} ${className}`}
+      className={`${styles.frame} ${morphing ? styles.morphing : ""} ${className}`}
       style={
         {
           "--frame-radius": radius,

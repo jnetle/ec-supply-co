@@ -54,8 +54,8 @@ export function Visit() {
 
       <div data-reveal>
         <BlobImage
-          src="/assets/photos/id-195-1200-900.jpg"
-          alt="The storefront on Fairmount Ave"
+          src="/assets/photos/shop/storefront-street.jpg"
+          alt="The shop seen from across Fairmount Ave: a low white storefront with a striped awning, the blue door at 7523A, Supply Co. lettering on the window and a blue bistro set out front, with Fat Apple's next door"
           radius="44% 56% 20% 20% / 40% 36% 8% 10%"
           ratio="4/3"
           sizes="(max-width: 700px) 100vw, 50vw"

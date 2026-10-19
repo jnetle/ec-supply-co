@@ -52,10 +52,10 @@ export function EmptyCalendar() {
         }
         media={
           <BlobImage
-            src="/assets/photos/id-42-1600-1000.jpg"
-            alt="The shop's long table, ready for a workshop"
-            radius="46% 54% 18% 22% / 38% 34% 8% 9%"
-            ratio="16/10"
+            src="/assets/photos/shop/front-window-sign.jpg"
+            alt="Inside the shop facing the sunny front window, under a paper lantern, with the Supply Co. lettering on the glass and an old El Cerrito city limit sign propped on the floor below it"
+            radius="48% 52% 20% 18% / 26% 28% 7% 8%"
+            ratio="3/4"
             sizes="(max-width: 700px) 100vw, 50vw"
             eager
             style={{ minHeight: "260px" }}

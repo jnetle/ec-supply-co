@@ -16,16 +16,19 @@
   text-transform: uppercase;
 }
 
+/* Wide pieces take the full row; portrait pieces pair up two to a row. */
 .pieces {
   margin-top: clamp(28px, 4vh, 48px);
   display: grid;
-  gap: clamp(48px, 8vh, 104px);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(48px, 8vh, 104px) clamp(24px, 4vw, 64px);
 }
 
 /* A wide feature photo with its story on a tilted card overlapping the
    lower corner; every other piece mirrors so the section zigzags. */
 .piece {
   --tilt: -1.5deg;
+  grid-column: 1 / -1;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   align-items: end;
@@ -60,6 +63,30 @@
   grid-area: 1 / 1 / 2 / 6;
 }
 
+/* A portrait photo shown whole, in half a row beside its pair. Mirrored
+   like the wide pieces, so a pair faces outward from the middle. The card
+   only tucks under the photo's outer quarter: a tall subject usually runs
+   down the middle, and a deeper overlap hides its bottom. */
+.portrait {
+  grid-column: auto;
+}
+
+.portrait .piecePhoto {
+  grid-area: 1 / 1 / 2 / 9;
+}
+
+.portrait .pieceText {
+  grid-area: 1 / 7 / 2 / 13;
+}
+
+.portrait:nth-child(even) .piecePhoto {
+  grid-area: 1 / 5 / 2 / 13;
+}
+
+.portrait:nth-child(even) .pieceText {
+  grid-area: 1 / 1 / 2 / 7;
+}
+
 .credit {
   margin: 12px 0 0;
   font-size: 15px;
@@ -75,6 +102,10 @@
 }
 
 @media (max-width: 760px) {
+  .pieces {
+    grid-template-columns: 1fr;
+  }
+
   .piece,
   .piece:nth-child(even) {
     grid-template-columns: 1fr;
@@ -94,6 +125,18 @@
   .piece:nth-child(even) .pieceText {
     grid-area: auto;
     margin: -40px 14px 0;
+  }
+
+  .portrait .piecePhoto,
+  .portrait:nth-child(even) .piecePhoto {
+    grid-area: auto;
+    justify-self: center;
+    width: min(100%, 420px);
+  }
+
+  .portrait .pieceText,
+  .portrait:nth-child(even) .pieceText {
+    grid-area: auto;
   }
 }
 

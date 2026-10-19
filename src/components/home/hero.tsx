@@ -58,17 +58,10 @@ const DEFAULT_HEADLINE_PX = 126.4;
 const WORDS = [
   { suffix: "mmunity", color: "var(--color-ecs-teal)" },
   { suffix: "llaboration", color: "var(--color-ecs-marigold)" },
-  { suffix: "-op", color: "var(--color-ecs-magenta)" },
+  { suffix: "-op", color: "var(--color-ecs-cobalt)" },
 ];
 
 const WORD_EXTRUDE_FILTER_ID = "ecs-word-extrude";
-
-/** Photo tint per word, cycled as the sequence advances. */
-const WASH_COLORS = [
-  "var(--color-ecs-teal-deep)",
-  "var(--color-ecs-navy)",
-  "var(--color-ecs-teal-deep)",
-];
 
 const SQUIGGLE =
   "M3 11 q10 -9 20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0 t20 0";
@@ -95,7 +88,7 @@ const SHOW_REPLAY = false;
 /** Must match the compact breakpoint in hero.module.css. */
 const COMPACT_QUERY = "(max-width: 620px)";
 
-const PHOTO_SRC = "/assets/photos/id-42-1600-1000.jpg";
+const PHOTO_SRC = "/assets/photos/shop/lounge.jpg";
 const PHOTO_CREDIT = photoCredit(PHOTO_SRC);
 
 export function Hero() {
@@ -115,11 +108,9 @@ export function Hero() {
     coWindowRef,
     squiggleRef,
     cueRef,
-    washRef,
     signRef,
     signTextRef,
   } = useHeroSequence({
-    washColors: WASH_COLORS,
     wordCount: WORDS.length,
     enabled: !reducedMotion,
     showSign: SHOW_COMING_SOON_SIGN,
@@ -165,16 +156,13 @@ export function Hero() {
         <div className={styles.photo}>
           <Image
             src={PHOTO_SRC}
-            alt="The shop floor on an event night, seen from the sidewalk"
+            alt="The shop's lounge corner: a rust velvet sofa and a rainbow acrylic coffee table on a jute rug, between pine shelving and an arched plywood screen with a round window"
             fill
             loading="eager"
             fetchPriority="high"
             sizes="100vw"
           />
         </div>
-
-        <div className={styles.scrim} aria-hidden="true" />
-        <div ref={washRef} className={styles.wash} aria-hidden="true" />
 
         <div className={styles.content}>
           {/* Laid out in the end state; at rest the hook carries "Co" up beside
