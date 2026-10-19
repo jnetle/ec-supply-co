@@ -63,8 +63,18 @@ export type MadeOfEntry = {
   creditedAs: string;
   /** The helpers who sourced or built it, by `Helper["id"]`. */
   helpers: Helper["id"][];
-  /** `portrait` gives a tall photo a tall frame instead of cropping it wide. */
-  photo?: { src: string; alt: string; portrait?: boolean };
+  /**
+   * `portrait` gives a tall photo a tall frame instead of cropping it wide.
+   * `compact` shows a wide photo in half a row. `pair` adds a second
+   * photo, and the two stand side by side as tall frames.
+   */
+  photo?: {
+    src: string;
+    alt: string;
+    portrait?: boolean;
+    compact?: boolean;
+    pair?: { src: string; alt: string };
+  };
 };
 
 /**
@@ -81,19 +91,7 @@ export const MADE_OF: MadeOfEntry[] = [
     photo: {
       src: "/assets/photos/build/big-table-tight.jpg",
       alt: "The big table's long honey-colored top of reclaimed wood flooring in the foreground, with the pine shelving, the orange sofa, the arched pony wall and the sunlit front window behind it.",
-    },
-  },
-  {
-    id: "shelves",
-    name: "The shelves",
-    // TODO: which high school, if we can name it.
-    provenance:
-      "Built from reclaimed high school bleacher seats, and home to the work of our Shelfie Members.",
-    creditedAs: "Sourced by",
-    helpers: ["thelumberbaron"],
-    photo: {
-      src: "/assets/photos/build/shelves-bleachers.jpg",
-      alt: "Reclaimed bleacher-seat shelves with rounded edges on white wall brackets, one labeled with blue painter's tape reading Kieran.",
+      compact: true,
     },
   },
   {
@@ -105,6 +103,24 @@ export const MADE_OF: MadeOfEntry[] = [
     photo: {
       src: "/assets/photos/shop/window-lettering.jpg",
       alt: "The finished hand-painted window sign: El Cerrito Supply Co. in white block letters with an orange and pink drop shade, over the script line Community, Collaboration, Co-op.",
+      compact: true,
+    },
+  },
+  {
+    id: "shelves",
+    name: "The shelves",
+    // TODO: which high school, if we can name it.
+    provenance:
+      "Built from reclaimed high school bleacher seats, and home to the work of our Shelfie Members.",
+    creditedAs: "Sourced by",
+    helpers: ["thelumberbaron"],
+    photo: {
+      src: "/assets/photos/build/shelves-books.jpg",
+      alt: "Reclaimed wood shelves on white wall brackets, the top one holding design books between orange acrylic bookends, with a pothos trailing down from a pink pot.",
+      pair: {
+        src: "/assets/photos/build/shelves-bleachers.jpg",
+        alt: "Reclaimed bleacher-seat shelves with rounded edges on white wall brackets, one labeled with blue painter's tape reading Kieran.",
+      },
     },
   },
   {
