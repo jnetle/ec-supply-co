@@ -8,6 +8,7 @@ import { Eyebrow } from '@/components/ui/eyebrow';
 import { WaveDivider } from '@/components/ui/wave-divider';
 import {
   MAKER_RADII,
+  NO_MAKERS_NOTE,
   makerByline,
   makerMorphDelay,
 } from '@/lib/content/makers';
@@ -44,6 +45,8 @@ export async function MakerSpotlight() {
         </Eyebrow>
         <h2 className={styles.heading}>Who made it</h2>
       </div>
+
+      {spotlight.length === 0 && <p className={styles.empty}>{NO_MAKERS_NOTE}</p>}
 
       <div className={styles.grid}>
         {spotlight.map((maker, i) => (
@@ -88,17 +91,19 @@ export async function MakerSpotlight() {
 
       {/* After the spotlight rather than beside the heading, so on a phone it
           follows the four makers instead of sitting above them. */}
-      <div className={styles.allRow}>
-        <Link
-          href="/makers"
-          className={button({
-            variant: 'outline',
-            tone: 'plum',
-          })}
-        >
-          Meet all the makers →
-        </Link>
-      </div>
+      {spotlight.length > 0 && (
+        <div className={styles.allRow}>
+          <Link
+            href="/makers"
+            className={button({
+              variant: 'outline',
+              tone: 'plum',
+            })}
+          >
+            Meet all the makers →
+          </Link>
+        </div>
+      )}
 
       <div data-reveal className={styles.cta}>
         <div className="grid gap-1.5">

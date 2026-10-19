@@ -16,9 +16,9 @@ export const metadata: Metadata = {
 
 /** Every unmatched URL, and any route that calls notFound(). */
 export default async function NotFound() {
-  // Today's first spotlight pick. Empty when Wix is unreachable, and the
-  // page reads fine without the introduction.
-  const [maker] = await getSpotlightMakers();
+  // Today's first spotlight pick. Missing when Wix is unreachable or the
+  // roster is empty, and the page reads fine without the introduction.
+  const [maker] = await getSpotlightMakers().catch(() => []);
 
   return (
     <>

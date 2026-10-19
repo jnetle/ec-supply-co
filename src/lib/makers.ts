@@ -64,20 +64,30 @@ function fromWix(item: Record<string, unknown>): Maker | undefined {
 /**
  * Every maker from Wix, in the order they were added. Pages show them through
  * getSpotlightMakers or getDirectoryMakers, which rotate the order. If Wix is
- * unreachable or unconfigured, the roster comes back empty rather than failing
- * the page. Memoized per request.
+ * unconfigured, the roster comes back empty. If Wix is unreachable, this
+ * throws: a background regeneration then keeps serving the last good page
+ * instead of caching an empty roster, and a build fails rather than deploy
+ * one. Memoized per request.
  */
 export const getMakers = cache(async (): Promise<Maker[]> => {
+  let client: ReturnType<typeof getWixClient>;
   try {
-    const { items } = await getWixClient()
-      .items.query(LOCAL_MAKERS_COLLECTION)
+    client = getWixClient();
+  } catch (error) {
+    console.error(`Loading the ${LOCAL_MAKERS_COLLECTION} collection skipped`, error);
+    return [];
+  }
+
+  try {
+    const { items } = await client.items
+      .query(LOCAL_MAKERS_COLLECTION)
       .ascending("_createdDate")
       .limit(1000)
       .find();
     return items.map(fromWix).filter((maker) => maker !== undefined);
   } catch (error) {
     console.error(`Loading the ${LOCAL_MAKERS_COLLECTION} collection failed`, error);
-    return [];
+    throw error;
   }
 });
 

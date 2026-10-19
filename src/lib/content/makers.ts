@@ -19,6 +19,10 @@ export type Maker = {
   featured?: boolean;
 };
 
+/** Stands in for the maker cards while the roster is empty. */
+export const NO_MAKERS_NOTE =
+  "The shelves are being restocked. Check back soon, or come by the shop to see their work in person.";
+
 /** "Ceramics · since 2019", skipping whichever half the CMS left blank. */
 export function makerByline(maker: Maker) {
   return [maker.craft, maker.since && `since ${maker.since}`]
