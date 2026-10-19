@@ -16,11 +16,14 @@ export function StoreJsonLd() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Store",
+    "@id": `${SITE_URL}/#store`,
     name: SITE_NAME,
     description: SITE_DESCRIPTION,
     url: SITE_URL,
     email: SITE_EMAIL,
     image: new URL(SHARE_IMAGE.url, SITE_URL).toString(),
+    logo: new URL("/icon.png", SITE_URL).toString(),
+    hasMap: SHOP_ADDRESS.maps,
     address: {
       "@type": "PostalAddress",
       streetAddress: SHOP_ADDRESS.street,

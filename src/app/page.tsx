@@ -15,9 +15,10 @@ import { SiteHeader } from "@/components/site/site-header";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
 import { HOME_EVENTS_ENABLED } from "@/lib/content/calendar";
 import { MANIFESTO_ENABLED } from "@/lib/content/manifesto";
-import { SITE_DESCRIPTION, pageMetadata } from "@/lib/site";
+import { SITE_DESCRIPTION, SITE_NAME, pageMetadata } from "@/lib/site";
 
 export const metadata: Metadata = pageMetadata({
+  title: { absolute: `${SITE_NAME} · Local makers shop in El Cerrito, CA` },
   description: SITE_DESCRIPTION,
   path: "/",
 });

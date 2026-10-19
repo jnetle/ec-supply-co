@@ -11,7 +11,7 @@ import { pageMetadata } from "@/lib/site";
 import styles from "@/components/sell-with-us/sell-with-us-page.module.css";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Maker submissions",
+  title: "Sell with us",
   description:
     "Apply to sell your work at El Cerrito Supply Co. We review submissions in rounds a few times a year.",
   path: "/sell-with-us",
