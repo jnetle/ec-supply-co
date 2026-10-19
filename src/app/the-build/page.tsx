@@ -27,6 +27,9 @@ const PIECE_RADII = [
 /** The same shape stood upright, for portrait photos; the arch stays shallow. */
 const PORTRAIT_RADIUS = "48% 52% 20% 18% / 26% 28% 7% 8%";
 
+/** A paired photo's masks: the portrait shape, then its mirror. */
+const PAIR_RADII = [PORTRAIT_RADIUS, "52% 48% 18% 20% / 28% 26% 8% 7%"];
+
 /** Card fills, rotated so neighbours never match; the manifesto's palette. */
 const CARD_COLORS = [
   { background: "var(--color-ecs-surface)", accent: "var(--color-ecs-teal)" },
@@ -69,7 +72,7 @@ export default function TheBuildPage() {
                 <article
                   key={entry.id}
                   id={entry.id}
-                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""}`}
+                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""} ${entry.photo?.compact ? styles.compact : ""}`}
                   style={
                     {
                       "--card-bg": colors.background,
@@ -78,22 +81,38 @@ export default function TheBuildPage() {
                     } as CSSProperties
                   }
                 >
-                  <BlobImage
-                    src={entry.photo?.src}
-                    alt={entry.photo?.alt ?? ""}
-                    radius={
-                      entry.photo?.portrait
-                        ? PORTRAIT_RADIUS
-                        : PIECE_RADII[i % PIECE_RADII.length]
-                    }
-                    ratio={entry.photo?.portrait ? "2/3" : "4/3"}
-                    // Parallax overscales the photo, which would crop the
-                    // very edges a portrait frame exists to show.
-                    parallax={!entry.photo?.portrait}
-                    sizes="(max-width: 700px) 92vw, 720px"
-                    eager={i === 0}
-                    className={styles.piecePhoto}
-                  />
+                  {entry.photo?.pair ? (
+                    <div className={`${styles.piecePhoto} ${styles.photoPair}`}>
+                      {[entry.photo, entry.photo.pair].map((photo, j) => (
+                        <BlobImage
+                          key={photo.src}
+                          src={photo.src}
+                          alt={photo.alt}
+                          radius={PAIR_RADII[j]}
+                          ratio="2/3"
+                          parallax={false}
+                          sizes="(max-width: 700px) 46vw, 360px"
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <BlobImage
+                      src={entry.photo?.src}
+                      alt={entry.photo?.alt ?? ""}
+                      radius={
+                        entry.photo?.portrait
+                          ? PORTRAIT_RADIUS
+                          : PIECE_RADII[i % PIECE_RADII.length]
+                      }
+                      ratio={entry.photo?.portrait ? "2/3" : "4/3"}
+                      // Parallax overscales the photo, which would crop the
+                      // very edges a portrait frame exists to show.
+                      parallax={!entry.photo?.portrait}
+                      sizes="(max-width: 700px) 92vw, 720px"
+                      eager={i === 0}
+                      className={styles.piecePhoto}
+                    />
+                  )}
                   <div className={styles.pieceText}>
                     <h3 className={styles.name}>{entry.name}</h3>
                     <p className={styles.note}>{entry.provenance}</p>
@@ -102,7 +121,8 @@ export default function TheBuildPage() {
                         {entry.creditedAs}{" "}
                         {helpers.map((helper, j) => (
                           <span key={helper.id}>
-                            {j > 0 && (j === helpers.length - 1 ? " and " : ", ")}
+                            {j > 0 &&
+                              (j === helpers.length - 1 ? " and " : ", ")}
                             <a href={`#${helper.id}`}>{helper.name}</a>
                           </span>
                         ))}

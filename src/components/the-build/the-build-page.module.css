@@ -16,12 +16,13 @@
   text-transform: uppercase;
 }
 
-/* Wide pieces take the full row; portrait pieces pair up two to a row. */
+/* Wide pieces take the full row; portrait and compact pieces pair up two
+   to a row. */
 .pieces {
   margin-top: clamp(28px, 4vh, 48px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(48px, 8vh, 104px) clamp(24px, 4vw, 64px);
+  gap: clamp(48px, 6vh, 72px) clamp(24px, 4vw, 64px);
 }
 
 /* A wide feature photo with its story on a tilted card overlapping the
@@ -85,6 +86,41 @@
 
 .portrait:nth-child(even) .pieceText {
   grid-area: 1 / 1 / 2 / 7;
+}
+
+/* Two tall photos side by side in a wide piece's place, the second
+   stepped down so the pair doesn't read as one block. */
+.photoPair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 28px);
+  align-items: start;
+}
+
+.photoPair > :nth-child(2) {
+  margin-top: 14%;
+}
+
+/* A wide photo in half a row, beside its pair, so the row isn't left
+   half empty. The card hangs off the photo's lower-right corner, clear of
+   the subject, which in these shots sits left of centre. Desktop only;
+   phones stack full width. */
+@media (min-width: 761px) {
+  .compact {
+    grid-column: auto;
+    align-items: start;
+  }
+
+  .compact .piecePhoto,
+  .compact:nth-child(even) .piecePhoto {
+    grid-area: 1 / 1 / 2 / 10;
+  }
+
+  .compact .pieceText,
+  .compact:nth-child(even) .pieceText {
+    grid-area: 2 / 7 / 3 / 13;
+    margin: clamp(-48px, -3vw, -24px) 0 0;
+  }
 }
 
 .credit {
