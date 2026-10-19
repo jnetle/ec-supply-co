@@ -4,13 +4,14 @@ import { track } from "@vercel/analytics/server";
 import { headers } from "next/headers";
 
 import { env } from "@/lib/env";
+import { newsletterSchema } from "@/lib/form-schemas";
 import type { SubscribeState } from "@/lib/newsletter";
-import { getWixClient } from "@/lib/wix";
+import { describeWixError, getWixClient } from "@/lib/wix";
 import { NEWSLETTER_FORM_FIELDS } from "@/lib/wix-form-config";
 
-// Server Actions are public POST endpoints, so every value here is untrusted.
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MAX_EMAIL_LENGTH = 254;
+// Rate limited by a Vercel Firewall custom rule, not in code: POST requests
+// with a `next-action` header to / or /sell-with-us, 5 per IP per 60s fixed
+// window, then deny (429).
 
 const SUCCESS_MESSAGE = "You're on the list. Thanks for subscribing!";
 const FAILURE_MESSAGE = "Something went wrong on our end. Please try again.";
@@ -25,13 +26,13 @@ export async function subscribe(
     return { status: "success", message: SUCCESS_MESSAGE };
   }
 
-  const submitted = formData.get("email");
-  const email =
-    typeof submitted === "string" ? submitted.trim().toLowerCase() : "";
+  const result = newsletterSchema.safeParse({ email: formData.get("email") });
 
-  if (!email || email.length > MAX_EMAIL_LENGTH || !EMAIL_PATTERN.test(email)) {
+  if (!result.success) {
     return { status: "error", message: "Enter a valid email address." };
   }
+
+  const { email } = result.data;
 
   try {
     // Lands in Wix under Customers & Leads > Forms & Submissions, alongside
@@ -43,7 +44,7 @@ export async function subscribe(
       submissions: { [NEWSLETTER_FORM_FIELDS.email]: email },
     });
   } catch (error) {
-    console.error("Newsletter subscription failed", error);
+    console.error("Newsletter subscription failed", describeWixError(error));
     return { status: "error", message: FAILURE_MESSAGE };
   }
 

@@ -11,6 +11,12 @@ import {
 import { submitMakerApplication } from "@/app/actions/maker-application";
 import { button } from "@/components/ui/button";
 import { Field, Required } from "@/components/ui/field";
+import {
+  MAX_EMAIL_LENGTH,
+  MAX_LONG_TEXT_LENGTH,
+  MAX_SHORT_TEXT_LENGTH,
+  MAX_URL_LENGTH,
+} from "@/lib/form-limits";
 import { initialMakerApplicationState } from "@/lib/maker-application";
 
 import styles from "@/components/ui/form.module.css";
@@ -70,10 +76,23 @@ function ApplicationFormFields({
     initialMakerApplicationState,
   );
   const [values, setValues] = useState(EMPTY_APPLICATION);
+  // When the form appeared, for the server's too-fast-to-be-human check. Added
+  // at submit rather than as a hidden input, which React resets after each
+  // attempt, and set after mount so it isn't the prerender's build time.
+  const startedRef = useRef(0);
   const sentTitleRef = useRef<HTMLHeadingElement>(null);
 
   const updateValue = (name: keyof ApplicationFormValues, value: string) => {
     setValues((current) => ({ ...current, [name]: value }));
+  };
+
+  useEffect(() => {
+    startedRef.current = Date.now();
+  }, []);
+
+  const submit = (formData: FormData) => {
+    formData.set("started", String(startedRef.current));
+    formAction(formData);
   };
 
   useEffect(() => {
@@ -103,7 +122,7 @@ function ApplicationFormFields({
   }
 
   return (
-    <form action={formAction} className={styles.form}>
+    <form action={submit} className={styles.form}>
       <div>
         <h2 className={styles.heading}>Apply</h2>
         <p className={styles.intro}>
@@ -119,6 +138,7 @@ function ApplicationFormFields({
               <input
                 {...props}
                 name="first"
+                maxLength={MAX_SHORT_TEXT_LENGTH}
                 required
                 autoComplete="given-name"
                 value={values.first}
@@ -131,6 +151,7 @@ function ApplicationFormFields({
               <input
                 {...props}
                 name="last"
+                maxLength={MAX_SHORT_TEXT_LENGTH}
                 required
                 autoComplete="family-name"
                 value={values.last}
@@ -147,6 +168,7 @@ function ApplicationFormFields({
             <input
               {...props}
               name="business"
+              maxLength={MAX_SHORT_TEXT_LENGTH}
               required
               autoComplete="organization"
               value={values.business}
@@ -160,6 +182,7 @@ function ApplicationFormFields({
               {...props}
               type="email"
               name="email"
+              maxLength={MAX_EMAIL_LENGTH}
               required
               autoComplete="email"
               value={values.email}
@@ -180,6 +203,7 @@ function ApplicationFormFields({
             {...props}
             type="url"
             name="link"
+            maxLength={MAX_URL_LENGTH}
             required
             placeholder="https://"
             value={values.link}
@@ -198,6 +222,7 @@ function ApplicationFormFields({
           <textarea
             {...props}
             name="about"
+            maxLength={MAX_LONG_TEXT_LENGTH}
             required
             rows={5}
             value={values.about}
@@ -211,6 +236,7 @@ function ApplicationFormFields({
           <input
             {...props}
             name="city"
+            maxLength={MAX_SHORT_TEXT_LENGTH}
             autoComplete="address-level2"
             value={values.city}
             onChange={(event) => updateValue("city", event.target.value)}
@@ -223,6 +249,7 @@ function ApplicationFormFields({
           <textarea
             {...props}
             name="connection"
+            maxLength={MAX_LONG_TEXT_LENGTH}
             rows={3}
             placeholder="If you have one, tell us"
             value={values.connection}

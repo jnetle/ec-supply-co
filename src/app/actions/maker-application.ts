@@ -2,47 +2,21 @@
 
 import { track } from "@vercel/analytics/server";
 import { headers } from "next/headers";
-import { z } from "zod";
+import type { z } from "zod";
 
 import { env } from "@/lib/env";
+import { MIN_APPLICATION_FILL_MS } from "@/lib/form-limits";
+import {
+  makerApplicationSchema,
+  type MakerApplication,
+} from "@/lib/form-schemas";
 import type { MakerApplicationState } from "@/lib/maker-application";
-import { getWixClient } from "@/lib/wix";
+import { describeWixError, getWixClient } from "@/lib/wix";
 import { MAKER_FORM_FIELDS } from "@/lib/wix-form-config";
 
-const MAX_SHORT_TEXT_LENGTH = 200;
-const MAX_LONG_TEXT_LENGTH = 5_000;
-
-const requiredShortText = z.string().trim().min(1).max(MAX_SHORT_TEXT_LENGTH);
-const optionalShortText = z.string().trim().max(MAX_SHORT_TEXT_LENGTH);
-const optionalLongText = z.string().trim().max(MAX_LONG_TEXT_LENGTH);
-
-const makerApplicationSchema = z.object({
-  first: requiredShortText,
-  last: requiredShortText,
-  business: requiredShortText,
-  email: z
-    .string()
-    .trim()
-    .max(254)
-    .email()
-    .transform((value) => value.toLowerCase()),
-  link: z
-    .string()
-    .trim()
-    .min(1)
-    .max(2_048)
-    .url()
-    .refine(
-      (value) =>
-        URL.canParse(value) &&
-        ["http:", "https:"].includes(new URL(value).protocol),
-    ),
-  about: z.string().trim().min(1).max(MAX_LONG_TEXT_LENGTH),
-  city: optionalShortText,
-  connection: optionalLongText,
-  wholesale: z.enum(["yes", "learning", "no"]),
-  pricing: z.union([z.literal(""), z.enum(["yes", "working", "no"])]),
-});
+// Rate limited by a Vercel Firewall custom rule, not in code: POST requests
+// with a `next-action` header to / or /sell-with-us, 5 per IP per 60s fixed
+// window, then deny (429).
 
 const WHOLESALE_ANSWERS = {
   yes: "Yes",
@@ -67,24 +41,61 @@ function formValue(
   return formData.get(name) ?? "";
 }
 
-function validationMessage(error: z.ZodError): string {
-  const invalidFields = new Set(error.issues.map((issue) => issue.path[0]));
+const FIELD_LABELS: Record<keyof MakerApplication, string> = {
+  first: "First name",
+  last: "Last name",
+  business: "Business name",
+  email: "Email",
+  link: "Website or social media",
+  about: "About you and your work",
+  city: "City",
+  connection: "Connection to El Cerrito",
+  wholesale: "The wholesale question",
+  pricing: "The pricing question",
+};
 
-  if (invalidFields.has("email")) return "Enter a valid email address.";
-  if (invalidFields.has("link")) {
-    return "Enter a full website or social media URL beginning with http:// or https://.";
+/** One message for the first field that failed, in form order. */
+function validationMessage(error: z.ZodError<MakerApplication>): string {
+  const issue = error.issues[0];
+  const field = issue?.path[0] as keyof MakerApplication | undefined;
+  if (!issue || !field || !(field in FIELD_LABELS)) {
+    return "Check the form values and fill in all required fields.";
   }
 
-  return "Check the form values and fill in all required fields.";
+  if (field === "email") return "Enter a valid email address.";
+  if (field === "link") {
+    return "Enter a full website or social media URL beginning with http:// or https://.";
+  }
+  if (field === "wholesale") return "Answer the wholesale question.";
+
+  const label = FIELD_LABELS[field];
+  switch (issue.code) {
+    case "too_small":
+      return `${label} is required.`;
+    case "too_big":
+      return `Keep ${label.toLowerCase()} under ${issue.maximum.toLocaleString("en-US")} characters.`;
+    case "invalid_format":
+      return `${label} contains characters we can't accept.`;
+    default:
+      return `Check ${label.toLowerCase()} and try again.`;
+  }
+}
+
+/** True when the form was sent too soon after it loaded, or with no start. */
+function sentTooFast(formData: FormData): boolean {
+  const started = Number(formData.get("started"));
+  const elapsed = Date.now() - started;
+  return !Number.isFinite(started) || started <= 0 || elapsed < MIN_APPLICATION_FILL_MS;
 }
 
 export async function submitMakerApplication(
   _prevState: MakerApplicationState,
   formData: FormData,
 ): Promise<MakerApplicationState> {
-  // Bots commonly fill hidden fields. Return success so they receive no signal
-  // that the submission was discarded.
-  if (formData.get("fax")) {
+  // Bots commonly fill hidden fields, and send within seconds of the form
+  // loading; nobody reads and fills this form that fast. Return success so
+  // they receive no signal that the submission was discarded.
+  if (formData.get("fax") || sentTooFast(formData)) {
     return { status: "success", message: SUCCESS_MESSAGE };
   }
 
@@ -126,7 +137,10 @@ export async function submitMakerApplication(
       },
     });
   } catch (error) {
-    console.error("Maker application submission failed", error);
+    console.error(
+      "Maker application submission failed",
+      describeWixError(error),
+    );
     return { status: "error", message: FAILURE_MESSAGE };
   }
 
