@@ -14,6 +14,8 @@ const nextConfig: NextConfig = {
   images: {
     // AVIF is about 20% smaller than WebP; browsers without it get WebP.
     formats: ["image/avif", "image/webp"],
+    // The shop's own photography is graded and sharp; 75 smeared it.
+    qualities: [85],
     // Placeholder photos on /the-build, served straight from Unsplash.
     remotePatterns: [new URL("https://images.unsplash.com/photo-**")],
   },

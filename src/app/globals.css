@@ -271,11 +271,6 @@ body::before {
   }
 }
 
-/* Photographs sit back into the warm page instead of on top of it. */
-.washed {
-  filter: saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94);
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

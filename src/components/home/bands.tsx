@@ -146,8 +146,8 @@ export function Carts() {
       }
       media={
         <BlobImage
-          src="/assets/photos/id-431-900-1125.jpg"
-          alt="A popup vendor's cart set up inside the shop"
+          src="/assets/photos/shop/storefront-bistro.jpg"
+          alt="Out front of the shop in the sun: a blue bistro table and two chairs on the sidewalk under the scalloped awning, below the Supply Co. window lettering"
           radius="54% 46% 22% 18% / 36% 40% 9% 8%"
           ratio="4/5"
           sizes={HALF_COLUMN}
@@ -200,8 +200,8 @@ export function Tools() {
       }
       media={
         <BlobImage
-          src="/assets/photos/id-1081-1000-750.jpg"
-          alt="A pegboard wall of borrowable tools"
+          src="/assets/photos/shop/tool-cabinets.jpg"
+          alt="A long row of pine cabinets with iridescent glass doors, reflecting the shop's shelving, running back toward the lounge's orange sofa and arched plywood screen"
           radius="54% 46% 22% 18% / 36% 40% 9% 8%"
           ratio="4/3"
           sizes={HALF_COLUMN}

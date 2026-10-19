@@ -1,10 +1,6 @@
 /**
  * The people who helped set up the shop, credited on /the-build, and the photos
  * around the site that each photographer took.
- *
- * PLACEHOLDERS: the helpers named "… name" are stand-ins until the real names
- * and links come in. Replace them rather than adding alongside. The Lumber
- * Baron is real.
  */
 
 export type Helper = {
@@ -37,11 +33,6 @@ export const HELPERS: Helper[] = [
     link: { href: "https://www.stephaniedolen.com/", label: "Website" },
   },
   {
-    id: "placeholder-builder",
-    name: "Builder name",
-    role: "Shelving + carpentry",
-  },
-  {
     id: "heather-hardison",
     name: "Heather Hardison",
     role: "Window sign design + painting",
@@ -52,6 +43,11 @@ export const HELPERS: Helper[] = [
     name: "Rookie Ceramics",
     role: "Ceramic address numbers",
     link: { href: "https://www.instagram.com/rookie.ceramics", label: "Instagram" },
+  },
+  {
+    id: "william-pryor",
+    name: "William Pryor",
+    role: "Pony wall",
   },
 ];
 
@@ -67,7 +63,8 @@ export type MadeOfEntry = {
   creditedAs: string;
   /** The helpers who sourced or built it, by `Helper["id"]`. */
   helpers: Helper["id"][];
-  photo?: { src: string; alt: string };
+  /** `portrait` gives a tall photo a tall frame instead of cropping it wide. */
+  photo?: { src: string; alt: string; portrait?: boolean };
 };
 
 /**
@@ -82,8 +79,8 @@ export const MADE_OF: MadeOfEntry[] = [
     creditedAs: "Sourced by",
     helpers: ["thelumberbaron"],
     photo: {
-      src: "/assets/photos/build/big-table.jpg",
-      alt: "A long table of honey-colored reclaimed wood flooring, still dotted with old nail holes, on black steel legs in the shop.",
+      src: "/assets/photos/build/big-table-tight.jpg",
+      alt: "The big table's long honey-colored top of reclaimed wood flooring in the foreground, with the pine shelving, the orange sofa, the arched pony wall and the sunlit front window behind it.",
     },
   },
   {
@@ -95,8 +92,8 @@ export const MADE_OF: MadeOfEntry[] = [
     creditedAs: "Sourced by",
     helpers: ["thelumberbaron"],
     photo: {
-      src: "/assets/photos/build/shelves.jpg",
-      alt: "Rows of warm, reclaimed-wood shelves on metal brackets along a cream wall, with a few books on the top shelf.",
+      src: "/assets/photos/build/shelves-bleachers.jpg",
+      alt: "Reclaimed bleacher-seat shelves with rounded edges on white wall brackets, one labeled with blue painter's tape reading Kieran.",
     },
   },
   {
@@ -106,8 +103,8 @@ export const MADE_OF: MadeOfEntry[] = [
     creditedAs: "Painted by",
     helpers: ["heather-hardison"],
     photo: {
-      src: "/assets/photos/build/window-sign.jpg",
-      alt: "Heather Hardison painting the El Cerrito Supply Co. sign on the shop's front window, seen from the sidewalk.",
+      src: "/assets/photos/shop/window-lettering.jpg",
+      alt: "The finished hand-painted window sign: El Cerrito Supply Co. in white block letters with an orange and pink drop shade, over the script line Community, Collaboration, Co-op.",
     },
   },
   {
@@ -117,8 +114,22 @@ export const MADE_OF: MadeOfEntry[] = [
     creditedAs: "Crafted by",
     helpers: ["rookie-ceramics"],
     photo: {
-      src: "/assets/photos/build/address-numbers.jpg",
-      alt: "Glossy red ceramic numbers reading 7523A, stacked down the shop's white door frame, with their reflection in the front window.",
+      src: "/assets/photos/build/address-numbers-door.jpg",
+      portrait: true,
+      alt: "Glossy orange ceramic numbers reading 7523A, stacked down the white door frame beside the blue door, with their reflection in the front window.",
+    },
+  },
+  {
+    id: "pony-wall",
+    name: "The pony wall",
+    provenance:
+      "An arched plywood wall with a round window and two little shelves, standing between the lounge and the shelving.",
+    creditedAs: "Built by",
+    helpers: ["william-pryor"],
+    photo: {
+      src: "/assets/photos/build/pony-wall.jpg",
+      portrait: true,
+      alt: "The arched plywood pony wall, with a round window cut through it and two small shelves, beside the rust velvet sofa and the rainbow acrylic coffee table.",
     },
   },
 ];
