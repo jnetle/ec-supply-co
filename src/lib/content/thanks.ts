@@ -139,7 +139,7 @@ export const MADE_OF: MadeOfEntry[] = [
     id: "pony-wall",
     name: "The pony wall",
     provenance:
-      "An arched plywood wall with a round window and two little shelves, standing between the lounge and the shelving.",
+      "Gives the lounge a little room of its own, and gets pushed aside when a crowd needs the whole floor.",
     creditedAs: "Built by",
     helpers: ["william-pryor"],
     photo: {
