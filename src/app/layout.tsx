@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 
 import { FONT_VARIABLES } from "@/lib/fonts";
@@ -34,6 +34,10 @@ export const metadata: Metadata = {
     ? { index: true, follow: true }
     : { index: false, follow: false },
 };
+
+// Draws the page up under the iPhone status bar, so the sticky header can
+// carry the awning to the top of the screen; see site-header.module.css.
+export const viewport: Viewport = { viewportFit: "cover" };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (

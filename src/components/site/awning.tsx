@@ -173,6 +173,10 @@ function wave(W: number, top: number, depth: number): Pt[] {
   return pts;
 }
 
+/** How far above the strip the slats reach, in user units: past the tallest
+    iPhone status bar (about 62px) at the narrow strip's 0.66px per unit. */
+const ABOVE = -200;
+
 function draw(g: Geo) {
   const r = seeded(231);
   // The hem sits where the original's scallops began to curve, less a
@@ -180,15 +184,19 @@ function draw(g: Geo) {
   const hemTop = 99.5 - Math.min(g.R, g.S / 2) - 12;
   const hem = wave(g.W, hemTop, 20);
   const last = hem[hem.length - 1];
-  const outline = closed([[-10, -10], ...hem, [last[0], -10]]);
+  const outline = closed([[-10, ABOVE], ...hem, [last[0], ABOVE]]);
 
   // One wavering edge per slat boundary, run past the bottom; the slats are
   // trimmed along the hem, so every colour meets it flush. Neighbours share
-  // an edge, so there are never gaps between slats.
+  // an edge, so there are never gaps between slats. Each edge also runs
+  // straight up to ABOVE, for the part behind the status bar.
   const edges: Pt[][] = [];
   for (let x = 0; x <= g.W + g.S; x += g.S) {
     const lean = (r() - 0.5) * 2.4;
-    edges.push(line(r, [x - lean / 2, -10], [x + lean / 2, 110], 14, 1.8));
+    edges.push([
+      [x - lean / 2, ABOVE],
+      ...line(r, [x - lean / 2, -10], [x + lean / 2, 110], 14, 1.8),
+    ]);
   }
 
   const slats: { d: string; fill: string }[] = [];
@@ -327,19 +335,21 @@ export function Awning() {
   }, []);
 
   return (
-    <div ref={ref} aria-hidden="true" className={styles.awning}>
-      <AwningArt
-        geo={geo}
-        id="awning-wide"
-        fit="none"
-        className={`${styles.art} ${styles.wide}`}
-      />
-      <AwningArt
-        geo={NARROW}
-        id="awning-narrow"
-        fit="xMinYMin slice"
-        className={`${styles.art} ${styles.narrow}`}
-      />
+    <div aria-hidden="true" className={styles.awning}>
+      <div ref={ref} className={styles.strip}>
+        <AwningArt
+          geo={geo}
+          id="awning-wide"
+          fit="none"
+          className={`${styles.art} ${styles.wide}`}
+        />
+        <AwningArt
+          geo={NARROW}
+          id="awning-narrow"
+          fit="xMinYMin slice"
+          className={`${styles.art} ${styles.narrow}`}
+        />
+      </div>
     </div>
   );
 }
