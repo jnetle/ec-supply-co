@@ -58,6 +58,7 @@ function fromWix(item: Record<string, unknown>): Maker | undefined {
       : undefined,
     website: websiteUrl(item.website),
     featured: item.featured === true,
+    added: item._createdDate instanceof Date ? shopTodayKey(item._createdDate) : undefined,
   };
 }
 
@@ -95,9 +96,17 @@ export const getMakers = cache(async (): Promise<Maker[]> => {
 const DAY_EPOCH = Date.UTC(2024, 0, 1);
 const DAY_MS = 24 * 60 * 60 * 1000;
 
+/** The day the site went live, where the spotlight's turn-taking starts. */
+const LAUNCH_DAY = "2026-10-19";
+
+/** Whole days from the epoch to a YYYY-MM-DD shop day. */
+function dayOf(key: string) {
+  return Math.round((Date.parse(key) - DAY_EPOCH) / DAY_MS);
+}
+
 /** Whole days since the epoch, turning over at midnight Pacific. */
 function dayNumber(now: Date) {
-  return Math.round((Date.parse(shopTodayKey(now)) - DAY_EPOCH) / DAY_MS);
+  return dayOf(shopTodayKey(now));
 }
 
 /** Fisher–Yates driven by mulberry32, so the same seed gives the same order. */
@@ -125,32 +134,42 @@ function byId(makers: Maker[]) {
 }
 
 /**
- * Four makers, changing daily. The roster is reshuffled once per cycle and the
- * cycles are laid end to end, so each day takes the next four in line and
- * everyone gets the same number of turns, whatever the roster's size. The
- * reshuffle means nobody is stuck with the same weekday, card position or
- * neighbours. Deterministic rather than random, so every render on a given day
- * agrees.
+ * Four makers, changing daily: whoever has waited longest since their last
+ * turn, with the day's shuffle settling ties. Nothing is stored, so every
+ * render replays the line from launch day, letting each maker join the day
+ * after they were added to Wix. A new maker therefore goes straight to the
+ * front, and nobody loses their place when the roster grows. The first card,
+ * the one phones show first and the 404 page borrows, goes to whichever of the
+ * four has waited longest for it. Deterministic, so every render on a given
+ * day agrees.
  */
 export async function getSpotlightMakers(now = new Date()): Promise<Maker[]> {
   const makers = byId(await getMakers());
-  if (makers.length <= SPOTLIGHT_SIZE) return seededShuffle(makers, dayNumber(now));
+  const launch = dayOf(LAUNCH_DAY);
+  const today = Math.max(dayNumber(now), launch);
+  // Joining the next day keeps today's four from changing mid-day.
+  const joins = new Map(
+    makers.map((m) => [m, m.added ? Math.max(dayOf(m.added) + 1, launch) : launch]),
+  );
 
-  const cycles = new Map<number, Maker[]>();
-  const inLine = (position: number) => {
-    const cycle = Math.floor(position / makers.length);
-    if (!cycles.has(cycle)) cycles.set(cycle, seededShuffle(makers, cycle));
-    return cycles.get(cycle)![position % makers.length];
-  };
+  const lastTurn = new Map<Maker, number>();
+  const lastFirst = new Map<Maker, number>();
+  const waited = (last: Map<Maker, number>) => (a: Maker, b: Maker) =>
+    (last.get(a) ?? -1) - (last.get(b) ?? -1);
 
-  // A day that straddles two cycles can meet the same maker twice; the repeat
-  // is skipped for whoever comes next.
-  const picked: Maker[] = [];
-  for (let p = dayNumber(now) * SPOTLIGHT_SIZE; picked.length < SPOTLIGHT_SIZE; p++) {
-    const maker = inLine(p);
-    if (!picked.includes(maker)) picked.push(maker);
+  for (let day = launch; ; day++) {
+    const picked = seededShuffle(
+      makers.filter((m) => joins.get(m)! <= day),
+      day,
+    )
+      .sort(waited(lastTurn))
+      .slice(0, SPOTLIGHT_SIZE);
+    const [first] = [...picked].sort(waited(lastFirst));
+
+    if (day === today) return first ? [first, ...picked.filter((m) => m !== first)] : [];
+    for (const maker of picked) lastTurn.set(maker, day);
+    if (first) lastFirst.set(first, day);
   }
-  return picked;
 }
 
 /** The whole roster in a fresh order each day, so nobody always heads the page. */
