@@ -17,6 +17,8 @@ export type Maker = {
   website?: string;
   /** Wix's "featured" box. Unused: the spotlight rotates through everyone. */
   featured?: boolean;
+  /** The shop day (YYYY-MM-DD, Pacific) the maker was added in Wix. */
+  added?: string;
 };
 
 /** Stands in for the maker cards while the roster is empty. */
