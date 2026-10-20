@@ -54,11 +54,18 @@ export const makerApplicationSchema = z.object({
   last: requiredShortText,
   business: requiredShortText,
   email,
-  // http(s) with a real domain: no javascript:, no localhost, no bare IPs.
+  // People type "myshop.com" or "instagram.com/me", so a missing scheme gets
+  // https:// added. After that it must be http(s) with a real domain: no
+  // javascript:, no localhost, no bare IPs.
   link: z
     .string()
     .trim()
     .max(MAX_URL_LENGTH)
+    .overwrite((value) =>
+      value === "" || /^[a-z][a-z\d+.-]*:\/\//i.test(value)
+        ? value
+        : `https://${value.replace(/^\/\//, "")}`,
+    )
     .pipe(z.url({ protocol: /^https?$/, hostname: z.regexes.domain })),
   about: longText.min(1),
   city: optionalShortText,

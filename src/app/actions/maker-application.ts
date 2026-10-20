@@ -64,7 +64,7 @@ function validationMessage(error: z.ZodError<MakerApplication>): string {
 
   if (field === "email") return "Enter a valid email address.";
   if (field === "link") {
-    return "Enter a full website or social media URL beginning with http:// or https://.";
+    return "Enter a website or social media link, like yourshop.com or instagram.com/yourshop.";
   }
   if (field === "wholesale") return "Answer the wholesale question.";
 

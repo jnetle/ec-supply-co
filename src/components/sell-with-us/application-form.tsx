@@ -201,11 +201,15 @@ function ApplicationFormFields({
         {(props) => (
           <input
             {...props}
-            type="url"
+            type="text"
+            inputMode="url"
+            autoComplete="url"
+            autoCapitalize="none"
+            spellCheck={false}
             name="link"
             maxLength={MAX_URL_LENGTH}
             required
-            placeholder="https://"
+            placeholder="yourshop.com"
             value={values.link}
             onChange={(event) => updateValue("link", event.target.value)}
           />
