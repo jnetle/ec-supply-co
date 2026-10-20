@@ -163,21 +163,6 @@ section[id] {
   background: color-mix(in srgb, var(--color-ecs-marigold) 40%, transparent);
 }
 
-/* Soft sun-fade in the corners, like an old painted window. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 899;
-  background: radial-gradient(
-    120% 90% at 50% 40%,
-    transparent 55%,
-    rgba(84, 58, 32, 0.16) 100%
-  );
-  mix-blend-mode: multiply;
-}
-
 /* ── Iridescent film ──────────────────────────────────────────────────────
    The shop's glass panel, door and screens carry a dichroic film: mostly
    clear, with a pale rainbow that slides across as you walk past. --ec-film
