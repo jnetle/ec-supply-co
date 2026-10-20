@@ -11,10 +11,22 @@
     drop-shadow(0 7px 9px color-mix(in srgb, var(--ec-shadow-ink) 16%, transparent));
 }
 
+/* The strip the awning is drawn for: the header less the status bar inset.
+   The slats run on up out of it (overflow: visible on the art) behind the
+   status bar, and .awning clips them at the screen top. */
+.strip {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: var(--safe-top, 0px);
+}
+
 .art {
   display: block;
   width: 100%;
   height: 100%;
+  overflow: visible;
 }
 
 /* One strip per range, switched in CSS so the right one paints first; see

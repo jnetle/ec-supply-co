@@ -1,15 +1,19 @@
+/* On phones with a see-through status bar the header grows up behind it by
+   --safe-top, so the awning, sign and burger reach the top of the screen
+   instead of leaving a band where the page scrolls past. It is 0 elsewhere. */
 .header {
+  --safe-top: env(safe-area-inset-top, 0px);
   position: sticky;
   top: 0;
   z-index: 60;
-  height: clamp(50px, 4.41vw, 113px);
+  height: calc(clamp(50px, 4.41vw, 113px) + var(--safe-top));
 }
 
 .row {
   position: absolute;
   left: 0;
   right: 0;
-  top: clamp(3px, 0.32vw, 9px);
+  top: calc(var(--safe-top) + clamp(3px, 0.32vw, 9px));
   height: clamp(28px, 2.6vw, 68px);
   display: flex;
   align-items: center;
@@ -19,14 +23,15 @@
 }
 
 /* The brand sign hangs below the awning and bleeds 30px above the top of the
-   page, so no gap shows when the sticky header meets the viewport edge. */
+   screen (past the status bar, if any), so no gap shows when the sticky
+   header meets the viewport edge. */
 .brand {
   display: inline-flex;
   align-items: center;
   align-self: flex-start;
-  margin-top: calc(-1 * clamp(3px, 0.32vw, 9px) - 30px);
-  height: calc(clamp(46px, 4.2vw, 105px) + 30px);
-  padding: calc(clamp(4px, 0.4vw, 10px) + 30px) clamp(12px, 1.2vw, 28px)
+  margin-top: calc(-1 * clamp(3px, 0.32vw, 9px) - 30px - var(--safe-top));
+  height: calc(clamp(46px, 4.2vw, 105px) + 30px + var(--safe-top));
+  padding: calc(clamp(4px, 0.4vw, 10px) + 30px + var(--safe-top)) clamp(12px, 1.2vw, 28px)
     clamp(7px, 0.6vw, 15px);
   position: relative;
   box-sizing: border-box;
@@ -86,10 +91,10 @@
 
 @media (max-width: 900px) {
   .header {
-    height: 66px;
+    height: calc(66px + var(--safe-top));
   }
 
   .brand {
-    height: 80px;
+    height: calc(80px + var(--safe-top));
   }
 }

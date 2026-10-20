@@ -1,17 +1,18 @@
 /* The hamburger only exists once the desktop row has been hidden. It hangs
    from the awning like the brand sign does, a smaller tab in the same teal,
    so it doesn't get lost among the cream and ink slats. Like the sign, it
-   bleeds 30px above the page top (plus the row's 3px offset at this width)
-   so no gap shows at the viewport edge. */
+   bleeds 30px above the screen top (plus the row's 3px offset at this width,
+   and the status bar's --safe-top from the header) so no gap shows at the
+   viewport edge. */
 .burger {
   display: none;
   align-items: center;
   justify-content: center;
   align-self: flex-start;
   width: 50px;
-  height: calc(33px + 60px);
-  margin-top: -33px;
-  padding: 33px 0 0;
+  height: calc(33px + 60px + var(--safe-top, 0px));
+  margin-top: calc(-33px - var(--safe-top, 0px));
+  padding: calc(33px + var(--safe-top, 0px)) 0 0;
   box-sizing: border-box;
   border: none;
   border-radius: 0 0 14px 14px;
