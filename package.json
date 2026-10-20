@@ -20,8 +20,8 @@
     "@wix/marketing": "^1.0.158",
     "@wix/sdk": "^1.21.17",
     "next": "16.4.2",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
