@@ -68,3 +68,29 @@
   text-transform: uppercase;
 }
 
+
+/* Phones: everything stacks full width, with "or" centred between the two
+   actions. min-width: 0 stops the long Instagram handle from widening the
+   grid column past the panel; on the narrowest phones the handle breaks
+   rather than overflow. */
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+  }
+
+  .alternative {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .or {
+    text-align: center;
+  }
+
+  .instagram {
+    width: 100%;
+    overflow-wrap: anywhere;
+  }
+}

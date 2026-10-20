@@ -46,3 +46,21 @@
   line-height: 1.4;
   color: var(--color-ecs-marigold);
 }
+
+/* Phones: the input and submit stack, each the full width of the panel. */
+@media (max-width: 600px) {
+  /* The signup row stacks into a column here, where a 440px basis would
+     become a height. */
+  .form {
+    flex: none;
+  }
+
+  .input {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .submit {
+    width: 100%;
+  }
+}
