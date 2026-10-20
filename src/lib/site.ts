@@ -21,23 +21,20 @@ export const SHARE_IMAGE = {
 
 /**
  * Whether search engines may index this deployment: only the production
- * build, and only once it is served on SITE_URL's domain. Until the domain is
- * attached in Vercel the site stays hidden, so Google never lists the
- * vercel.app address. Read at build time — redeploy after attaching the domain.
+ * build, and only once a custom domain is attached in Vercel. Until then the
+ * site stays hidden, so Google never lists the vercel.app address. Read at
+ * build time — redeploy after attaching the domain.
  */
 export function allowIndexing(): boolean {
   const host = vercel.productionHost();
-  // Vercel reports the shortest production domain, so with both the apex and
-  // www attached this is the apex even though the site is served on www.
+  // Vercel reports the shortest domain attached to production, counting
+  // redirect-only domains, so this can be any of them rather than SITE_URL's.
+  // Redirect domains never serve pages, so any custom domain will do.
   return (
     vercel.isProduction() &&
     host !== undefined &&
-    withoutWww(host) === withoutWww(new URL(SITE_URL).host)
+    !host.endsWith(".vercel.app")
   );
-}
-
-function withoutWww(host: string): string {
-  return host.replace(/^www\./, "");
 }
 
 type PageMetadataInput = {
