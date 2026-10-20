@@ -62,6 +62,7 @@ export function Signup() {
                   variant: 'outline',
                   tone: 'paper',
                   size: 'lg',
+                  className: styles.instagram,
                 })}
               >
                 Follow @elcerritosupplyco
