@@ -9,8 +9,9 @@
 
 /**
  * TODO: turn back on when the manifesto is ready to go public. Hidden for
- * launch: /manifesto returns a 404, and the home page teaser, the nav and
- * footer link and the sitemap entry are all gone.
+ * launch: /manifesto returns a 404, and the home teaser's "Read the full
+ * manifesto" link, the nav and footer link and the sitemap entry are all
+ * gone. The "What we believe" teaser itself stays on the home page.
  */
 export const MANIFESTO_ENABLED = false;
 

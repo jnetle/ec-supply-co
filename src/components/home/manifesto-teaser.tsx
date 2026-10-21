@@ -5,6 +5,7 @@ import { Blob } from "@/components/ui/blob";
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
+import { MANIFESTO_ENABLED } from "@/lib/content/manifesto";
 
 import styles from "./manifesto-teaser.module.css";
 
@@ -82,17 +83,19 @@ export function ManifestoTeaser() {
               </p>
             </div>
 
-            <Link
-              href="/manifesto"
-              className={button({
-                variant: "link",
-                tone: "marigold",
-                size: "lg",
-                className: styles.more,
-              })}
-            >
-              Read the full manifesto →
-            </Link>
+            {MANIFESTO_ENABLED && (
+              <Link
+                href="/manifesto"
+                className={button({
+                  variant: "link",
+                  tone: "marigold",
+                  size: "lg",
+                  className: styles.more,
+                })}
+              >
+                Read the full manifesto →
+              </Link>
+            )}
           </div>
 
           <figure className={`film ${styles.figure}`}>
