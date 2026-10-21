@@ -1,21 +1,25 @@
 # EC Supply Co
 
 The El Cerrito Supply Co. site: a vintage, hand-painted-window community shop,
-built from the Claude Design handoff. Next.js App Router, Tailwind v4 for tokens
-and layout, CSS Modules for the bespoke pieces, Wix as the headless backend for
-events, the newsletter and the maker roster.
+built from the Claude Design handoff. Next.js 16 App Router, Tailwind v4 for
+tokens and layout, CSS Modules for the bespoke pieces, and Wix as the headless
+backend for the maker roster, the newsletter and the maker application. Hosted on
+Vercel; live since 2026-10-19 at
+[www.elcerritosupplyco.com](https://www.elcerritosupplyco.com).
 
 ## Routes
 
-| Route             | What it is                                                                    |
-| ----------------- | ----------------------------------------------------------------------------- |
-| `/`               | Home: scroll-driven hero, then the shop, manifesto, events, makers and signup |
-| `/calendar`       | Community calendar: month list + grid, filters, seat sign-ups                 |
-| `/host-with-us`   | Rent the room: private events, co-marketing workshops and pitched ideas       |
-| `/makers`         | Maker directory, from the Wix `LocalMakers` collection                        |
-| `/sell-with-us`   | Maker submission criteria and application                                     |
-| `/manifesto`      | The nine rules                                                                |
-| `/api/events.ics` | Public, subscribable iCalendar feed generated from published Wix Events       |
+| Route             | What it is                                                                         |
+| ----------------- | ---------------------------------------------------------------------------------- |
+| `/`               | Home: scroll-driven hero, the shop's bands, maker spotlight, visit and signup      |
+| `/makers`         | Maker directory, from the Wix `LocalMakers` collection                             |
+| `/sell-with-us`   | Maker submission criteria and application                                          |
+| `/calendar`       | Community calendar. No events yet, so it shows an empty state and is `noindex`     |
+| `/the-build`      | How the shop was built: materials, and the people who helped                       |
+| `/privacy`        | What the site collects (Vercel Analytics, the two forms) and why                   |
+| `/host-with-us`   | Rent the room. **Hidden for launch** (404s); see [Launch flags](#launch-flags)     |
+| `/manifesto`      | The nine rules. **Hidden for launch** (404s)                                       |
+| `/api/events.ics` | Public iCalendar feed. Serves a valid, empty calendar until Wix Events is wired up |
 
 ## How the styling is organised
 
@@ -61,25 +65,48 @@ animates.
 
 ## Content
 
-Makers and the public calendar subscription feed come from Wix (below). The
-visible calendar UI still uses the typed placeholder events in
-`src/lib/content/calendar.ts`; it can move to the same Wix source once the event
-model and signup flow are finalized. Other placeholder copy and stock
-photography from the handoff lives in `src/lib/content/`. `nav.ts` is the single
-source for the site's information architecture — the header dropdowns, the
-mobile drawer and the footer sitemap all read from it.
+Only the makers come from Wix (below). Everything else is typed content in
+`src/lib/content/`: the calendar, the manifesto, the host-with-us copy, the
+selling criteria, and the `/the-build` helpers and photo credits (`thanks.ts`).
+`nav.ts` is the single source for the site's information architecture. The
+header dropdowns, the mobile drawer and the footer sitemap all read from it.
+
+Photography is the shop's own, in `public/assets/photos/{shop,build,hennai}`.
+The numbered `id-*.jpg` files are leftover stock from the handoff; only the
+hidden `/host-with-us` still uses one.
+
+`CALENDAR_EVENTS` in `src/lib/content/calendar.ts` is empty until phase two
+connects Wix Events. Every view that reads it has a zero-event state, and
+`/calendar` drops out of the sitemap and goes `noindex` while it is empty.
+
+## Launch flags
+
+Some finished features are switched off for launch with boolean constants. Each
+has a `TODO` saying when to turn it back on, and each hides every link to the
+feature too, not just the feature.
+
+| Flag                            | File                              | While `false`                                                   |
+| ------------------------------- | --------------------------------- | --------------------------------------------------------------- |
+| `HOST_WITH_US_ENABLED`          | `src/lib/content/host-with-us.ts` | `/host-with-us` 404s; nav, footer, sitemap and booking links go |
+| `CO_MARKETING_WORKSHOP_ENABLED` | `src/lib/content/host-with-us.ts` | Drops the workshop card and rental option on `/host-with-us`    |
+| `MANIFESTO_ENABLED`             | `src/lib/content/manifesto.ts`    | `/manifesto` 404s; the home page teaser goes                    |
+| `HOME_EVENTS_ENABLED`           | `src/lib/content/calendar.ts`     | Hides "What's coming up" on the home page                       |
+| `CALENDAR_SUBSCRIBE_ENABLED`    | `src/lib/content/calendar.ts`     | Hides the subscribe box; `/api/events.ics` stays up             |
+
+`SHOW_COMING_SOON_SIGN` in `src/components/home/hero.tsx` is a design toggle,
+not a launch flag (see the motion section above).
 
 ## Known gaps
 
-- The two private-event inquiries are client-side only; each has a `TODO` where
+- The `/host-with-us` inquiry form is client-side only; it has a `TODO` where
   the submit endpoint goes. The maker application and newsletter submit to Wix
-  Forms once their form IDs and field targets are configured.
-- The visible `/calendar` event list still uses local placeholder data, while
-  `/api/events.ics` reads live Wix Events. They may differ until the UI is moved
-  to Wix.
-- Calendar seat sign-ups are remembered in the visitor's own browser via
-  `localStorage`, not on a server.
-- All photography is placeholder stock from the handoff.
+  Forms.
+- No events yet: the calendar and the `.ics` feed are both empty until Wix
+  Events is connected (phase two). `src/lib/wix-events.ts` is already written
+  for it.
+- When the calendar has events, seat sign-ups are remembered in the visitor's
+  own browser via `localStorage`, not on a server.
+- The home page's hours card says "Hours coming soon".
 - `/coming-soon` from the handoff was not built.
 - The handoff's Manifesto and Coming Soon pages use a second, later palette
   (Baloo 2, brighter teal and marigold). The site uses one palette throughout,
@@ -118,6 +145,11 @@ export default async function Page() {
 Replace `YourCollectionId` with the collection ID shown in the Wix CMS collection settings. The integration uses visitor OAuth, so reads follow the collection permissions configured in Wix.
 
 ## Calendar subscription feed
+
+> **Current state:** the route serves a valid, empty calendar
+> (`createCalendar([])`), and the subscribe panel is hidden by
+> `CALENDAR_SUBSCRIBE_ENABLED`. The rest of this section describes the feed once
+> phase two passes it `getPublishedWixEvents()`.
 
 `GET /api/events.ics` is a public iCalendar feed generated from the Wix Events
 site attached to `WIX_CLIENT_ID`. The subscription panel on `/calendar` offers
@@ -173,20 +205,27 @@ events.
 `/makers` and the home page spotlight read the Wix CMS collection **`LocalMakers`**
 through `getMakers()` in `src/lib/makers.ts`.
 
-| Wix field     | Shown as                                                |
-| ------------- | ------------------------------------------------------- |
-| `title`       | Card heading (required — items without one are skipped) |
-| `makerName`   | The person behind it, under the heading                 |
-| `category`    | The craft, in the byline                                |
-| `since`       | "since 2017", in the byline                             |
-| `description` | The bio                                                 |
-| `image`       | The portrait, in the organic mask                       |
-| `website`     | Links the heading                                       |
-| `featured`    | Boolean. Puts the maker in the home spotlight (4 slots) |
+| Wix field     | Shown as                                                     |
+| ------------- | ------------------------------------------------------------ |
+| `title`       | Card heading (required — items without one are skipped)      |
+| `makerName`   | The person behind it, under the heading                      |
+| `category`    | The craft, in the byline                                     |
+| `since`       | "since 2017", in the byline                                  |
+| `description` | The bio                                                      |
+| `image`       | The portrait, in the organic mask                            |
+| `website`     | Links the heading. A bare `rosaceramics.com` gets `https://` |
+| `featured`    | Unused. The spotlight rotates through everyone               |
 
-Until the CMS holds the full roster, the 20 placeholder makers in
-`src/lib/content/makers.ts` are listed after the Wix ones and top up the spotlight.
-Delete `PLACEHOLDER_MAKERS` once the real list is in.
+Wix is the whole roster; there are no placeholder makers. With none in Wix, both
+pages show `NO_MAKERS_NOTE` instead of cards.
+
+- **Spotlight (home, 4 slots):** changes daily at midnight Pacific. It goes to
+  whoever has waited longest since their last turn, with a seeded daily shuffle
+  settling ties. Nothing is stored: every render replays the turns from
+  `LAUNCH_DAY` (2026-10-19), so a new maker joins the day after they're added
+  and goes straight to the front. Don't move `LAUNCH_DAY`; it would reshuffle
+  everyone's place in line.
+- **Directory (`/makers`):** the whole roster in a fresh seeded order each day.
 
 Maker photos are sized by Wix's own image CDN, not the Next.js optimizer, so they
 cost no image transformations on our host: `WixImage`
@@ -194,9 +233,11 @@ cost no image transformations on our host: `WixImage`
 width in the srcset, cropped to the frame. Local images still go through Next. Upload
 portraits at 1000px or wider so they stay sharp on high-density screens.
 
-Both pages are static and revalidate every five minutes, so a CMS edit shows up
-within that window. If Wix is unreachable or `WIX_CLIENT_ID` is unset, the error is
-logged and the pages render the placeholders alone.
+Both pages are static and revalidate every five minutes (see
+[Caching and CMS edits](#caching-and-cms-edits)). If `WIX_CLIENT_ID` is unset,
+the roster comes back empty. If Wix is unreachable, loading throws: a background
+regeneration keeps serving the last good page rather than caching an empty
+roster, and a build fails rather than deploy one.
 
 ## Newsletter signup
 
@@ -299,7 +340,50 @@ explaining where to find the value, and import `env` from it.
 
 Values are read lazily, so a missing variable fails where it is used with a message
 naming it, rather than crashing the app at import. Blank and whitespace-only values
-count as unset.
+count as unset. `vercel` in the same file reads Vercel's own system variables
+(`VERCEL_ENV`, `VERCEL_PROJECT_PRODUCTION_URL`), which need no setup.
+
+## Deployment
+
+The site is the Vercel project **`ec-supply-co`**, connected to
+`github.com/jnetle/ec-supply-co` through the Vercel GitHub app. There is no deploy
+script or GitHub Actions workflow:
+
+- Merging to `main` builds and deploys production.
+- Every other branch and PR gets a preview deployment, linked from the PR.
+- Vercel runs `next build` with its Next.js defaults; there is no `vercel.json`.
+
+Set `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID` and `WIX_MAKER_FORM_ID` in every
+Vercel environment, pointing at the live premium Wix site.
+
+`docs/domain-move.md` is the runbook for moving to `elcerritosupply.co`: Google
+Workspace, the code changes, and the Vercel domains and DNS.
+
+### Caching and CMS edits
+
+The home page and `/makers` are regenerated at most every five minutes
+(`export const revalidate = 300`). After that window, the next visit still gets
+the old page and starts a rebuild in the background; the visit after that gets
+the new one. So a Wix edit appears within about five minutes plus one page view.
+A force reload doesn't skip this, since the cache is Vercel's, not the browser's.
+To see an edit at once, redeploy from the Vercel dashboard.
+
+### Search indexing
+
+`allowIndexing()` in `src/lib/site.ts` lets search engines in only on a
+production build served on a custom domain. Previews and `*.vercel.app`
+addresses get `Disallow: /` and `noindex`. It's decided at build time, so
+redeploy after changing domains. `src/app/sitemap.ts` lists every public route
+and leaves out whatever a launch flag hides. `SITE_URL` in `src/lib/site.ts` is
+the canonical address used by metadata, the sitemap and structured data.
+
+The link-preview image, `public/og-image.png`, is rendered by
+`npm run og:image`. Rerun it after changing the logo or address, and keep
+`SHARE_IMAGE` in `src/lib/site.ts` in step with it.
+
+Vercel Analytics (`@vercel/analytics`, in `src/app/layout.tsx`) counts page
+views without cookies. `/privacy` describes it and the two forms; update that
+page if either changes.
 
 ## Commands
 
@@ -309,4 +393,5 @@ npm run lint       # Run ESLint
 npm run build      # Create a production build
 npm run start      # Serve a production build
 npm run wix:forms  # List Wix form IDs and field targets
+npm run og:image   # Render public/og-image.png
 ```
