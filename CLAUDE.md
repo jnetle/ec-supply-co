@@ -28,10 +28,10 @@ class list, so it works on `<button>`, `<a>`, `<Link>` and Radix triggers.
    `paper`. `custom` + `buttonColors()` is only for colours that come from
    data, such as event categories. `film` (a pearly film fill, ink text)
    is solid only and for at most one headline action per page; today
-   that is the newsletter submit. A form's submit takes the deep tone of
-   the band its page sits on: `plum` on the pink pages (sell with us,
-   host with us), `teal` in the calendar. Adding a tone is a design
-   decision.
+   that is the newsletter submit. Every other form submit is `tealDeep`.
+   Never use red, magenta or plum for a submit: magenta is the form's
+   error colour, and the reds all read as a warning. Adding a tone is a
+   design decision.
 6. **Labels** are written in sentence case; the CSS uppercases them (links
    stay as written). A trailing `→` means it goes to another page or section.
 7. **States.** Disabled: the `disabled` attribute (or `aria-disabled` on a
