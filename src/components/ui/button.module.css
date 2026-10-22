@@ -246,6 +246,12 @@
   --btn-on: var(--color-ecs-ink);
 }
 
+/* Ink text: white on cerulean is only 3.5:1. */
+.cerulean {
+  --btn-color: var(--color-ecs-cerulean);
+  --btn-on: var(--color-ecs-ink);
+}
+
 .red {
   --btn-color: var(--color-ecs-red);
   --btn-on: #ffffff;

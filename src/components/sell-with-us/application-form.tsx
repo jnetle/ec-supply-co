@@ -335,7 +335,7 @@ function ApplicationFormFields({
         aria-busy={pending}
         disabled={pending}
         className={button({
-          tone: "tealDeep",
+          tone: "cerulean",
           size: "lg",
           className: styles.submit,
         })}
