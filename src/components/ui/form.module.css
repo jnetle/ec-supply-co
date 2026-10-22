@@ -62,6 +62,7 @@
     font-family: var(--font-body);
     font-size: 16px;
     color: inherit;
+    transition: border-color 220ms ease;
 }
 
 .textarea {
@@ -111,8 +112,11 @@
     background-position: 100% 0;
 }
 
+/* The film is too pale on cream to mark focus alone (under 3:1), so the
+   border turns magenta and carries the contrast. */
 .input:focus-visible,
 .textarea:focus-visible {
+    border-color: var(--color-ecs-magenta);
     outline: none;
 }
 
