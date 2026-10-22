@@ -39,11 +39,17 @@ export function Field({
       <label htmlFor={id} className={styles.label}>
         {label} {required ? <Required /> : null}
       </label>
-      {children({
-        id,
-        className: multiline ? styles.textarea : styles.input,
-        "aria-describedby": hintId,
-      })}
+      <div
+        className={
+          multiline ? `${styles.control} ${styles.multiline}` : styles.control
+        }
+      >
+        {children({
+          id,
+          className: multiline ? styles.textarea : styles.input,
+          "aria-describedby": hintId,
+        })}
+      </div>
       {hint ? (
         <span id={hintId} className={styles.hint}>
           {hint}

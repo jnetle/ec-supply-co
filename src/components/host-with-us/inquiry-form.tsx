@@ -199,7 +199,7 @@ export function InquiryForm() {
           <button
             type="submit"
             className={button({
-              tone: "magenta",
+              tone: "plum",
               size: "lg",
               className: styles.submit,
             })}
