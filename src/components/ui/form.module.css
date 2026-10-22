@@ -183,8 +183,8 @@
 .checkbox input {
     width: 18px;
     height: 18px;
-    /* Matches the submit. Not magenta, which is the error colour. */
-    accent-color: var(--color-ecs-teal-deep);
+    /* Not magenta, which is the error colour. */
+    accent-color: var(--color-ecs-cobalt);
 }
 
 /* Layout for the submit button; its look comes from button(). */
