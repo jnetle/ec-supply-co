@@ -113,10 +113,11 @@
 }
 
 /* The film is too pale on cream to mark focus alone (under 3:1), so the
-   border turns magenta and carries the contrast. */
+   ply border firms up to ply ink and carries the contrast. Not magenta,
+   which is the error colour. */
 .input:focus-visible,
 .textarea:focus-visible {
-    border-color: var(--color-ecs-magenta);
+    border-color: var(--color-ecs-ply-ink);
     outline: none;
 }
 
