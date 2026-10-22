@@ -176,6 +176,7 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
                 <button
                   type="submit"
                   className={button({
+                    tone: "tealDeep",
                     size: "lg",
                     className: formStyles.submit,
                   })}

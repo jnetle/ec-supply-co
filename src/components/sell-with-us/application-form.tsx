@@ -24,6 +24,15 @@ import styles from "@/components/ui/form.module.css";
 /** Clears the sticky header when the form scrolls itself into view. */
 const SCROLL_OFFSET = 80;
 
+/** "Up to 5,000 characters" when empty, then a running count. Fixed to
+ * en-US so the prerender and the client agree. */
+function lengthHint(value: string, max: number) {
+  const limit = max.toLocaleString("en-US");
+  return value.length === 0
+    ? `Up to ${limit} characters`
+    : `${value.length.toLocaleString("en-US")} of ${limit} characters`;
+}
+
 const WHOLESALE_UNDERSTANDING = [
   { value: "yes", label: "Yes" },
   { value: "learning", label: "Still learning" },
@@ -221,6 +230,7 @@ function ApplicationFormFields({
         label="Tell us about yourself and your work"
         required
         multiline
+        hint={lengthHint(values.about, MAX_LONG_TEXT_LENGTH)}
       >
         {(props) => (
           <textarea
@@ -248,7 +258,12 @@ function ApplicationFormFields({
         )}
       </Field>
 
-      <Field id="connection" label="Your connection to El Cerrito" multiline>
+      <Field
+        id="connection"
+        label="Your connection to El Cerrito"
+        multiline
+        hint={lengthHint(values.connection, MAX_LONG_TEXT_LENGTH)}
+      >
         {(props) => (
           <textarea
             {...props}
@@ -320,7 +335,7 @@ function ApplicationFormFields({
         aria-busy={pending}
         disabled={pending}
         className={button({
-          tone: "plum",
+          tone: "cerulean",
           size: "lg",
           className: styles.submit,
         })}

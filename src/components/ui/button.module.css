@@ -64,12 +64,15 @@
   position: relative;
 }
 
-/* The film edge: a ring masked out of a film sheet, laid over the border.
-   Hidden at rest; hover and focus fade it in and drift it along. */
+/* The film edge: a ring masked out of a film sheet, laid just outside the
+   border so the button keeps its full colour and size. (Laid over the
+   border, the pale film made the button look like it shrank.) Hidden at
+   rest; hover and focus fade it in and drift it along. Inset is measured
+   from the padding box, so -4px clears the 2px border. */
 :is(.solid, .outline)::before {
   content: "";
   position: absolute;
-  inset: -2px;
+  inset: -4px;
   padding: 2px;
   border-radius: inherit;
   background-image: var(--ec-film);
@@ -240,6 +243,12 @@
 
 .marigold {
   --btn-color: var(--color-ecs-marigold);
+  --btn-on: var(--color-ecs-ink);
+}
+
+/* Ink text: white on cerulean is only 3.5:1. */
+.cerulean {
+  --btn-color: var(--color-ecs-cerulean);
   --btn-on: var(--color-ecs-ink);
 }
 
