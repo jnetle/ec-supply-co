@@ -3,15 +3,15 @@
 import { track } from "@vercel/analytics/server";
 import { headers } from "next/headers";
 
-import { env } from "@/lib/env";
+import { HONEYPOT_FIELD } from "@/lib/form-limits";
 import { newsletterSchema } from "@/lib/form-schemas";
 import type { SubscribeState } from "@/lib/newsletter";
-import { describeWixError, getWixClient } from "@/lib/wix";
-import { NEWSLETTER_FORM_FIELDS } from "@/lib/wix-form-config";
+import { addToNewsletter } from "@/lib/newsletter-signup";
+import { describeWixError } from "@/lib/wix";
 
 // Rate limited by a Vercel Firewall custom rule, not in code: POST requests
 // with a `next-action` header to / or /sell-with-us, 5 per IP per 60s fixed
-// window, then deny (429).
+// window, then deny (429). /calendar's RSVP action needs the same rule.
 
 const SUCCESS_MESSAGE = "You're on the list. Thanks for subscribing!";
 const FAILURE_MESSAGE = "Something went wrong on our end. Please try again.";
@@ -22,7 +22,7 @@ export async function subscribe(
 ): Promise<SubscribeState> {
   // Bots fill every field; real browsers leave the hidden one empty. Report
   // success so a scripted submitter gets no signal that it was filtered.
-  if (formData.get("company")) {
+  if (formData.get(HONEYPOT_FIELD)) {
     return { status: "success", message: SUCCESS_MESSAGE };
   }
 
@@ -35,14 +35,7 @@ export async function subscribe(
   const { email } = result.data;
 
   try {
-    // Lands in Wix under Customers & Leads > Forms & Submissions, alongside
-    // submissions from the classic site, and runs that form's automations.
-    // The submission key is the field's stable `target` in the form schema,
-    // not its label or ID.
-    await getWixClient().submissions.createSubmission({
-      formId: env.newsletterFormId(),
-      submissions: { [NEWSLETTER_FORM_FIELDS.email]: email },
-    });
+    await addToNewsletter(email);
   } catch (error) {
     console.error("Newsletter subscription failed", describeWixError(error));
     return { status: "error", message: FAILURE_MESSAGE };

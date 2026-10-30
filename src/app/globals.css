@@ -46,6 +46,11 @@
   --color-ecs-cerulean: #0097b2;
   --color-ecs-ultramarine: #130284;
 
+  /* Sky: the calendar's cool surfaces and lines, in place of ply */
+  --color-ecs-sky-surface: #f6fafc;
+  --color-ecs-sky-pale: #d0e3ec;
+  --color-ecs-sky-line: #9fc4d6;
+
   /* Woods, ply and the rest */
   --color-ecs-navy: #1c2540;
   --color-ecs-jade: #2c8559;

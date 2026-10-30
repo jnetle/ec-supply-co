@@ -10,6 +10,8 @@ import { z } from "zod";
 import {
   MAX_EMAIL_LENGTH,
   MAX_LONG_TEXT_LENGTH,
+  MAX_RSVP_NAME_LENGTH,
+  MAX_RSVP_SEATS,
   MAX_SHORT_TEXT_LENGTH,
   MAX_URL_LENGTH,
 } from "@/lib/form-limits";
@@ -75,3 +77,16 @@ export const makerApplicationSchema = z.object({
 });
 
 export type MakerApplication = z.infer<typeof makerApplicationSchema>;
+
+export const eventRsvpSchema = z.object({
+  // A Wix event ID. z.guid() rather than z.uuid(), which also checks the
+  // RFC version bits that Wix's IDs don't promise.
+  eventId: z.guid(),
+  first: requiredShortText.max(MAX_RSVP_NAME_LENGTH),
+  last: requiredShortText.max(MAX_RSVP_NAME_LENGTH),
+  email,
+  seats: z.coerce.number().int().min(1).max(MAX_RSVP_SEATS),
+  // Checkboxes and the waitlist flag arrive as "on" or not at all.
+  waitlist: z.boolean(),
+  news: z.boolean(),
+});

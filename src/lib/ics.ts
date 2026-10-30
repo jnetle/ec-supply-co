@@ -7,6 +7,8 @@ export type IcsEvent = {
   location?: string;
   start: Date;
   end?: Date;
+  /** A whole day: `start` (and `end`, the day after) are read as dates only. */
+  allDay?: boolean;
   created?: Date;
   updated?: Date;
   url?: string;
@@ -20,6 +22,10 @@ function toIcsDate(date: Date): string {
     .toISOString()
     .replace(/[-:]/g, "")
     .replace(/\.\d{3}Z$/, "Z");
+}
+
+function toIcsDay(date: Date): string {
+  return date.toISOString().slice(0, 10).replace(/-/g, "");
 }
 
 function escapeText(value: string): string {
@@ -71,10 +77,18 @@ export function createCalendar(events: IcsEvent[]): string {
       "BEGIN:VEVENT",
       `UID:wix-event-${event.id}@elcerritosupplyco.com`,
       `DTSTAMP:${toIcsDate(timestamp)}`,
-      `DTSTART:${toIcsDate(event.start)}`,
+      event.allDay
+        ? `DTSTART;VALUE=DATE:${toIcsDay(event.start)}`
+        : `DTSTART:${toIcsDate(event.start)}`,
     );
 
-    if (event.end) lines.push(`DTEND:${toIcsDate(event.end)}`);
+    if (event.end) {
+      lines.push(
+        event.allDay
+          ? `DTEND;VALUE=DATE:${toIcsDay(event.end)}`
+          : `DTEND:${toIcsDate(event.end)}`,
+      );
+    }
     if (event.created) lines.push(`CREATED:${toIcsDate(event.created)}`);
     if (event.updated) lines.push(`LAST-MODIFIED:${toIcsDate(event.updated)}`);
 

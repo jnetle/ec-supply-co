@@ -14,11 +14,15 @@
   width: min(560px, calc(100vw - 32px));
   max-height: min(86vh, 760px);
   overflow: auto;
-  background: var(--color-ecs-surface);
+  background: var(--color-ecs-sky-surface);
   color: var(--color-ecs-ink);
-  border: 3px solid var(--color-ecs-ply);
+  border: 3px solid var(--color-ecs-sky-line);
   border-radius: clamp(24px, 3vw, 36px);
   box-shadow: 0 24px 60px color-mix(in srgb, var(--color-ecs-ink) 35%, transparent);
+  /* The shared form styles draw their lines in ply; the calendar's dialog
+     draws them in sky, like the rest of the page. */
+  --color-ecs-ply: var(--color-ecs-sky-line);
+  --color-ecs-ply-ink: var(--color-ecs-navy);
 }
 
 .header {
@@ -75,17 +79,33 @@
 .fact {
   border-radius: 999px;
   padding: 6px 14px;
-  background: var(--color-ecs-ply-pale);
-  color: var(--color-ecs-ply-ink);
+  background: var(--color-ecs-sky-pale);
+  color: var(--color-ecs-navy);
   font-size: 13px;
   font-weight: 700;
+}
+
+.addToCalendar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 18px;
+}
+
+.addLabel {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ecs-navy);
 }
 
 /* Shown instead of the form when there is nothing to sign up for. */
 .note {
   border-radius: 18px;
   padding: 14px 18px;
-  background: var(--color-ecs-ply-pale);
+  background: var(--color-ecs-sky-pale);
   font-size: 15px;
   line-height: 1.5;
 }
@@ -116,7 +136,7 @@
   width: 100%;
   min-height: 52px;
   padding: 0 20px;
-  border: 2px solid var(--color-ecs-ply);
+  border: 2px solid var(--color-ecs-sky-line);
   border-radius: 999px;
   background: #ffffff;
   font-family: var(--font-body);

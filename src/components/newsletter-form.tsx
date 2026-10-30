@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useRef } from "react";
 
 import { subscribe } from "@/app/actions/newsletter";
-import { MAX_EMAIL_LENGTH } from "@/lib/form-limits";
+import { HONEYPOT_FIELD, MAX_EMAIL_LENGTH } from "@/lib/form-limits";
 import { initialSubscribeState } from "@/lib/newsletter";
 import { button } from "@/components/ui/button";
 
@@ -57,7 +57,7 @@ export function NewsletterForm() {
       {/* Honeypot: hidden from users and assistive tech, tempting to bots. */}
       <input
         type="text"
-        name="company"
+        name={HONEYPOT_FIELD}
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
@@ -68,7 +68,11 @@ export function NewsletterForm() {
         type="submit"
         aria-busy={pending}
         disabled={pending}
-        className={button({ tone: "film", size: "lg", className: styles.submit })}
+        className={button({
+          tone: "film",
+          size: "lg",
+          className: styles.submit,
+        })}
       >
         {pending ? "Signing up…" : "Sign up"}
       </button>
