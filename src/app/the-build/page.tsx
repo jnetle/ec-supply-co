@@ -72,7 +72,7 @@ export default function TheBuildPage() {
                 <article
                   key={entry.id}
                   id={entry.id}
-                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""} ${entry.photo?.compact ? styles.compact : ""}`}
+                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""} ${entry.photo?.compact ? styles.compact : ""} ${entry.photo?.pair ? styles.paired : ""}`}
                   style={
                     {
                       "--card-bg": colors.background,
@@ -91,7 +91,7 @@ export default function TheBuildPage() {
                           radius={PAIR_RADII[j]}
                           ratio="2/3"
                           parallax={false}
-                          sizes="(max-width: 700px) 46vw, 360px"
+                          sizes="(max-width: 1099px) 46vw, 340px"
                         />
                       ))}
                     </div>
@@ -108,7 +108,11 @@ export default function TheBuildPage() {
                       // Parallax overscales the photo, which would crop the
                       // very edges a portrait frame exists to show.
                       parallax={!entry.photo?.portrait}
-                      sizes="(max-width: 700px) 92vw, 720px"
+                      sizes={
+                        entry.photo?.portrait
+                          ? "(max-width: 760px) 92vw, (max-width: 1099px) 46vw, 340px"
+                          : "(max-width: 760px) 92vw, 760px"
+                      }
                       eager={i === 0}
                       className={styles.piecePhoto}
                     />
