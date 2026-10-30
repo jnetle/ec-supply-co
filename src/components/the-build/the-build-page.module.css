@@ -3,7 +3,6 @@
 /* "What the shop is made of". */
 .madeOf {
   padding: 0 clamp(18px, 4vw, 56px) clamp(40px, 7vh, 96px);
-  max-width: 1400px;
 }
 
 .sectionTitle {
@@ -16,80 +15,56 @@
   text-transform: uppercase;
 }
 
-/* Wide pieces take the full row; portrait and compact pieces pair up two
-   to a row. */
+/* One 12-column collage. Pieces size themselves by span and the grid
+   flows them into rows: two compact wide photos split a row 7 + 5, and a
+   photo pair (6) and two portraits (3 each) make a row of arches. A
+   plain wide piece still takes the whole row. */
 .pieces {
-  margin-top: clamp(28px, 4vh, 48px);
+  /* Only the collage centres on wide screens; the headings and credits
+     stay left-aligned like every other page. */
+  max-width: 1288px;
+  margin: clamp(28px, 4vh, 48px) auto 0;
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(48px, 6vh, 72px) clamp(24px, 4vw, 64px);
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(56px, 7vh, 88px) clamp(20px, 2.4vw, 36px);
+  align-items: start;
 }
 
-/* A wide feature photo with its story on a tilted card overlapping the
-   lower corner; every other piece mirrors so the section zigzags. */
+/* A photo with its story on a tilted card tucked under the lower edge;
+   every other card leans and hangs the other way. */
 .piece {
   --tilt: -1.5deg;
   grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  align-items: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   /* Anchor links stop clear of the header, like the helper cards. */
   scroll-margin-top: calc(var(--ecs-header-clearance, 100px) + 24px);
 }
 
+.piece:nth-child(even) {
+  --tilt: 1.5deg;
+  align-items: flex-start;
+}
+
 .piecePhoto {
-  grid-area: 1 / 1 / 2 / 9;
+  align-self: stretch;
 }
 
 .pieceText {
-  grid-area: 1 / 8 / 2 / 13;
+  position: relative;
   z-index: 1;
-  margin-bottom: clamp(-48px, -4vw, -24px);
-  padding: clamp(22px, 2.4vw, 34px);
+  width: min(100% - 28px, 26rem);
+  margin: clamp(-64px, -5vw, -40px) 14px 0;
+  padding: clamp(20px, 2.2vw, 32px);
   border-radius: var(--radius-ecs-lg);
   background: var(--card-bg);
   box-shadow: var(--shadow-ecs-md);
   rotate: var(--tilt);
 }
 
-.piece:nth-child(even) {
-  --tilt: 1.5deg;
-}
-
-.piece:nth-child(even) .piecePhoto {
-  grid-area: 1 / 5 / 2 / 13;
-}
-
-.piece:nth-child(even) .pieceText {
-  grid-area: 1 / 1 / 2 / 6;
-}
-
-/* A portrait photo shown whole, in half a row beside its pair. Mirrored
-   like the wide pieces, so a pair faces outward from the middle. The card
-   only tucks under the photo's outer quarter: a tall subject usually runs
-   down the middle, and a deeper overlap hides its bottom. */
-.portrait {
-  grid-column: auto;
-}
-
-.portrait .piecePhoto {
-  grid-area: 1 / 1 / 2 / 9;
-}
-
-.portrait .pieceText {
-  grid-area: 1 / 7 / 2 / 13;
-}
-
-.portrait:nth-child(even) .piecePhoto {
-  grid-area: 1 / 5 / 2 / 13;
-}
-
-.portrait:nth-child(even) .pieceText {
-  grid-area: 1 / 1 / 2 / 7;
-}
-
-/* Two tall photos side by side in a wide piece's place, the second
-   stepped down so the pair doesn't read as one block. */
+/* Two tall photos side by side, the second stepped down so the pair
+   doesn't read as one block. */
 .photoPair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -101,25 +76,52 @@
   margin-top: 14%;
 }
 
-/* A wide photo in half a row, beside its pair, so the row isn't left
-   half empty. The card hangs off the photo's lower-right corner, clear of
-   the subject, which in these shots sits left of centre. Desktop only;
-   phones stack full width. */
+/* A portrait card only tucks under the arch's rounded foot: a tall
+   subject usually runs down the middle, and a deeper overlap hides it. */
+.portrait .pieceText {
+  margin-top: -20px;
+}
+
 @media (min-width: 761px) {
   .compact {
-    grid-column: auto;
-    align-items: start;
+    grid-column: span 7;
   }
 
-  .compact .piecePhoto,
-  .compact:nth-child(even) .piecePhoto {
-    grid-area: 1 / 1 / 2 / 10;
+  /* The second wide photo starts lower, so the pair zigzags. */
+  .compact + .compact {
+    grid-column: span 5;
+    margin-top: clamp(48px, 9vw, 140px);
   }
 
-  .compact .pieceText,
-  .compact:nth-child(even) .pieceText {
-    grid-area: 2 / 7 / 3 / 13;
-    margin: clamp(-48px, -3vw, -24px) 0 0;
+  /* Until the arches fit four across, the pair takes a row of its own
+     and the portraits share the next. */
+  .portrait {
+    grid-column: span 6;
+  }
+
+  .portrait:nth-child(even) {
+    margin-top: clamp(32px, 6vw, 96px);
+  }
+}
+
+/* Wide enough for the whole row of arches: the pair, then each portrait
+   stepped down a little further than the last. */
+@media (min-width: 1100px) {
+  .paired {
+    grid-column: span 6;
+  }
+
+  .portrait {
+    grid-column: span 3;
+    margin-top: 6%;
+  }
+
+  .portrait:nth-child(even) {
+    margin-top: 0;
+  }
+
+  .portrait + .portrait {
+    margin-top: 14%;
   }
 }
 
@@ -138,13 +140,7 @@
 }
 
 @media (max-width: 760px) {
-  .pieces {
-    grid-template-columns: 1fr;
-  }
-
-  .piece,
-  .piece:nth-child(even) {
-    grid-template-columns: 1fr;
+  .piece {
     --tilt: -1deg;
   }
 
@@ -152,27 +148,13 @@
     --tilt: 1deg;
   }
 
-  .piecePhoto,
-  .piece:nth-child(even) .piecePhoto {
-    grid-area: auto;
+  .pieceText {
+    margin-top: -40px;
   }
 
-  .pieceText,
-  .piece:nth-child(even) .pieceText {
-    grid-area: auto;
-    margin: -40px 14px 0;
-  }
-
-  .portrait .piecePhoto,
-  .portrait:nth-child(even) .piecePhoto {
-    grid-area: auto;
-    justify-self: center;
+  .portrait .piecePhoto {
+    align-self: center;
     width: min(100%, 420px);
-  }
-
-  .portrait .pieceText,
-  .portrait:nth-child(even) .pieceText {
-    grid-area: auto;
   }
 }
 
