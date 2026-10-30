@@ -1,7 +1,8 @@
 import {
   CATEGORIES,
+  SHOP_TIME_ZONE,
+  type Availability,
   type CalendarEvent,
-  type EventCategory,
 } from "@/lib/content/calendar";
 
 export const MONTHS = [
@@ -43,7 +44,7 @@ export function todayKey(now = new Date()) {
 export function shopTodayKey(now = new Date()) {
   // en-CA formats as YYYY-MM-DD.
   return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Los_Angeles",
+    timeZone: SHOP_TIME_ZONE,
   }).format(now);
 }
 
@@ -55,8 +56,52 @@ export function upcomingEvents(
 ) {
   return events
     .filter((e) => e.date >= today)
-    .sort((a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start))
+    .sort(
+      (a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start),
+    )
     .slice(0, count);
+}
+
+/** The ISO day after `date`, for an all-day event's exclusive end. */
+export function nextDay(date: string) {
+  const next = new Date(`${date}T00:00:00Z`);
+  next.setUTCDate(next.getUTCDate() + 1);
+  return next.toISOString().slice(0, 10);
+}
+
+const HOUR = 60 * 60 * 1_000;
+
+/** An ISO instant as Google's UTC stamp: "2026-12-13T19:00:00.000Z" → "20261213T190000Z". */
+const utcStamp = (iso: string) =>
+  iso.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+
+/**
+ * A Google Calendar link that opens the event, filled in, ready to save. An
+ * event with no end gets an hour, and one whose time isn't set yet is saved
+ * as all day.
+ */
+export function googleCalendarUrl(
+  event: Pick<
+    CalendarEvent,
+    "title" | "date" | "startsAt" | "endsAt" | "timeTba" | "description"
+  >,
+  location: string,
+) {
+  const end =
+    event.endsAt ??
+    new Date(new Date(event.startsAt).getTime() + HOUR).toISOString();
+
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: event.title,
+    dates: event.timeTba
+      ? `${event.date.replace(/-/g, "")}/${nextDay(event.date).replace(/-/g, "")}`
+      : `${utcStamp(event.startsAt)}/${utcStamp(end)}`,
+    ctz: SHOP_TIME_ZONE,
+    details: event.description,
+    location,
+  });
+  return `https://calendar.google.com/calendar/render?${params}`;
 }
 
 /** Months since year 0, so navigation is one number to clamp. */
@@ -64,11 +109,13 @@ export const monthIndex = (year: number, month: number) => year * 12 + month;
 
 export type DecoratedEvent = CalendarEvent & {
   past: boolean;
-  /** Seats still available, or null for a drop-in event. */
-  left: number | null;
   /** Seats this visitor has already saved. */
   mine: number;
   dropIn: boolean;
+  /** Where sign-ups stand; null for a drop-in event. */
+  availability: Availability | null;
+  /** Seats one sign-up may save. */
+  maxSeats: number;
   categoryLabel: string;
   categoryColor: string;
   categoryInk: string;
@@ -80,7 +127,7 @@ export type DecoratedEvent = CalendarEvent & {
   priceLabel: string;
   spotsLabel: string;
   cta: string;
-  /** Drop-ins only need details, so their button steps back to an outline. */
+  /** Details-only buttons step back to an outline. */
   ctaVariant: "solid" | "outline";
   ctaColor: string;
   ctaInk: string;
@@ -96,49 +143,50 @@ export function decorate(
   mySeats: Record<string, number>,
   today: string,
 ): DecoratedEvent {
-  const category = CATEGORIES[event.category as EventCategory];
+  const category = CATEGORIES[event.category];
   const past = event.date < today;
   const mine = mySeats[event.id] ?? 0;
-  const dropIn = event.capacity === 0;
-  const left = dropIn ? null : Math.max(0, event.capacity - event.taken - mine);
+  const dropIn = event.seats.kind === "drop-in";
+  const availability =
+    event.seats.kind === "rsvp" ? event.seats.availability : null;
 
   // Noon avoids the date shifting under time zones either side of UTC.
   const date = new Date(`${event.date}T12:00:00`);
 
-  const spotsLabel = dropIn
-    ? "Drop in"
-    : left === 0
-      ? "Full"
-      : `${left} ${left === 1 ? "spot" : "spots"} left`;
+  const spotsLabel = availability ? SPOTS_LABELS[availability] : "Drop in";
 
   const cta = past
     ? "Past"
     : mine
       ? "You're in"
-      : dropIn
-        ? "Details"
-        : left === 0
-          ? "Waitlist"
-          : "Sign up";
+      : availability
+        ? CTA_LABELS[availability]
+        : "Details";
 
   return {
     ...event,
     past,
-    left,
     mine,
     dropIn,
+    availability,
+    maxSeats: event.seats.kind === "rsvp" ? event.seats.maxSeats : 0,
     categoryLabel: category.label,
     categoryColor: category.color,
     categoryInk: category.ink,
     dow: WEEKDAYS[date.getDay()].toUpperCase(),
     day: date.getDate(),
     longDate: `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
-    time: `${formatTime(event.start)}–${formatTime(event.end)}`,
-    shortTime: formatTime(event.start),
+    // Empty while the time isn't set yet; every view then shows the date alone.
+    time: event.timeTba
+      ? ""
+      : event.end
+        ? `${formatTime(event.start)}–${formatTime(event.end)}`
+        : formatTime(event.start),
+    shortTime: event.timeTba ? "" : formatTime(event.start),
     priceLabel: event.price ? `$${event.price}` : "Free",
     spotsLabel,
     cta,
-    ctaVariant: dropIn && !past && !mine ? "outline" : "solid",
+    ctaVariant: cta === "Details" ? "outline" : "solid",
     ctaColor: past
       ? "var(--color-ecs-ply-pale)"
       : mine
@@ -151,6 +199,20 @@ export function decorate(
         : "#ffffff",
   };
 }
+
+const SPOTS_LABELS: Record<Availability, string> = {
+  open: "Spots open",
+  waitlist: "Waitlist open",
+  full: "Full",
+  closed: "Sign-ups closed",
+};
+
+const CTA_LABELS: Record<Availability, string> = {
+  open: "Sign up",
+  waitlist: "Waitlist",
+  full: "Details",
+  closed: "Details",
+};
 
 export type MonthCell = {
   key: string;

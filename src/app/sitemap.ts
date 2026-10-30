@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next";
 
-import { CALENDAR_EVENTS } from "@/lib/content/calendar";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 import { MANIFESTO_ENABLED } from "@/lib/content/manifesto";
+import { getCalendarEvents } from "@/lib/events";
 import { SITE_URL } from "@/lib/site";
 
 type Route = {
@@ -15,16 +15,6 @@ type Route = {
 const ROUTES: Route[] = [
   { path: "/", changeFrequency: "weekly", priority: 1 },
   { path: "/makers", changeFrequency: "weekly", priority: 0.8 },
-  // Left out while empty, when the page is noindex.
-  ...(CALENDAR_EVENTS.length > 0
-    ? [
-        {
-          path: "/calendar",
-          changeFrequency: "weekly",
-          priority: 0.8,
-        } as const,
-      ]
-    : []),
   ...(MANIFESTO_ENABLED
     ? [
         {
@@ -48,8 +38,18 @@ const ROUTES: Route[] = [
   { path: "/privacy", changeFrequency: "monthly", priority: 0.1 },
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  return ROUTES.map(({ path, changeFrequency, priority }) => ({
+const CALENDAR_ROUTE: Route = {
+  path: "/calendar",
+  changeFrequency: "weekly",
+  priority: 0.8,
+};
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // /calendar is left out while empty, when the page is noindex.
+  const hasEvents = (await getCalendarEvents(false)).length > 0;
+  const routes = hasEvents ? [...ROUTES, CALENDAR_ROUTE] : ROUTES;
+
+  return routes.map(({ path, changeFrequency, priority }) => ({
     url: new URL(path, SITE_URL).toString(),
     changeFrequency,
     priority,

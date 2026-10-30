@@ -83,7 +83,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: clamp(22px, 3.4vh, 36px);
+  margin-bottom: 18px;
 }
 
 .monthNav {
@@ -102,6 +102,24 @@
   letter-spacing: 0.02em;
 }
 
+/* Everything you click to narrow the month, in one row: the type filters on
+   the left, the view switch on the right, ruled off from the events. */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: clamp(22px, 3.4vh, 32px);
+  border-bottom: 2px solid color-mix(in srgb, var(--color-ecs-navy) 14%, transparent);
+}
+
+.views {
+  display: flex;
+  gap: 6px;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -115,47 +133,114 @@
   background: var(--dot-color);
 }
 
-.listHeader {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 16px;
+/* The list: a section per month, each a heading over its cards. */
+.months {
+  display: grid;
+  gap: clamp(36px, 6vh, 64px);
 }
 
-.listHeading {
-  margin: 0;
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  letter-spacing: 0.1em;
+.monthHeading {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 2.6vw, 2.1rem);
+  line-height: 1;
   text-transform: uppercase;
-  color: var(--color-ecs-ply-ink);
+  letter-spacing: 0.02em;
 }
 
+/* Cards, four across on a wide screen and never more, so each photo grows
+   with the screen rather than the row filling up with small ones. */
 .list {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
 }
 
-.empty {
-  padding: clamp(24px, 5vh, 56px) 0;
-  font-size: 16px;
+@media (max-width: 1100px) {
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
-/* One event: photo with its date chip, details, and the action on the right. */
-.row {
+@media (max-width: 860px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* A month with nothing on it: a note on the board instead of a blank. */
+.emptyMonth {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: clamp(14px, 2vw, 24px);
-  background: var(--color-ecs-surface);
+  justify-items: start;
+  gap: 14px;
+  padding: clamp(24px, 4vw, 44px);
+  border: 3px dashed var(--color-ecs-sky-line);
+  border-radius: 26px;
+  background: var(--color-ecs-sky-surface);
+}
+
+.emptyHeading {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.emptyCopy {
+  max-width: 560px;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.emptyActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+/* One event: a big square photo (often a Canva graphic, so nothing sits on
+   top of it), then the date beside the title, details, and the action. */
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  overflow: hidden;
+  background: var(--color-ecs-sky-surface);
   border-radius: 24px;
-  padding: 12px clamp(12px, 1.6vw, 18px);
+  padding-bottom: 20px;
   opacity: var(--row-opacity, 1);
 }
 
-.rowPhoto {
-  width: clamp(124px, 14vw, 168px);
+/* The photo runs edge to edge across the top of the card. */
+.row .rowPhoto {
+  width: 100%;
+  border-radius: 0;
+}
+
+.row > :not(.rowPhoto) {
+  margin-inline: clamp(14px, 1.4vw, 18px);
+}
+
+.rowHead {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+/* Takes the leftover height, so every card's action lines up. */
+.rowBody {
+  flex: 1;
 }
 
 .rowMeta {
@@ -218,21 +303,8 @@
 }
 
 .rowCta {
+  align-self: flex-start;
   white-space: nowrap;
-}
-
-/* Phones stack it like a flyer: photo on top, details, then the action. */
-@media (max-width: 620px) {
-  .row {
-    grid-template-columns: minmax(0, 1fr);
-    align-items: stretch;
-  }
-
-  /* Still square, just bigger, capped so the row doesn't get too tall. */
-  .rowPhoto {
-    width: 100%;
-    max-width: 360px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -243,22 +315,11 @@
 
 /* ── Month grid ────────────────────────────────────────────────────────── */
 
-.monthViewBar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: clamp(30px, 5vh, 56px) 0 16px;
-  /* Not a <section>, so it needs the clearance rule spelled out. */
-  scroll-margin-top: calc(var(--ecs-header-clearance, 100px) + 24px);
-}
-
 .grid {
-  border: 3px solid var(--color-ecs-ply);
+  border: 3px solid var(--color-ecs-sky-line);
   border-radius: 26px;
   overflow: hidden;
-  background: var(--color-ecs-ply-pale);
+  background: var(--color-ecs-sky-pale);
 }
 
 .weekdays,
@@ -269,7 +330,7 @@
 }
 
 .weekdays {
-  background: var(--color-ecs-ply-pale);
+  background: var(--color-ecs-sky-pale);
   padding: 12px 0;
 }
 
@@ -279,14 +340,14 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-ecs-ply-ink);
+  color: var(--color-ecs-navy);
   padding-left: 12px;
 }
 
 .cell {
   min-height: 116px;
   padding: 8px;
-  background: var(--color-ecs-surface);
+  background: var(--color-ecs-sky-surface);
   display: grid;
   align-content: start;
   gap: 4px;
@@ -300,7 +361,7 @@
   font-family: var(--font-heading);
   font-weight: 600;
   font-size: 14px;
-  color: var(--color-ecs-ply-ink);
+  color: var(--color-ecs-navy);
 }
 
 .cellToday {
@@ -331,10 +392,17 @@
   font-weight: 700;
 }
 
-/* The grid is unusable at phone widths; the list above carries it. */
+/* The grid is unusable at phone widths, so phones get the cards in either
+   view and no switch between them. */
 @media (max-width: 760px) {
-  .monthViewBar,
-  .grid {
+  .calendarView,
+  .views {
+    display: none;
+  }
+}
+
+@media (min-width: 761px) {
+  .phoneOnly {
     display: none;
   }
 }

@@ -11,18 +11,24 @@ import {
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import {
-  CALENDAR_EVENTS,
   CALENDAR_SUBSCRIBE_ENABLED,
+  EVENTS_PREVIEW,
 } from "@/lib/content/calendar";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
+import { getCalendarEvents } from "@/lib/events";
 
 import styles from "./events.module.css";
 
-/** The next few events from the community calendar, the one source of truth. */
-export function Events() {
+const CALENDAR_PREVIEW_HREF = `/calendar?${EVENTS_PREVIEW.param}=${EVENTS_PREVIEW.value}`;
+
+/**
+ * The next few events from the community calendar, the one source of truth.
+ * `preview` shows Wix events before they're switched on for everyone.
+ */
+export async function Events({ preview = false }: { preview?: boolean }) {
   const today = shopTodayKey();
-  const events = upcomingEvents(CALENDAR_EVENTS, today, 4).map((e) =>
-    decorate(e, {}, today),
+  const events = upcomingEvents(await getCalendarEvents(preview), today, 4).map(
+    (e) => decorate(e, {}, today),
   );
 
   return (
@@ -30,19 +36,19 @@ export function Events() {
       <div className={styles.header}>
         <div>
           <Eyebrow
-            color="var(--color-ecs-magenta)"
+            color="var(--color-ecs-cobalt)"
             ink="#ffffff"
             className="mb-[18px]"
           >
-            Fall calendar
+            {preview ? "Preview: Wix events" : "Fall calendar"}
           </Eyebrow>
           <h2 className={styles.heading}>What&rsquo;s coming up</h2>
         </div>
 
         <div className={styles.actions}>
           <Link
-            href="/calendar"
-            className={button({ variant: "outline", tone: "magenta" })}
+            href={preview ? CALENDAR_PREVIEW_HREF : "/calendar"}
+            className={button({ variant: "outline", tone: "navy" })}
           >
             Full calendar + sign-ups →
           </Link>
@@ -61,7 +67,7 @@ export function Events() {
         <EmptyBoard />
       ) : events.length === 1 ? (
         <div className={styles.solo}>
-          <FeaturedEvent event={events[0]} />
+          <FeaturedEvent event={events[0]} preview={preview} />
           <MoreOnTheWay />
         </div>
       ) : (
@@ -75,7 +81,9 @@ export function Events() {
               />
               <div className={styles.cardBody}>
                 <div className={styles.cardMeta}>
-                  {event.longDate} · {event.time} · {event.priceLabel}
+                  {[event.longDate, event.time, event.priceLabel]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </div>
                 <h3 className={styles.cardTitle}>{event.title}</h3>
                 <p className={styles.cardBlurb}>{event.description}</p>
@@ -92,13 +100,19 @@ export function Events() {
  * A lone event gets the room four cards would have shared: a wide card with
  * the details a visitor needs to decide, beside a nudge to hear about the next.
  */
-function FeaturedEvent({ event }: { event: DecoratedEvent }) {
+function FeaturedEvent({
+  event,
+  preview,
+}: {
+  event: DecoratedEvent;
+  preview: boolean;
+}) {
   return (
     <article data-reveal className={styles.feature}>
       <EventPhoto
         event={event}
         className={styles.featurePhoto}
-        sizes="(max-width: 700px) 100vw, 420px"
+        sizes="(max-width: 640px) 100vw, 460px"
       />
       <div className={styles.featureBody}>
         <span
@@ -120,7 +134,7 @@ function FeaturedEvent({ event }: { event: DecoratedEvent }) {
           <div>
             <dt>When</dt>
             <dd>{event.longDate}</dd>
-            <dd>{event.time}</dd>
+            {event.time && <dd>{event.time}</dd>}
           </div>
           <div>
             <dt>Cost</dt>
@@ -130,8 +144,8 @@ function FeaturedEvent({ event }: { event: DecoratedEvent }) {
         </dl>
 
         <Link
-          href="/calendar"
-          className={button({ className: styles.featureCta })}
+          href={preview ? CALENDAR_PREVIEW_HREF : "/calendar"}
+          className={button({ tone: "navy", className: styles.featureCta })}
         >
           {event.cta === "Details" ? "See details" : event.cta} →
         </Link>
@@ -140,48 +154,29 @@ function FeaturedEvent({ event }: { event: DecoratedEvent }) {
   );
 }
 
-/** Shared by the one-event and no-event layouts: where the next ones show up. */
+/**
+ * Beside a lone event, so it doesn't sit by itself. No newsletter pitch here;
+ * the section's empty board and the signup band below already make it.
+ */
 function MoreOnTheWay() {
   return (
     <aside data-reveal className={styles.more}>
       <p className={styles.moreKicker}>More on the way</p>
       <p className={styles.moreCopy}>
-        {CALENDAR_SUBSCRIBE_ENABLED ? (
-          <>
-            New workshops and popups land all season long. Subscribe once and
-            they&rsquo;ll show up in your calendar on their own.
-          </>
-        ) : (
-          <>
-            New workshops and popups land all season long. Get the newsletter
-            to hear about them first.
-          </>
-        )}
+        {HOST_WITH_US_ENABLED
+          ? "Workshops, pop-ups and neighborhood nights are filling in. Got one of your own? We have room."
+          : "Workshops, pop-ups and neighborhood nights are filling in. Check back here as the calendar grows."}
       </p>
-      <div className={styles.moreLinks}>
-        {CALENDAR_SUBSCRIBE_ENABLED && (
+      {HOST_WITH_US_ENABLED && (
+        <div className={styles.moreLinks}>
           <Link
-            href="/calendar#subscribe-heading"
-            className={button({
-              variant: "outline",
-              tone: "tealDeep",
-              size: "sm",
-            })}
+            href="/host-with-us"
+            className={button({ variant: "outline", tone: "navy", size: "sm" })}
           >
-            Subscribe to the calendar
+            Pitch a pop-up →
           </Link>
-        )}
-        <Link
-          href="#signup"
-          className={button({
-            variant: "outline",
-            tone: "tealDeep",
-            size: "sm",
-          })}
-        >
-          Get the newsletter
-        </Link>
-      </div>
+        </div>
+      )}
     </aside>
   );
 }
@@ -207,7 +202,7 @@ function EmptyBoard() {
           <div className={styles.moreLinks}>
             <Link
               href="/calendar#subscribe-heading"
-              className={button({ tone: "magenta", size: "sm" })}
+              className={button({ tone: "navy", size: "sm" })}
             >
               Subscribe to the calendar
             </Link>
@@ -215,7 +210,7 @@ function EmptyBoard() {
               href="#signup"
               className={button({
                 variant: "outline",
-                tone: "ply",
+                tone: "navy",
                 size: "sm",
               })}
             >
@@ -227,7 +222,7 @@ function EmptyBoard() {
             <Link
               href="#signup"
               className={button({
-                tone: "magenta",
+                tone: "navy",
                 size: "sm",
               })}
             >

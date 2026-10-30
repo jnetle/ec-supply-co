@@ -35,7 +35,7 @@
 }
 
 .card {
-  background: var(--color-ecs-surface);
+  background: var(--color-ecs-sky-surface);
   border-radius: 28px;
   overflow: hidden;
   transition:
@@ -63,7 +63,7 @@
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--color-ecs-teal-deep);
+  color: var(--color-ecs-cobalt);
 }
 
 .cardTitle {
@@ -88,8 +88,8 @@
 
 .feature {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
-  background: var(--color-ecs-surface);
+  grid-template-columns: min(460px, 45%) minmax(0, 1fr);
+  background: var(--color-ecs-sky-surface);
   border-radius: 28px;
   overflow: hidden;
   transition:
@@ -102,9 +102,12 @@
   box-shadow: var(--shadow-ecs-lg);
 }
 
+/* Square, so a Canva graphic isn't cropped, and taller if the text is: it
+   takes its width from the column, never from the card's height. */
 .featurePhoto {
   border-radius: 0;
-  height: 100%;
+  width: 100%;
+  min-height: 100%;
 }
 
 .featureBody {
@@ -141,10 +144,11 @@
   font-style: italic;
   font-weight: 500;
   font-size: 19px;
-  color: var(--color-ecs-magenta);
+  color: var(--color-ecs-cobalt);
 }
 
 .featureBlurb {
+  max-width: 60ch;
   margin: 12px 0 0;
   font-size: 16px;
   line-height: 1.55;
@@ -154,10 +158,26 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  width: 100%;
+  width: min(100%, 560px);
+  position: relative;
   margin: 20px 0 24px;
-  padding-top: 16px;
-  border-top: 2px dashed var(--color-ecs-ply);
+  padding-top: 32px;
+}
+
+/* A loose, hand-drawn squiggle across the top, in place of a ruled line. The
+   waves differ in width and height so it doesn't read as a pattern, and the
+   tile ends where it starts so the repeat can't be seen. Coloured through a
+   mask so it takes any colour. */
+.featureFacts::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  background: var(--color-ecs-sky-line);
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='20' viewBox='0 0 300 20'%3E%3Cpath d='M0 10 C14 1 34 1 46 8 S66 19 86 15 S104 4 116 7 S130 13 146 12 S170 2 196 4 S220 18 238 16 S256 9 266 8 S288 13 300 10' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
+    repeat-x left center / 300px 20px;
 }
 
 .featureFacts dt {
@@ -166,7 +186,7 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--color-ecs-teal-deep);
+  color: var(--color-ecs-cobalt);
 }
 
 .featureFacts dd {
@@ -183,10 +203,10 @@
   flex-direction: column;
   justify-content: center;
   padding: clamp(22px, 3vw, 34px);
-  border: 3px solid var(--color-ecs-teal-deep);
+  border: 3px solid var(--color-ecs-sky-line);
   border-radius: 26px;
-  background: var(--color-ecs-teal-pale);
-  color: var(--color-ecs-teal-deep);
+  background: var(--color-ecs-sky-pale);
+  color: var(--color-ecs-navy);
 }
 
 .moreKicker {
@@ -219,10 +239,10 @@
   align-items: center;
   gap: clamp(24px, 4vw, 56px);
   padding: clamp(26px, 4vw, 56px);
-  border: 3px dashed var(--color-ecs-ply);
+  border: 3px dashed var(--color-ecs-sky-line);
   border-radius: 28px;
-  background: var(--color-ecs-ply-pale);
-  color: var(--color-ecs-ply-ink);
+  background: var(--color-ecs-sky-pale);
+  color: var(--color-ecs-navy);
 }
 
 .boardScript {
@@ -231,7 +251,7 @@
   font-style: italic;
   font-weight: 500;
   font-size: clamp(22px, 2.4vw, 28px);
-  color: var(--color-ecs-magenta);
+  color: var(--color-ecs-cobalt);
 }
 
 .boardTitle {
@@ -241,7 +261,7 @@
   font-size: clamp(1.6rem, 3.2vw, 2.8rem);
   line-height: 1.02;
   text-transform: uppercase;
-  color: var(--color-ecs-ink);
+  color: var(--color-ecs-navy);
 }
 
 .boardCopy {
@@ -336,7 +356,7 @@
   }
 
   .featurePhoto {
-    height: auto;
+    min-height: 0;
   }
 }
 

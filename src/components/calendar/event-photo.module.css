@@ -5,7 +5,7 @@
   aspect-ratio: 1 / 1;
   overflow: hidden;
   border-radius: 18px;
-  background: var(--color-ecs-ply-pale);
+  background: var(--color-ecs-sky-pale);
 }
 
 .photo img {
@@ -18,11 +18,7 @@
   transform: scale(1.04);
 }
 
-/* Pinned over the photo's corner, like a sticker on a flyer. */
 .chip {
-  position: absolute;
-  left: 8px;
-  top: 8px;
   display: grid;
   place-items: center;
   min-width: 56px;
@@ -33,6 +29,13 @@
   color: var(--chip-ink);
   font-family: var(--font-heading);
   line-height: 1;
+}
+
+/* Pinned over the photo's corner, like a sticker on a flyer. */
+.pinned {
+  position: absolute;
+  left: 8px;
+  top: 8px;
 }
 
 .chipDow {

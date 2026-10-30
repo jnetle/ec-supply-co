@@ -1,36 +1,61 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { useState, type CSSProperties, type FormEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 
+import { rsvpToEvent } from "@/app/actions/event-rsvp";
 import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
+import { SHOP_ADDRESS } from "@/lib/content/nav";
+import { initialRsvpState } from "@/lib/event-rsvp";
+import {
+  HONEYPOT_FIELD,
+  MAX_EMAIL_LENGTH,
+  MAX_RSVP_NAME_LENGTH,
+} from "@/lib/form-limits";
+import { mockRsvp } from "@/lib/mock-events";
+import { SITE_NAME } from "@/lib/site";
 
 import formStyles from "@/components/ui/form.module.css";
 import styles from "./event-dialog.module.css";
-import type { DecoratedEvent } from "./event-model";
+import { googleCalendarUrl, type DecoratedEvent } from "./event-model";
 
-/** Nobody may book more than this many seats at once. */
-const MAX_SEATS_PER_BOOKING = 4;
+const SHOP_LOCATION = `${SITE_NAME}, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city}`;
+const calendarLink = button({ variant: "link", tone: "teal" });
 
 type Outcome = "reserved" | "waitlisted";
 
 type EventDialogProps = {
   event: DecoratedEvent | null;
   onClose: () => void;
-  /** Records the seats; the parent owns persistence. */
+  /** Remembers the seats in this browser; the parent owns persistence. */
   onReserve: (eventId: string, seats: number) => void;
+  /** A made-up event: the form fakes its result instead of calling Wix. */
+  mock?: boolean;
 };
 
-export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
-  const [seats, setSeats] = useState("1");
+export function EventDialog({
+  event,
+  onClose,
+  onReserve,
+  mock = false,
+}: EventDialogProps) {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
 
   if (!event) return null;
 
-  const canJoin = !event.past && !event.dropIn && !event.mine && !outcome;
-  const maxSeats = Math.min(MAX_SEATS_PER_BOOKING, event.left || 1);
-  const isFull = event.left === 0;
+  const isWaitlist = event.availability === "waitlist";
+  const canJoin =
+    !event.past &&
+    !event.mine &&
+    !outcome &&
+    (event.availability === "open" || isWaitlist);
 
   const note = outcome
     ? null
@@ -40,24 +65,20 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
         ? "No sign-up needed. Just come by."
         : event.mine
           ? `You have ${event.mine} ${event.mine === 1 ? "seat" : "seats"} saved. See you there.`
-          : null;
+          : event.availability === "full"
+            ? "This one is full."
+            : event.availability === "closed"
+              ? "Sign-ups for this one are closed."
+              : null;
 
-  const handleSubmit = (formEvent: FormEvent<HTMLFormElement>) => {
-    formEvent.preventDefault();
-    // TODO: wire the submit endpoint; seats are only remembered in this
-    // browser until it exists.
-    if (isFull) {
-      setOutcome("waitlisted");
-      return;
-    }
-    onReserve(event.id, Number(seats));
-    setOutcome("reserved");
+  const handleDone = (next: Outcome, seats: number) => {
+    setOutcome(next);
+    if (next === "reserved") onReserve(event.id, seats);
   };
 
   const handleOpenChange = (next: boolean) => {
     if (next) return;
     setOutcome(null);
-    setSeats("1");
     onClose();
   };
 
@@ -89,7 +110,7 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
             <div className={styles.category}>{event.categoryLabel}</div>
             <Dialog.Title className={styles.title}>{event.title}</Dialog.Title>
             <div className={styles.when}>
-              {event.longDate} · {event.time}
+              {[event.longDate, event.time].filter(Boolean).join(" · ")}
             </div>
           </div>
 
@@ -103,6 +124,27 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
               <span className={styles.fact}>{event.priceLabel}</span>
               <span className={styles.fact}>{event.spotsLabel}</span>
             </div>
+
+            {event.past ? null : (
+              <div className={styles.addToCalendar}>
+                <span className={styles.addLabel}>Add to calendar</span>
+                <a
+                  href={googleCalendarUrl(event, SHOP_LOCATION)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={calendarLink}
+                >
+                  Google
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+                <a
+                  href={`/api/events/${encodeURIComponent(event.id)}`}
+                  className={calendarLink}
+                >
+                  Apple / Outlook
+                </a>
+              </div>
+            )}
 
             {outcome ? (
               <div className={styles.done} aria-live="polite">
@@ -122,72 +164,148 @@ export function EventDialog({ event, onClose, onReserve }: EventDialogProps) {
             {note ? <div className={styles.note}>{note}</div> : null}
 
             {canJoin ? (
-              <form onSubmit={handleSubmit} className={formStyles.form}>
-                <div className={formStyles.pair}>
-                  <Field id="signup-name" label="Name" required>
-                    {(props) => (
-                      <input
-                        {...props}
-                        name="name"
-                        required
-                        autoComplete="name"
-                      />
-                    )}
-                  </Field>
-                  <Field id="signup-email" label="Email" required>
-                    {(props) => (
-                      <input
-                        {...props}
-                        type="email"
-                        name="email"
-                        required
-                        autoComplete="email"
-                      />
-                    )}
-                  </Field>
-                </div>
-
-                {isFull ? null : (
-                  <div className={formStyles.field}>
-                    <label htmlFor="signup-seats" className={formStyles.label}>
-                      Seats
-                    </label>
-                    <select
-                      id="signup-seats"
-                      name="seats"
-                      value={seats}
-                      onChange={(e) => setSeats(e.target.value)}
-                      className={styles.select}
-                    >
-                      {Array.from({ length: maxSeats }, (_, i) => (
-                        <option key={i} value={String(i + 1)}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
-                <label className={formStyles.checkbox}>
-                  <input type="checkbox" name="news" />
-                  Sign up for news and updates
-                </label>
-
-                <button
-                  type="submit"
-                  className={button({
-                    tone: "tealDeep",
-                    size: "lg",
-                    className: formStyles.submit,
-                  })}
-                >
-                  {isFull ? "Join waitlist" : "Save my seat"}
-                </button>
-              </form>
+              // Keyed so each event starts with a fresh form and result.
+              <RsvpForm
+                key={event.id}
+                eventId={event.id}
+                waitlist={isWaitlist}
+                maxSeats={event.maxSeats}
+                mock={mock}
+                onDone={handleDone}
+              />
             ) : null}
           </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  );
+}
+
+type RsvpFormProps = {
+  eventId: string;
+  /** The event is full but takes names for its waitlist. */
+  waitlist: boolean;
+  /** Seats one RSVP may save; the picker is hidden at 1. */
+  maxSeats: number;
+  mock: boolean;
+  onDone: (outcome: Outcome, seats: number) => void;
+};
+
+function RsvpForm({
+  eventId,
+  waitlist,
+  maxSeats,
+  mock,
+  onDone,
+}: RsvpFormProps) {
+  const [state, formAction, pending] = useActionState(
+    mock ? mockRsvp : rsvpToEvent,
+    initialRsvpState,
+  );
+
+  // Each result is reported once, however often the parent re-renders.
+  const reported = useRef(initialRsvpState);
+  useEffect(() => {
+    if (reported.current === state) return;
+    reported.current = state;
+    if (state.status === "reserved") onDone("reserved", state.seats ?? 1);
+    if (state.status === "waitlisted") onDone("waitlisted", 0);
+  }, [state, onDone]);
+
+  return (
+    <form action={formAction} className={formStyles.form}>
+      <input type="hidden" name="eventId" value={eventId} />
+      {waitlist && <input type="hidden" name="waitlist" value="on" />}
+
+      <div className={formStyles.pair}>
+        <Field id="signup-first" label="First name" required>
+          {(props) => (
+            <input
+              {...props}
+              name="first"
+              required
+              maxLength={MAX_RSVP_NAME_LENGTH}
+              autoComplete="given-name"
+            />
+          )}
+        </Field>
+        <Field id="signup-last" label="Last name" required>
+          {(props) => (
+            <input
+              {...props}
+              name="last"
+              required
+              maxLength={MAX_RSVP_NAME_LENGTH}
+              autoComplete="family-name"
+            />
+          )}
+        </Field>
+      </div>
+
+      <Field id="signup-email" label="Email" required>
+        {(props) => (
+          <input
+            {...props}
+            type="email"
+            name="email"
+            required
+            maxLength={MAX_EMAIL_LENGTH}
+            autoComplete="email"
+          />
+        )}
+      </Field>
+
+      {waitlist || maxSeats <= 1 ? null : (
+        <div className={formStyles.field}>
+          <label htmlFor="signup-seats" className={formStyles.label}>
+            Seats
+          </label>
+          <select
+            id="signup-seats"
+            name="seats"
+            defaultValue="1"
+            className={styles.select}
+          >
+            {Array.from({ length: maxSeats }, (_, i) => (
+              <option key={i} value={String(i + 1)}>
+                {i + 1}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      <label className={formStyles.checkbox}>
+        <input type="checkbox" name="news" />
+        Sign up for news and updates
+      </label>
+
+      {/* Honeypot: hidden from users and assistive tech, tempting to bots. */}
+      <input
+        type="text"
+        name={HONEYPOT_FIELD}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="sr-only"
+      />
+
+      <button
+        type="submit"
+        aria-busy={pending}
+        disabled={pending}
+        className={button({
+          tone: "tealDeep",
+          size: "lg",
+          className: formStyles.submit,
+        })}
+      >
+        {pending ? "Saving…" : waitlist ? "Join waitlist" : "Save my seat"}
+      </button>
+
+      <p aria-live="polite" className={formStyles.error}>
+        {state.status === "error" ? state.message : ""}
+      </p>
+    </form>
   );
 }
