@@ -1,6 +1,6 @@
-/* An event's photo with its date chip. The frame takes the photo's own shape,
-   from square to a 3:4 portrait (set inline as --photo-ratio), so a square
-   Canva graphic and an Instagram-sized 4:5 flyer both show whole. */
+/* An event's photo with its date chip, always a 4:5 portrait (set inline as
+   --photo-ratio). Graphics are made 1080×1350 before upload, so they show
+   whole. */
 .photo {
   position: relative;
   aspect-ratio: var(--photo-ratio, 1);
@@ -11,29 +11,6 @@
 
 .photo img {
   object-fit: cover;
-  transition: transform 400ms ease;
-}
-
-/* The whole photo, letterboxed over a soft blur of itself. */
-.whole > img {
-  object-fit: contain;
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-}
-
-*:hover > .photo .backdrop img,
-.photo .backdrop img {
-  object-fit: cover;
-  filter: blur(18px) saturate(1.1);
-  transform: scale(1.15);
-}
-
-/* Zooms when the card or row holding the photo is hovered. */
-*:hover > .photo img {
-  transform: scale(1.04);
 }
 
 .chip {
@@ -68,8 +45,3 @@
   margin-top: 4px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .photo img {
-    transition: none;
-  }
-}

@@ -194,8 +194,9 @@
   text-underline-offset: 4px;
 }
 
-/* Two wide cards side by side get too narrow for their photos below this. */
-@media (max-width: 1180px) {
+/* Two wide cards share a row only when each has room for its photo beside
+   its text (760px, see event-card); below this they stack. */
+@media (max-width: 1700px) {
   .pair {
     grid-template-columns: minmax(0, 880px);
   }

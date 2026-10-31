@@ -151,7 +151,9 @@ export function EventDialog({
             ) : null}
 
             <div className={styles.facts}>
-              <span className={styles.fact}>{event.priceLabel}</span>
+              {event.priceLabel ? (
+                <span className={styles.fact}>{event.priceLabel}</span>
+              ) : null}
               {event.spotsLabel ? (
                 <span className={styles.fact}>{event.spotsLabel}</span>
               ) : null}

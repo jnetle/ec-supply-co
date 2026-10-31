@@ -162,6 +162,20 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
         "Loaves, jam and coffee until they run out. No photo on this one, to see the shop photo that stands in.",
     },
     {
+      id: "mock-run",
+      date: on(-3),
+      lastDate: on(20),
+      start: "08:00",
+      end: "14:00",
+      category: "popup",
+      title: "Coffee bar with rotating roasters",
+      photo: "/assets/photos/id-102-600-600.jpg",
+      price: 0,
+      seats: { kind: "drop-in" },
+      description:
+        "Runs over several days, already going: its card shows the dates and no time, and the month view shows it every day.",
+    },
+    {
       id: "mock-closed",
       date: on(12),
       start: "18:00",
@@ -204,7 +218,9 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
   return events.map((event) => ({
     ...event,
     startsAt: shopInstant(event.date, event.start),
-    endsAt: event.end ? shopInstant(event.date, event.end) : undefined,
+    endsAt: event.end
+      ? shopInstant(event.lastDate ?? event.date, event.end)
+      : undefined,
   }));
 }
 

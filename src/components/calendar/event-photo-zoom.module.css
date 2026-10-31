@@ -9,12 +9,19 @@
   cursor: zoom-in;
 }
 
-/* The visible control, in the corner away from the date chip. */
+/* The keyboard's way in, in the corner away from the date chip. Hidden
+   until it's tabbed to, so it never sits over a flyer's small print; a
+   mouse or a tap opens the large view from anywhere on the photo. */
 .expand {
   position: absolute;
   right: 8px;
   bottom: 8px;
   z-index: 2;
+}
+
+.expand:not(:focus-visible) {
+  clip-path: inset(50%);
+  opacity: 0;
 }
 
 .overlay {

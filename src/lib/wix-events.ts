@@ -323,10 +323,12 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
   }
 
   const about = aboutBlocks(event.description?.nodes);
+  const date = shopDate.format(start);
 
   return {
     id: event._id,
-    date: shopDate.format(start),
+    date,
+    lastDate: end ? lastDay(date, end) : undefined,
     start: shopTime.format(start),
     end: end ? shopTime.format(end) : undefined,
     startsAt: start.toISOString(),
@@ -345,6 +347,31 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
     draft: names.some(isDraftCategory) || undefined,
   };
 }
+
+/**
+ * The last day of an event that ends on a later day than it starts, in shop
+ * time; undefined for a one-day event. An end at midnight (Wix's way to say
+ * "to the end of the 30th") belongs to the day before. One that ends in the
+ * small hours, a late night running past midnight, is still a one-day event.
+ */
+function lastDay(date: string, end: Date): string | undefined {
+  const endDate = shopDate.format(end);
+  if (endDate <= date) return undefined;
+  const endTime = shopTime.format(end);
+  if (endTime === "00:00") {
+    const before = previousDay(endDate);
+    return before > date ? before : undefined;
+  }
+  return endDate === nextDayOf(date) && endTime < "06:00" ? undefined : endDate;
+}
+
+const shiftDay = (date: string, days: number) => {
+  const day = new Date(`${date}T00:00:00Z`);
+  day.setUTCDate(day.getUTCDate() + days);
+  return day.toISOString().slice(0, 10);
+};
+const previousDay = (date: string) => shiftDay(date, -1);
+const nextDayOf = (date: string) => shiftDay(date, 1);
 
 /** Every published free Wix event, draft-tagged ones included and marked. */
 async function loadCalendarEvents(): Promise<CalendarEvent[]> {

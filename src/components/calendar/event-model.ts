@@ -48,18 +48,72 @@ export function shopTodayKey(now = new Date()) {
   }).format(now);
 }
 
-/** The next `count` events on or after `today`, soonest first. */
+/** The event's last day: its `lastDate` when it runs over several days. */
+export const lastDayOf = (event: Pick<CalendarEvent, "date" | "lastDate">) =>
+  event.lastDate ?? event.date;
+
+/**
+ * The day an event sorts and groups by: its first day, or today for one
+ * that's already running, so a month-long coffee bar sits with today's
+ * events rather than at the top of a month that's half gone.
+ */
+export const listDate = (
+  event: Pick<CalendarEvent, "date" | "lastDate">,
+  today: string,
+) => (event.lastDate && event.date < today ? today : event.date);
+
+/** Single-day events before runs of days, which are on most days anyway. */
+const singleDayFirst = (a: CalendarEvent, b: CalendarEvent) =>
+  Number(Boolean(a.lastDate)) - Number(Boolean(b.lastDate));
+
+/**
+ * By month of `listDate`; within a month, single-day events first, soonest
+ * first, then runs of days after them, so a month-long coffee bar never
+ * pushes that month's one-off events down.
+ */
+export const byListDate =
+  (today: string) => (a: CalendarEvent, b: CalendarEvent) =>
+    listDate(a, today)
+      .slice(0, 7)
+      .localeCompare(listDate(b, today).slice(0, 7)) ||
+    singleDayFirst(a, b) ||
+    listDate(a, today).localeCompare(listDate(b, today)) ||
+    a.start.localeCompare(b.start);
+
+/** The next `count` events still to come or running on `today`. */
 export function upcomingEvents(
   events: CalendarEvent[],
   today: string,
   count: number,
 ) {
   return events
-    .filter((e) => e.date >= today)
-    .sort(
-      (a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start),
-    )
+    .filter((e) => lastDayOf(e) >= today)
+    .sort(byListDate(today))
     .slice(0, count);
+}
+
+/**
+ * A run of days, for the When line: "All of November" for a whole month,
+ * "November 1–20" within one, "November 15 – December 15" across two.
+ */
+function runLabel(first: Date, last: Date) {
+  const firstMonth = MONTHS[first.getMonth()];
+  const lastMonth = MONTHS[last.getMonth()];
+  const sameMonth =
+    first.getFullYear() === last.getFullYear() &&
+    first.getMonth() === last.getMonth();
+  if (!sameMonth) {
+    return `${firstMonth} ${first.getDate()} – ${lastMonth} ${last.getDate()}`;
+  }
+  const monthLength = new Date(
+    last.getFullYear(),
+    last.getMonth() + 1,
+    0,
+  ).getDate();
+  if (first.getDate() === 1 && last.getDate() === monthLength) {
+    return `All of ${firstMonth}`;
+  }
+  return `${firstMonth} ${first.getDate()}–${last.getDate()}`;
 }
 
 /** The ISO day after `date`, for an all-day event's exclusive end. */
@@ -83,7 +137,13 @@ const utcStamp = (iso: string) =>
 export function googleCalendarUrl(
   event: Pick<
     CalendarEvent,
-    "title" | "date" | "startsAt" | "endsAt" | "timeTba" | "description"
+    | "title"
+    | "date"
+    | "lastDate"
+    | "startsAt"
+    | "endsAt"
+    | "timeTba"
+    | "description"
   >,
   location: string,
 ) {
@@ -94,9 +154,11 @@ export function googleCalendarUrl(
   const params = new URLSearchParams({
     action: "TEMPLATE",
     text: event.title,
-    dates: event.timeTba
-      ? `${event.date.replace(/-/g, "")}/${nextDay(event.date).replace(/-/g, "")}`
-      : `${utcStamp(event.startsAt)}/${utcStamp(end)}`,
+    // A run of days, or a day with no time yet, is saved as all day.
+    dates:
+      event.timeTba || event.lastDate
+        ? `${event.date.replace(/-/g, "")}/${nextDay(lastDayOf(event)).replace(/-/g, "")}`
+        : `${utcStamp(event.startsAt)}/${utcStamp(end)}`,
     ctz: SHOP_TIME_ZONE,
     details: event.description,
     location,
@@ -129,6 +191,7 @@ export type DecoratedEvent = CalendarEvent & {
   longDate: string;
   time: string;
   shortTime: string;
+  /** "Preorder" for a pick-up; empty, and not shown, for everything else. */
   priceLabel: string;
   /** Empty for a pick-up, where "Preorder" already says it all. */
   spotsLabel: string;
@@ -150,7 +213,7 @@ export function decorate(
   today: string,
 ): DecoratedEvent {
   const category = CATEGORIES[event.category];
-  const past = event.date < today;
+  const past = lastDayOf(event) < today;
   const mine = mySeats[event.id] ?? 0;
   const dropIn = event.seats.kind === "drop-in";
   const availability =
@@ -158,18 +221,17 @@ export function decorate(
 
   // Noon avoids the date shifting under time zones either side of UTC.
   const date = new Date(`${event.date}T12:00:00`);
+  const last = event.lastDate
+    ? new Date(`${event.lastDate}T12:00:00`)
+    : undefined;
 
   const orderUrl =
-    event.seats.kind === "external"
-      ? event.seats.url
-      : undefined;
+    event.seats.kind === "external" ? event.seats.url : undefined;
 
   const external = event.seats.kind === "external";
   const pickup = event.category === "pickup";
   const orderLabel = pickup ? "Preorder" : "Sign up";
 
-  // An external event's price and seats live on the host's site, so the
-  // shop's "Free" (Wix's price is always 0 here) would be wrong.
   const spotsLabel = availability
     ? SPOTS_LABELS[availability]
     : external
@@ -200,23 +262,25 @@ export function decorate(
     categoryLabel: category.label,
     categoryColor: category.color,
     categoryInk: category.ink,
-    dow: WEEKDAYS[date.getDay()].toUpperCase(),
-    day: date.getDate(),
-    longDate: `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
-    // Empty while the time isn't set yet; every view then shows the date alone.
-    time: event.timeTba
-      ? ""
-      : event.end
-        ? `${formatTime(event.start)}–${formatTime(event.end)}`
-        : formatTime(event.start),
-    shortTime: event.timeTba ? "" : formatTime(event.start),
-    priceLabel: pickup
-      ? "Preorder"
-      : external
-        ? "Set by the host"
-        : event.price
-          ? `$${event.price}`
-          : "Free",
+    // A run's chip counts down to its last day: "THRU 30".
+    dow: last ? "THRU" : WEEKDAYS[date.getDay()].toUpperCase(),
+    day: (last ?? date).getDate(),
+    longDate: last
+      ? runLabel(date, last)
+      : `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
+    // Empty while the time isn't set yet, and for a run, whose hours vary
+    // day to day; every view then shows the dates alone.
+    time:
+      event.timeTba || last
+        ? ""
+        : event.end
+          ? `${formatTime(event.start)}–${formatTime(event.end)}`
+          : formatTime(event.start),
+    shortTime: event.timeTba || last ? "" : formatTime(event.start),
+    // Only a pick-up shows a cost line. Wix's price is always 0 here, so
+    // anything else would say "Free", which reads as free food at a popup
+    // and is wrong for a host who charges on their own site.
+    priceLabel: pickup ? "Preorder" : "",
     spotsLabel,
     cta,
     ctaVariant: cta === "Details" ? "outline" : "solid",
@@ -252,6 +316,8 @@ export type MonthCell = {
   /** Empty for leading and trailing padding cells. */
   day: number | null;
   isToday: boolean;
+  /** Before today: a run's chip fades here even while the run goes on. */
+  past: boolean;
   events: DecoratedEvent[];
 };
 
@@ -276,7 +342,12 @@ export function buildMonthGrid(
       key,
       day: inside ? day : null,
       isToday: key === today,
-      events: inside ? events.filter((e) => e.date === key) : [],
+      past: inside && key < today,
+      events: inside
+        ? events
+            .filter((e) => e.date <= key && key <= lastDayOf(e))
+            .sort(singleDayFirst)
+        : [],
     };
   });
 }

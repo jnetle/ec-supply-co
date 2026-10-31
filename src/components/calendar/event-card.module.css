@@ -1,6 +1,5 @@
 /* One event card, shared by the home page and the calendar. */
 .card {
-  display: grid;
   background: var(--color-ecs-sky-surface);
   border-radius: 28px;
   overflow: hidden;
@@ -17,25 +16,51 @@
   }
 }
 
-/* Flush with the card's edges; the card's own corners round it. */
+/* By default the photo is on top and the text under it: the stacked
+   layout, and a wide card too narrow to put them side by side. */
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+/* Flush with the card's edges; the card's own corners round it. 4:5 (see
+   event-photo), filling its whole area with no padding around it. */
 .photo {
   border-radius: 0;
   width: 100%;
 }
 
-/* The photo beside the text. The photo takes its width from the column and
-   stretches to the text's height, shown whole over a blur (`whole`). */
+/* The wide card. With room, the 4:5 photo sits beside the text, filling
+   the card's full height edge to edge, every card the same height. If the
+   text runs taller than that, the photo grows with it and loses a sliver
+   off its left and right edges, inside the margin a Canva graphic leaves.
+   The blurb is clamped so that's rare; the pop-up has it in full. Without
+   room, the photo goes on top, full width. */
 .wide {
-  grid-template-columns: min(420px, 45%) minmax(0, 1fr);
+  --card-height: 480px;
+  container-type: inline-size;
 }
 
-.wide .photo {
-  min-height: 100%;
+@container (min-width: 760px) {
+  .wide .layout {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: none;
+    min-height: var(--card-height);
+  }
+
+  .wide .photo {
+    width: calc(var(--card-height) * 0.8);
+    aspect-ratio: auto;
+  }
 }
 
-/* The photo on top, the text under it. */
-.stacked {
-  grid-template-rows: auto 1fr;
+.wide .blurb {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .body {
@@ -143,16 +168,6 @@
   align-items: center;
   gap: 4px 18px;
   margin-top: auto;
-}
-
-@media (max-width: 640px) {
-  .wide {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .wide .photo {
-    min-height: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

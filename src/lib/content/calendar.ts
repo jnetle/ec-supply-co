@@ -65,6 +65,12 @@ export type CalendarEvent = {
   /** Unset when the event has no set end time. */
   end?: string;
   /**
+   * The last day of an event that runs over several days (a coffee bar in
+   * for the month), as an ISO date. Unset for a one-day event. Its daily
+   * hours vary, so a run shows its dates and no time.
+   */
+  lastDate?: string;
+  /**
    * The exact start and end, as ISO instants, for calendar files and links:
    * `date`/`start`/`end` are wall-clock text, and can't say when an event
    * ends the next day or which side of a clock change it falls on.
