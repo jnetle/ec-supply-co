@@ -62,7 +62,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
 
       <main>
         <PageIntro
-          eyebrow={mock ? "Preview: mock events" : "Workshops + classes"}
+          eyebrow={mock ? "Preview: mock events" : "Events + popups"}
           eyebrowColor={
             hasEvents ? "var(--color-ecs-magenta)" : "var(--color-ecs-teal)"
           }
