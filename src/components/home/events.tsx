@@ -30,23 +30,6 @@ export async function Events() {
           </Eyebrow>
           <h2 className={styles.heading}>What&rsquo;s coming up</h2>
         </div>
-
-        <div className={styles.actions}>
-          <Link
-            href="/calendar"
-            className={button({ variant: "outline", tone: "navy" })}
-          >
-            See the full calendar →
-          </Link>
-          {HOST_WITH_US_ENABLED && (
-            <Link
-              href="/host-with-us"
-              className={button({ variant: "outline", tone: "navy" })}
-            >
-              Book a private event
-            </Link>
-          )}
-        </div>
       </div>
 
       {events.length === 0 ? (
@@ -54,6 +37,23 @@ export async function Events() {
       ) : (
         <UpcomingEvents events={events} more={<MoreOnTheWay />} />
       )}
+
+      <div className={styles.actions}>
+        <Link
+          href="/calendar"
+          className={button({ variant: "outline", tone: "navy" })}
+        >
+          See the full calendar →
+        </Link>
+        {HOST_WITH_US_ENABLED && (
+          <Link
+            href="/host-with-us"
+            className={button({ variant: "outline", tone: "navy" })}
+          >
+            Book a private event
+          </Link>
+        )}
+      </div>
     </section>
   );
 }

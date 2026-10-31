@@ -24,7 +24,14 @@ const FRAME_RATIO = 4 / 5;
 type EventPhotoProps = {
   event: Pick<
     DecoratedEvent,
-    "photo" | "photoRatio" | "title" | "dow" | "day" | "categoryColor" | "categoryInk"
+    | "photo"
+    | "photoRatio"
+    | "title"
+    | "dow"
+    | "day"
+    | "month"
+    | "categoryColor"
+    | "categoryInk"
   >;
   sizes: string;
   className?: string;
@@ -85,12 +92,18 @@ function PhotoImage({
   );
 }
 
-/** The event's weekday and day, in its category colours. */
+/**
+ * The event's weekday, day and month, in its category colours: "SAT 7 NOV",
+ * or "THRU 30 NOV" for a run.
+ */
 export function EventDateChip({
   event,
   className = "",
 }: {
-  event: Pick<DecoratedEvent, "dow" | "day" | "categoryColor" | "categoryInk">;
+  event: Pick<
+    DecoratedEvent,
+    "dow" | "day" | "month" | "categoryColor" | "categoryInk"
+  >;
   className?: string;
 }) {
   return (
@@ -105,6 +118,7 @@ export function EventDateChip({
     >
       <span className={styles.chipDow}>{event.dow}</span>
       <span className={styles.chipDay}>{event.day}</span>
+      <span className={styles.chipMonth}>{event.month}</span>
     </div>
   );
 }

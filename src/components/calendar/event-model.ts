@@ -188,6 +188,8 @@ export type DecoratedEvent = CalendarEvent & {
   categoryInk: string;
   dow: string;
   day: number;
+  /** "NOV": the month of `day`. */
+  month: string;
   longDate: string;
   time: string;
   shortTime: string;
@@ -265,6 +267,7 @@ export function decorate(
     // A run's chip counts down to its last day: "THRU 30".
     dow: last ? "THRU" : WEEKDAYS[date.getDay()].toUpperCase(),
     day: (last ?? date).getDate(),
+    month: MONTHS[(last ?? date).getMonth()].slice(0, 3).toUpperCase(),
     longDate: last
       ? runLabel(date, last)
       : `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
