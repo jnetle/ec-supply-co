@@ -34,50 +34,6 @@
   gap: clamp(16px, 2.4vw, 30px);
 }
 
-.card {
-  background: var(--color-ecs-sky-surface);
-  border-radius: 28px;
-  overflow: hidden;
-  transition:
-    transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    box-shadow 340ms ease;
-}
-
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: var(--shadow-ecs-lg);
-}
-
-/* Flush with the card's edges; the card's own corners round it. */
-.cardPhoto {
-  border-radius: 0;
-}
-
-.cardBody {
-  padding: 18px 18px 22px;
-}
-
-.cardMeta {
-  font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ecs-cobalt);
-}
-
-.cardTitle {
-  margin: 8px 0 0;
-  font-size: clamp(1.15rem, 1.6vw, 1.5rem);
-  line-height: 1.1;
-}
-
-.cardBlurb {
-  margin: 10px 0 0;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
 /* ---- One event: a wide feature card beside a "more on the way" tile ---- */
 
 .solo {
@@ -86,116 +42,11 @@
   gap: clamp(16px, 2.4vw, 30px);
 }
 
-.feature {
+/* Two events: a wide card each, side by side, capped like the calendar's. */
+.pair {
   display: grid;
-  grid-template-columns: min(460px, 45%) minmax(0, 1fr);
-  background: var(--color-ecs-sky-surface);
-  border-radius: 28px;
-  overflow: hidden;
-  transition:
-    transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1),
-    box-shadow 340ms ease;
-}
-
-.feature:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-ecs-lg);
-}
-
-/* Square, so a Canva graphic isn't cropped, and taller if the text is: it
-   takes its width from the column, never from the card's height. */
-.featurePhoto {
-  border-radius: 0;
-  width: 100%;
-  min-height: 100%;
-}
-
-.featureBody {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: clamp(20px, 2.6vw, 34px);
-}
-
-.featureTag {
-  padding: 5px 12px;
-  border-radius: 12px 6px 11px 5px;
-  background: var(--tag-color);
-  color: var(--tag-ink);
-  font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.featureTitle {
-  font-family: var(--font-display);
-  font-weight: 400;
-  margin: 14px 0 0;
-  font-size: clamp(1.6rem, 2.8vw, 2.5rem);
-  line-height: 1.02;
-  text-transform: uppercase;
-}
-
-.featureHost {
-  margin: 6px 0 0;
-  font-family: var(--font-heading);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 19px;
-  color: var(--color-ecs-cobalt);
-}
-
-.featureBlurb {
-  max-width: 60ch;
-  margin: 12px 0 0;
-  font-size: 16px;
-  line-height: 1.55;
-}
-
-.featureFacts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  width: min(100%, 560px);
-  position: relative;
-  margin: 20px 0 24px;
-  padding-top: 32px;
-}
-
-/* A loose, hand-drawn squiggle across the top, in place of a ruled line. The
-   waves differ in width and height so it doesn't read as a pattern, and the
-   tile ends where it starts so the repeat can't be seen. Coloured through a
-   mask so it takes any colour. */
-.featureFacts::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 20px;
-  background: var(--color-ecs-sky-line);
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='20' viewBox='0 0 300 20'%3E%3Cpath d='M0 10 C14 1 34 1 46 8 S66 19 86 15 S104 4 116 7 S130 13 146 12 S170 2 196 4 S220 18 238 16 S256 9 266 8 S288 13 300 10' fill='none' stroke='black' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E")
-    repeat-x left center / 300px 20px;
-}
-
-.featureFacts dt {
-  font-size: 11px;
-  font-family: var(--font-heading);
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--color-ecs-cobalt);
-}
-
-.featureFacts dd {
-  margin: 4px 0 0;
-  font-size: 15px;
-}
-
-.featureCta {
-  margin-top: auto;
+  grid-template-columns: repeat(2, minmax(0, 880px));
+  gap: clamp(16px, 2.4vw, 30px);
 }
 
 .more {
@@ -343,6 +194,13 @@
   text-underline-offset: 4px;
 }
 
+/* Two wide cards side by side get too narrow for their photos below this. */
+@media (max-width: 1180px) {
+  .pair {
+    grid-template-columns: minmax(0, 880px);
+  }
+}
+
 @media (max-width: 960px) {
   .solo,
   .board {
@@ -350,24 +208,10 @@
   }
 }
 
-@media (max-width: 640px) {
-  .feature {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .featurePhoto {
-    min-height: 0;
-  }
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .feature,
   .note {
     transition: none;
-  }
-
-  .feature:hover {
-    transform: none;
   }
 
   .note:hover {

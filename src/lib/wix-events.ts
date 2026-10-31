@@ -4,6 +4,9 @@ import type { wixEventsV2 } from "@wix/events";
 
 import {
   CATEGORIES,
+  aboutPlainText,
+  type AboutBlock,
+  type AboutText,
   SHOP_TIME_ZONE,
   type Availability,
   type CalendarEvent,
@@ -12,13 +15,8 @@ import {
 } from "@/lib/content/calendar";
 import { MAX_RSVP_SEATS } from "@/lib/form-limits";
 import type { IcsEvent } from "@/lib/ics";
-import { getMakers } from "@/lib/makers";
-import { SITE_NAME } from "@/lib/site";
 import { getWixClient } from "@/lib/wix";
 import { WIX_MEDIA } from "@/lib/wix-media";
-
-/** A Wix Events category naming who runs the event: "Host: Rosa Delgado". */
-const HOST_CATEGORY = /^host:\s*(.+)$/i;
 
 /** "Food Pop-up" → "foodpopup", so a category matches however it's typed. */
 const squash = (name: string) => name.toLowerCase().replace(/[^a-z]/g, "");
@@ -36,21 +34,67 @@ const TYPE_CATEGORIES = new Map(
 
 type RichNode = NonNullable<wixEventsV2.RichContent["nodes"]>[number];
 
-function nodeText(node: RichNode): string {
-  const ownText = node.textData?.text ?? "";
-  const childText = node.nodes?.map(nodeText).join("") ?? "";
-  return ownText + childText;
+const SAFE_LINK = /^(https?:|mailto:)/i;
+
+/** A block's text runs, keeping bold, italic and safe links. */
+function aboutText(node: RichNode): AboutText[] {
+  if (node.type === "TEXT") {
+    const text = node.textData?.text ?? "";
+    if (!text) return [];
+    const decorations = node.textData?.decorations ?? [];
+    const url = decorations.find((d) => d.type === "LINK")?.linkData?.link
+      ?.url;
+    return [
+      {
+        text,
+        bold: decorations.some((d) => d.type === "BOLD") || undefined,
+        italic: decorations.some((d) => d.type === "ITALIC") || undefined,
+        href: url && SAFE_LINK.test(url) ? url : undefined,
+      },
+    ];
+  }
+  return node.nodes?.flatMap(aboutText) ?? [];
 }
 
-function descriptionText(event: wixEventsV2.Event): string | undefined {
-  const richText = event.description?.nodes
-    ?.map(nodeText)
-    .map((text) => text.trim())
-    .filter(Boolean)
-    .join("\n");
+const hasText = (content: AboutText[]) =>
+  content.some((run) => run.text.trim());
 
-  return richText || event.shortDescription || undefined;
+/**
+ * The About section as paragraphs, headings and lists. Everything else Wix's
+ * editor can hold (images, galleries, video, embeds, files, tables, buttons)
+ * is skipped, captions included.
+ */
+function aboutBlocks(nodes: RichNode[] | undefined): AboutBlock[] {
+  return (nodes ?? []).flatMap((node): AboutBlock[] => {
+    switch (node.type) {
+      case "PARAGRAPH":
+      case "HEADING": {
+        const content = aboutText(node);
+        if (!hasText(content)) return [];
+        return [
+          { kind: node.type === "HEADING" ? "heading" : "paragraph", content },
+        ];
+      }
+      case "BLOCKQUOTE":
+        return aboutBlocks(node.nodes);
+      case "BULLETED_LIST":
+      case "ORDERED_LIST": {
+        const items = (node.nodes ?? [])
+          .map((item) =>
+            aboutBlocks(item.nodes).flatMap((block) =>
+              block.kind === "list" ? block.items.flat() : block.content,
+            ),
+          )
+          .filter(hasText);
+        if (!items.length) return [];
+        return [{ kind: "list", ordered: node.type === "ORDERED_LIST", items }];
+      }
+      default:
+        return [];
+    }
+  });
 }
+
 
 function locationText(event: wixEventsV2.Event): string | undefined {
   const location = event.location;
@@ -71,7 +115,11 @@ function toIcsEvent(event: wixEventsV2.Event): IcsEvent | undefined {
   return {
     id: event._id,
     title: event.title,
-    description: descriptionText(event),
+    // Calendar apps show the full text, so the About section comes first.
+    description:
+      aboutPlainText(aboutBlocks(event.description?.nodes)) ||
+      event.shortDescription ||
+      undefined,
     location: locationText(event),
     start,
     end: event.dateAndTimeSettings?.endDate ?? undefined,
@@ -145,6 +193,16 @@ function photoUrl(image: string | undefined): string | undefined {
   return mediaId ? `${WIX_MEDIA}${mediaId}` : undefined;
 }
 
+/**
+ * The image's width over its height, from the "#originWidth=…&originHeight=…"
+ * Wix puts on the end of the image string.
+ */
+function photoRatio(image: string | undefined): number | undefined {
+  const width = Number(image?.match(/originWidth=(\d+)/)?.[1]);
+  const height = Number(image?.match(/originHeight=(\d+)/)?.[1]);
+  return width > 0 && height > 0 ? width / height : undefined;
+}
+
 function availability(registration: wixEventsV2.Registration): Availability {
   if (registration.registrationDisabled || registration.registrationPaused) {
     return "closed";
@@ -176,7 +234,10 @@ function maxSeats(form: wixEventsV2.Form | undefined): number {
 }
 
 /**
- * Free events only, for now: paid tickets and outside sign-ups are skipped.
+ * Free events only, for now: paid tickets are skipped. An event whose
+ * registration is an external link (in Wix: registration on an external
+ * site) sends people to that link: how vendors run their own workshop
+ * sign-ups and pick-up preorders.
  * A "Drop-in" category makes any event drop-in, since Wix's dashboard doesn't
  * always offer an event with no registration at all.
  */
@@ -192,6 +253,9 @@ function seatsFor(
   ) {
     return { kind: "drop-in" };
   }
+  if (registration.type === "EXTERNAL") {
+    return { kind: "external", url: registration.external?.url || undefined };
+  }
   if (registration.type === "RSVP") {
     return {
       kind: "rsvp",
@@ -201,7 +265,7 @@ function seatsFor(
   }
 
   console.warn(
-    `Skipping Wix event "${event.title}": only RSVP and no-registration events are supported, not ${registration.type}`,
+    `Skipping Wix event "${event.title}": only RSVP, external and no-registration events are supported, not ${registration.type}`,
   );
   return undefined;
 }
@@ -213,12 +277,25 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
   if (event.status === "CANCELED") return undefined;
 
   const names = categoryNames(event);
-  const seats = seatsFor(event, names);
+  let seats = seatsFor(event, names);
   if (!seats) return undefined;
 
-  const category = names
-    .map((name) => TYPE_CATEGORIES.get(squash(name)))
-    .find((key) => key !== undefined);
+  // Community is the catch-all, so any other category it's paired with wins:
+  // a pick-up tagged "Community, Pick-up" is a pick-up.
+  const matches = names.flatMap((name) => {
+    const key = TYPE_CATEGORIES.get(squash(name));
+    return key ? [key] : [];
+  });
+  const category = matches.find((key) => key !== "community") ?? matches[0];
+
+  // The shop takes no sign-ups for a pick-up: people preorder from the
+  // vendor. One left on RSVP in Wix shows no sign-up and no button.
+  if (category === "pickup" && seats.kind === "rsvp") {
+    console.warn(
+      `Wix pick-up "${event.title}" is set to RSVP; set its registration to an external link to the vendor's preorder page`,
+    );
+    seats = { kind: "external" };
+  }
   if (!category) {
     console.warn(
       `Wix event "${event.title}" has none of the categories ${Object.values(
@@ -229,9 +306,7 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
     );
   }
 
-  const host = names
-    .map((name) => name.match(HOST_CATEGORY)?.[1]?.trim())
-    .find(Boolean);
+  const about = aboutBlocks(event.description?.nodes);
 
   return {
     id: event._id,
@@ -245,37 +320,13 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
     timeTba: shopTime.format(start) === "00:00" || undefined,
     category: category ?? "community",
     title: event.title,
-    host: host ?? SITE_NAME,
     photo: photoUrl(event.mainImage),
+    photoRatio: photoRatio(event.mainImage),
     price: 0,
     seats,
-    description: event.shortDescription?.trim() || descriptionText(event) || "",
+    description: event.shortDescription?.trim() || aboutPlainText(about),
+    about: about.length ? about : undefined,
   };
-}
-
-/** Links a host who is also one of the shop's makers to the maker's website. */
-async function withHostWebsites(
-  events: CalendarEvent[],
-): Promise<CalendarEvent[]> {
-  let websites: Map<string, string>;
-  try {
-    const makers = await getMakers();
-    websites = new Map(
-      makers.flatMap((maker) =>
-        maker.website
-          ? [[maker.name.toLowerCase(), maker.website] as const]
-          : [],
-      ),
-    );
-  } catch (error) {
-    console.error("Loading makers for event hosts failed", error);
-    return events;
-  }
-
-  return events.map((event) => {
-    const hostUrl = websites.get(event.host.toLowerCase());
-    return hostUrl ? { ...event, hostUrl } : event;
-  });
 }
 
 /** Published free Wix events, shaped for the calendar. */
@@ -288,10 +339,8 @@ export async function getWixCalendarEvents(): Promise<CalendarEvent[]> {
     "CATEGORIES",
   ]);
 
-  return withHostWebsites(
-    events.flatMap((event) => {
-      const mapped = toCalendarEvent(event);
-      return mapped ? [mapped] : [];
-    }),
-  );
+  return events.flatMap((event) => {
+    const mapped = toCalendarEvent(event);
+    return mapped ? [mapped] : [];
+  });
 }

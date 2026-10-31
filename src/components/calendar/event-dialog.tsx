@@ -13,6 +13,7 @@ import { rsvpToEvent } from "@/app/actions/event-rsvp";
 import { trackEvent } from "@/components/site/analytics";
 import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
+import { aboutPlainText } from "@/lib/content/calendar";
 import { SHOP_ADDRESS } from "@/lib/content/nav";
 import { initialRsvpState } from "@/lib/event-rsvp";
 import {
@@ -25,6 +26,7 @@ import { SITE_NAME } from "@/lib/site";
 
 import formStyles from "@/components/ui/form.module.css";
 import styles from "./event-dialog.module.css";
+import { EventAbout } from "./event-about";
 import { googleCalendarUrl, type DecoratedEvent } from "./event-model";
 
 const SHOP_LOCATION = `${SITE_NAME}, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city}`;
@@ -52,6 +54,8 @@ export function EventDialog({
   if (!event) return null;
 
   const isWaitlist = event.availability === "waitlist";
+  const showTeaser =
+    !event.about || event.description !== aboutPlainText(event.about);
   const canJoin =
     !event.past &&
     !event.mine &&
@@ -64,13 +68,19 @@ export function EventDialog({
       ? "This one already happened — check the calendar for the next round."
       : event.dropIn
         ? "No sign-up needed. Just come by."
-        : event.mine
-          ? `You have ${event.mine} ${event.mine === 1 ? "seat" : "seats"} saved. See you there.`
-          : event.availability === "full"
-            ? "This one is full."
-            : event.availability === "closed"
-              ? "Sign-ups for this one are closed."
-              : null;
+        : event.seats.kind === "external"
+          ? event.orderUrl
+            ? event.category === "pickup"
+              ? "Preorder on the vendor's site, then pick it up at the shop."
+              : "Sign-ups are on the host's own site."
+            : "Sign-up details are on the way."
+          : event.mine
+            ? `You have ${event.mine} ${event.mine === 1 ? "seat" : "seats"} saved. See you there.`
+            : event.availability === "full"
+              ? "This one is full."
+              : event.availability === "closed"
+                ? "Sign-ups for this one are closed."
+                : null;
 
   const handleDone = (next: Outcome, seats: number) => {
     setOutcome(next);
@@ -116,14 +126,32 @@ export function EventDialog({
           </div>
 
           <div className={styles.body}>
-            <Dialog.Description className={styles.description}>
-              {event.description}
-            </Dialog.Description>
+            {/* The short teaser, then the full About section. With no teaser
+                the blurb is the About text itself, so it isn't shown twice,
+                and the About section describes the dialog instead. */}
+            {showTeaser ? (
+              <Dialog.Description className={styles.description}>
+                {event.description}
+              </Dialog.Description>
+            ) : null}
+
+            {event.about ? (
+              showTeaser ? (
+                <EventAbout blocks={event.about} />
+              ) : (
+                <Dialog.Description asChild>
+                  <div>
+                    <EventAbout blocks={event.about} />
+                  </div>
+                </Dialog.Description>
+              )
+            ) : null}
 
             <div className={styles.facts}>
-              <span className={styles.fact}>{event.host}</span>
               <span className={styles.fact}>{event.priceLabel}</span>
-              <span className={styles.fact}>{event.spotsLabel}</span>
+              {event.spotsLabel ? (
+                <span className={styles.fact}>{event.spotsLabel}</span>
+              ) : null}
             </div>
 
             {event.past ? null : (
@@ -163,6 +191,18 @@ export function EventDialog({
             ) : null}
 
             {note ? <div className={styles.note}>{note}</div> : null}
+
+            {event.orderUrl && !event.past ? (
+              <a
+                href={event.orderUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={button({ tone: "tealDeep", size: "lg" })}
+              >
+                {event.orderLabel} →
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            ) : null}
 
             {canJoin ? (
               // Keyed so each event starts with a fresh form and result.

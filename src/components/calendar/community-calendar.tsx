@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState, type CSSProperties } from "react";
 
-import { button, buttonColors } from "@/components/ui/button";
-import { LinkIcon } from "@/components/ui/link-icon";
+import { button } from "@/components/ui/button";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 import {
   CALENDAR_SUBSCRIBE_ENABLED,
@@ -15,8 +14,8 @@ import {
 
 import styles from "./calendar.module.css";
 import { CalendarSubscriptions } from "./calendar-subscriptions";
+import { EventCard } from "./event-card";
 import { EventDialog } from "./event-dialog";
-import { EventDateChip, EventPhoto } from "./event-photo";
 import {
   MONTHS,
   WEEKDAYS,
@@ -36,6 +35,7 @@ const FILTERS: { key: Filter; label: string; dot: string }[] = [
   { key: "all", label: "All", dot: "var(--color-ecs-sky-line)" },
   { key: "workshop", label: "Workshops", dot: CATEGORIES.workshop.color },
   { key: "popup", label: "Food popups", dot: CATEGORIES.popup.color },
+  { key: "pickup", label: "Pick-ups", dot: CATEGORIES.pickup.color },
   { key: "community", label: "Community", dot: CATEGORIES.community.color },
 ];
 
@@ -319,10 +319,13 @@ function EmptyMonth({
 
 type MonthGroup = { key: string; label: string; events: DecoratedEvent[] };
 
-/** Events in date order, split into one group per month. */
+/**
+ * Events in date order, split into one group per month. The first month and
+ * any month that starts a new year carry the year ("November 2026",
+ * "December", "January 2027"), so it's always on screen without repeating.
+ */
 function groupByMonth(events: DecoratedEvent[]): MonthGroup[] {
   const groups: MonthGroup[] = [];
-  const thisYear = new Date().getFullYear();
   const sorted = events.toSorted(
     (a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start),
   );
@@ -330,11 +333,12 @@ function groupByMonth(events: DecoratedEvent[]): MonthGroup[] {
     const key = event.date.slice(0, 7);
     let group = groups.at(-1);
     if (group?.key !== key) {
-      const year = Number(key.slice(0, 4));
+      const year = key.slice(0, 4);
       const name = MONTHS[Number(key.slice(5, 7)) - 1];
+      const newYear = group?.key.slice(0, 4) !== year;
       group = {
         key,
-        label: year === thisYear ? name : `${name} ${year}`,
+        label: newYear ? `${name} ${year}` : name,
         events: [],
       };
       groups.push(group);
@@ -343,6 +347,9 @@ function groupByMonth(events: DecoratedEvent[]): MonthGroup[] {
   }
   return groups;
 }
+
+/** Months with this many events or fewer show them as wide cards. */
+const WIDE_MAX = 2;
 
 /** Everything coming up, a heading and a row of cards per month. */
 function MonthList({
@@ -359,81 +366,31 @@ function MonthList({
           <h2 id={`month-${group.key}`} className={styles.monthHeading}>
             {group.label}
           </h2>
-          <div className={styles.list}>
+          {/* A quiet month gives each event a wide card with room for its
+              full details, rather than one small card and an empty row. */}
+          <div
+            className={`${styles.list} ${
+              group.events.length <= WIDE_MAX ? styles.wide : ""
+            }`}
+            style={{ "--count": group.events.length } as CSSProperties}
+          >
             {group.events.map((event) => (
-              <EventCard key={event.id} event={event} onSelect={onSelect} />
+              <EventCard
+                key={event.id}
+                event={event}
+                onSelect={onSelect}
+                layout={group.events.length <= WIDE_MAX ? "wide" : "stacked"}
+                sizes={
+                  group.events.length <= WIDE_MAX
+                    ? "(max-width: 640px) 100vw, 420px"
+                    : "(max-width: 560px) 100vw, (max-width: 860px) 50vw, (max-width: 1100px) 33vw, 25vw"
+                }
+              />
             ))}
           </div>
         </section>
       ))}
     </div>
-  );
-}
-
-/** One event: its photo, the date beside the title, details and the action. */
-function EventCard({
-  event,
-  onSelect,
-}: {
-  event: DecoratedEvent;
-  onSelect: (eventId: string) => void;
-}) {
-  return (
-    <article
-      className={styles.row}
-      style={{ "--row-opacity": event.past ? 0.5 : 1 } as CSSProperties}
-    >
-      <EventPhoto
-        event={event}
-        chip={false}
-        className={styles.rowPhoto}
-        sizes="(max-width: 560px) 100vw, (max-width: 860px) 50vw, (max-width: 1100px) 33vw, 25vw"
-      />
-
-      <div className={styles.rowHead}>
-        <EventDateChip event={event} />
-        <div>
-          <div className={styles.rowMeta}>
-            {[event.categoryLabel, event.time].filter(Boolean).join(" · ")}
-          </div>
-          <h3 className={styles.rowTitle}>{event.title}</h3>
-        </div>
-      </div>
-
-      <div className={styles.rowBody}>
-        <div className={styles.rowDetail}>
-          {event.host} · {event.priceLabel} · {event.spotsLabel}
-        </div>
-        {event.hostUrl && (
-          <a
-            href={event.hostUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.hostLink}
-          >
-            Visit {event.host}
-            <span className={styles.hostLinkBadge}>
-              <LinkIcon size="0.7em" />
-            </span>
-            <span className="sr-only"> (opens in a new tab)</span>
-          </a>
-        )}
-      </div>
-
-      <button
-        type="button"
-        onClick={() => onSelect(event.id)}
-        disabled={event.past}
-        className={button({
-          variant: event.ctaVariant,
-          tone: "custom",
-          className: styles.rowCta,
-        })}
-        style={buttonColors(event.ctaColor, event.ctaInk)}
-      >
-        {event.cta}
-      </button>
-    </article>
   );
 }
 

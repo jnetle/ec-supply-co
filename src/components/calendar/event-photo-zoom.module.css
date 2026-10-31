@@ -1,0 +1,53 @@
+/* Covers the photo, so a click anywhere on it opens the large view. */
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+/* The visible control, in the corner away from the date chip. */
+.expand {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 110;
+  background: color-mix(in srgb, var(--color-ecs-ink) 82%, transparent);
+}
+
+/* The whole photo, as big as the window allows, never cropped. */
+.content {
+  position: fixed;
+  z-index: 111;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+}
+
+.image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 48px);
+  border-radius: 14px;
+  background: var(--color-ecs-sky-pale);
+}
+
+/* Inside the photo's corner, so it never runs off a short window. */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
