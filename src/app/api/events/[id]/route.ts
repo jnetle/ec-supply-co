@@ -1,4 +1,8 @@
-import { nextDay, shopTodayKey } from "@/components/calendar/event-model";
+import {
+  lastDayOf,
+  nextDay,
+  shopTodayKey,
+} from "@/components/calendar/event-model";
 import {
   MOCK_EVENTS_PREVIEW,
   type CalendarEvent,
@@ -16,7 +20,10 @@ const LOCATION = `${SITE_NAME}, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city}`;
 const WIX_EVENT_ID =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-/** A calendar event as an .ics entry; one without a set time is all day. */
+/**
+ * A calendar event as an .ics entry. One without a set time is all day, and
+ * so is a run of days, across all of them, since its hours vary.
+ */
 function toIcsEvent(event: CalendarEvent): IcsEvent {
   const shared = {
     id: event.id,
@@ -24,12 +31,12 @@ function toIcsEvent(event: CalendarEvent): IcsEvent {
     description: event.description,
     location: LOCATION,
   };
-  if (event.timeTba) {
+  if (event.timeTba || event.lastDate) {
     return {
       ...shared,
       allDay: true,
       start: new Date(`${event.date}T00:00:00Z`),
-      end: new Date(`${nextDay(event.date)}T00:00:00Z`),
+      end: new Date(`${nextDay(lastDayOf(event))}T00:00:00Z`),
     };
   }
   return {

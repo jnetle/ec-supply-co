@@ -20,7 +20,10 @@ import {
   MONTHS,
   WEEKDAYS,
   buildMonthGrid,
+  byListDate,
   decorate,
+  lastDayOf,
+  listDate,
   monthIndex,
   type DecoratedEvent,
   type MonthCell,
@@ -61,15 +64,18 @@ export function CommunityCalendar({
   /** Made-up events: sign-ups are faked instead of sent to Wix. */
   mock?: boolean;
 }) {
-  // Navigation spans the current month plus every month that has events,
-  // and always opens on the current month.
+  // Navigation spans the current month plus every month that has events
+  // (from a run's first day to its last), and always opens on the current
+  // month.
   const [{ MIN_INDEX, MAX_INDEX, START_INDEX }] = useState(() => {
     const now = new Date();
     const current = monthIndex(now.getFullYear(), now.getMonth());
     const months = [
       current,
-      ...events.map((e) =>
-        monthIndex(Number(e.date.slice(0, 4)), Number(e.date.slice(5, 7)) - 1),
+      ...events.flatMap((e) =>
+        [e.date, lastDayOf(e)].map((day) =>
+          monthIndex(Number(day.slice(0, 4)), Number(day.slice(5, 7)) - 1),
+        ),
       ),
     ];
     return {
@@ -101,15 +107,19 @@ export function CommunityCalendar({
     [events, filter, mySeats, today],
   );
 
+  // Anything on during the month, a run that started before it included.
   const inMonth = useMemo(
-    () => visible.filter((e) => e.date.startsWith(ym)),
+    () =>
+      visible.filter(
+        (e) => e.date.slice(0, 7) <= ym && lastDayOf(e).slice(0, 7) >= ym,
+      ),
     [visible, ym],
   );
 
   // The list shows everything still to come, a section per month.
   const months = useMemo(
-    () => groupByMonth(visible.filter((e) => !e.past)),
-    [visible],
+    () => groupByMonth(visible.filter((e) => !e.past), today),
+    [visible, today],
   );
 
   const cells = useMemo(
@@ -320,17 +330,19 @@ function EmptyMonth({
 type MonthGroup = { key: string; label: string; events: DecoratedEvent[] };
 
 /**
- * Events in date order, split into one group per month. The first month and
+ * Events in date order, split into one group per month; a run that's already
+ * going sits with today's (see `listDate`). The first month and
  * any month that starts a new year carry the year ("November 2026",
  * "December", "January 2027"), so it's always on screen without repeating.
  */
-function groupByMonth(events: DecoratedEvent[]): MonthGroup[] {
+function groupByMonth(
+  events: DecoratedEvent[],
+  today: string,
+): MonthGroup[] {
   const groups: MonthGroup[] = [];
-  const sorted = events.toSorted(
-    (a, b) => a.date.localeCompare(b.date) || a.start.localeCompare(b.start),
-  );
+  const sorted = events.toSorted(byListDate(today));
   for (const event of sorted) {
-    const key = event.date.slice(0, 7);
+    const key = listDate(event, today).slice(0, 7);
     let group = groups.at(-1);
     if (group?.key !== key) {
       const year = key.slice(0, 4);
@@ -430,7 +442,7 @@ function MonthGrid({
                   {
                     "--chip-color": event.categoryColor,
                     "--chip-ink": event.categoryInk,
-                    "--chip-opacity": event.past ? 0.5 : 1,
+                    "--chip-opacity": event.past || cell.past ? 0.5 : 1,
                   } as CSSProperties
                 }
               >

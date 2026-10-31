@@ -1,6 +1,5 @@
 /* One event card, shared by the home page and the calendar. */
 .card {
-  display: grid;
   background: var(--color-ecs-sky-surface);
   border-radius: 28px;
   overflow: hidden;
@@ -17,25 +16,67 @@
   }
 }
 
-/* Flush with the card's edges; the card's own corners round it. */
-.photo {
+/* By default the photo is on top and the text under it: the stacked
+   layout, and a wide card too narrow to put them side by side. */
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+}
+
+/* Flush with the card's edges; the card's own corners round it. 4:5 (see
+   event-photo), filling its whole area with no padding around it. Scoped
+   to the card so it beats event-photo's own rounded corners whichever
+   stylesheet loads last. */
+.card .photo {
   border-radius: 0;
   width: 100%;
 }
 
-/* The photo beside the text. The photo takes its width from the column and
-   stretches to the text's height, shown whole over a blur (`whole`). */
+/* The wide card. With room, the 4:5 photo sits beside the text, 45% of the
+   card wide up to 420px, and every wide card is exactly the photo's height
+   (about 395x495 on a full-width card). The photo is never stretched past
+   4:5, so a flyer keeps its margins. The text fits that height: a smaller
+   title, and a blurb that gives up lines first if space runs short; the
+   pop-up has it all. Without room, the photo goes on top, full width. */
 .wide {
-  grid-template-columns: min(420px, 45%) minmax(0, 1fr);
+  --photo-width: min(420px, 45cqi);
+  container-type: inline-size;
 }
 
-.wide .photo {
-  min-height: 100%;
+@container (min-width: 760px) {
+  .wide .layout {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: none;
+    height: calc(var(--photo-width) * 1.25);
+  }
+
+  .wide .photo {
+    width: var(--photo-width);
+    height: 100%;
+  }
+
+  .wide .body {
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .wide .title {
+    font-size: clamp(1.4rem, 2.2vw, 2.1rem);
+  }
+
+  .wide .blurb {
+    flex-shrink: 1;
+    min-height: 0;
+  }
 }
 
-/* The photo on top, the text under it. */
-.stacked {
-  grid-template-rows: auto 1fr;
+.wide .blurb {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
 }
 
 .body {
@@ -143,16 +184,6 @@
   align-items: center;
   gap: 4px 18px;
   margin-top: auto;
-}
-
-@media (max-width: 640px) {
-  .wide {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .wide .photo {
-    min-height: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
