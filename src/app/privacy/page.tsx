@@ -62,6 +62,14 @@ export default function PrivacyPage() {
                 application questions, so we can review your work and get back
                 to you.
               </li>
+              <li>
+                <strong>Event sign-ups:</strong> your name, email and how many
+                seats you&rsquo;re saving, so the event knows who&rsquo;s
+                coming and can send your confirmation. If you tick the box,
+                your email also joins the newsletter. Some events are booked on
+                the host&rsquo;s own site instead; what you give them is covered
+                by their privacy policy, not this one.
+              </li>
             </ul>
           </section>
 
@@ -73,6 +81,13 @@ export default function PrivacyPage() {
               here, your browser, device type and rough location, and whether a
               newsletter sign-up, maker submission or event RSVP went through.
               Neither tells us who you are.
+            </p>
+            <p>
+              When you sign up for an event, your browser also remembers it
+              (in its own storage, not a cookie) so the calendar can show
+              &ldquo;You&rsquo;re in&rdquo;. It stays on your device and
+              isn&rsquo;t sent to us; clearing your browser&rsquo;s site data
+              removes it.
             </p>
             <ul>
               <li>
@@ -94,8 +109,9 @@ export default function PrivacyPage() {
             <p>
               We don&rsquo;t sell or rent your information. It&rsquo;s handled
               only by the companies that host this site, store our form
-              submissions and newsletter list, and measure visits (Vercel and
-              Google), and only to provide those services to us. We&rsquo;d also share information if the law
+              submissions, event sign-ups and newsletter list, and measure
+              visits (Vercel, Wix and Google), and only to provide those
+              services to us. We&rsquo;d also share information if the law
               required us to.
             </p>
           </section>
@@ -105,7 +121,8 @@ export default function PrivacyPage() {
             <p>
               Newsletter addresses stay on the list until you ask to come off
               it. Maker submissions are kept while we review them and for
-              future rounds. Ask us any time and we&rsquo;ll delete yours.
+              future rounds. Event sign-ups are kept with the event&rsquo;s
+              guest list. Ask us any time and we&rsquo;ll delete yours.
             </p>
           </section>
 

@@ -26,7 +26,7 @@ export async function Events() {
             ink="#ffffff"
             className="mb-[18px]"
           >
-            Fall calendar
+            Events + popups
           </Eyebrow>
           <h2 className={styles.heading}>What&rsquo;s coming up</h2>
         </div>
