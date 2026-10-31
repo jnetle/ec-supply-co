@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
  * Bump this whenever the policy's substance changes: a new form, a new
  * service that receives visitor data, or a change to what analytics records.
  */
-const EFFECTIVE_DATE = "October 18, 2026";
+const EFFECTIVE_DATE = "October 31, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -32,7 +32,7 @@ export default function PrivacyPage() {
           eyebrowColor="var(--color-ecs-cobalt)"
           eyebrowInk="#ffffff"
           title="What we collect, and why."
-          lede="The short version: we only ask for what we need to write back to you, we don't sell it, and the site doesn't track you with cookies."
+          lede="The short version: we only ask for what we need to write back to you, we don't sell it, and our only cookies count visits."
         />
 
         <article className={styles.policy}>
@@ -68,22 +68,34 @@ export default function PrivacyPage() {
           <section>
             <h2>What the site records on its own</h2>
             <p>
-              We use privacy-friendly analytics to see how many people visit and
-              which pages they read. It counts page views, the page that sent you
-              here, your browser, device type and country, and whether a
-              newsletter sign-up or maker submission went through.
-              It doesn&rsquo;t use cookies, doesn&rsquo;t follow you to other
-              sites, and doesn&rsquo;t tell us who you are.
+              We use two analytics tools to see how many people visit and which
+              pages they read. Both count page views, the page that sent you
+              here, your browser, device type and rough location, and whether a
+              newsletter sign-up, maker submission or event RSVP went through.
+              Neither tells us who you are.
             </p>
+            <ul>
+              <li>
+                <strong>Vercel Analytics</strong>, from the company that hosts
+                the site, doesn&rsquo;t use cookies.
+              </li>
+              <li>
+                <strong>Google Analytics</strong> sets cookies (named{" "}
+                <code>_ga</code>) so it can tell a returning visitor from a new
+                one. We don&rsquo;t use it for advertising. In the US it runs unless
+                your browser asks not to be tracked; everywhere else, it only
+                runs if you say yes when the site asks.
+              </li>
+            </ul>
           </section>
 
           <section>
             <h2>Who handles it</h2>
             <p>
               We don&rsquo;t sell or rent your information. It&rsquo;s handled
-              only by the companies that host this site and store our form
-              submissions and newsletter list, and only to provide those
-              services to us. We&rsquo;d also share information if the law
+              only by the companies that host this site, store our form
+              submissions and newsletter list, and measure visits (Vercel and
+              Google), and only to provide those services to us. We&rsquo;d also share information if the law
               required us to.
             </p>
           </section>
@@ -110,10 +122,13 @@ export default function PrivacyPage() {
                 extend them to everyone.
               </li>
               <li>
+                To turn Google Analytics on or off, use &ldquo;Cookie
+                choices&rdquo; at the bottom of any page.
+              </li>
+              <li>
                 If your browser sends a Do Not Track or Global Privacy Control
-                signal, there&rsquo;s nothing further for us to switch off:
-                we don&rsquo;t track you across sites, and we don&rsquo;t sell
-                or share your information for advertising.
+                signal, we don&rsquo;t load Google Analytics at all. We
+                don&rsquo;t sell or share your information for advertising.
               </li>
             </ul>
           </section>

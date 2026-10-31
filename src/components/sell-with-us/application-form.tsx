@@ -9,6 +9,7 @@ import {
 } from "react";
 
 import { submitMakerApplication } from "@/app/actions/maker-application";
+import { trackEvent } from "@/components/site/analytics";
 import { button } from "@/components/ui/button";
 import { Field, Required } from "@/components/ui/field";
 import {
@@ -106,6 +107,7 @@ function ApplicationFormFields({
 
   useEffect(() => {
     if (state.status !== "success") return;
+    trackEvent("maker_application");
     scrollToTop();
     // The submit button that had focus is gone; land on the thank-you
     // instead. scrollToTop already handles the scroll.

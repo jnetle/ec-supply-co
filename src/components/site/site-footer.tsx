@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { CookieChoicesButton } from '@/components/site/analytics';
 import { button } from '@/components/ui/button';
 import { InstagramIcon } from '@/components/ui/instagram-icon';
 import { WaveDivider } from '@/components/ui/wave-divider';
@@ -50,9 +51,12 @@ export function SiteFooter() {
           © {new Date().getFullYear()} El Cerrito Supply Co. All Rights
           Reserved.
         </span>
-        <Link href="/privacy" className={styles.colophonLink}>
-          Privacy
-        </Link>
+        <span className={styles.colophonLinks}>
+          <CookieChoicesButton className={styles.colophonLink} />
+          <Link href="/privacy" className={styles.colophonLink}>
+            Privacy
+          </Link>
+        </span>
       </div>
     </footer>
   );

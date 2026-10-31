@@ -1,8 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
 
+import { Analytics } from "@/components/site/analytics";
+import { vercel } from "@/lib/env";
 import { FONT_VARIABLES } from "@/lib/fonts";
 import {
+  GA_MEASUREMENT_ID,
   SHARE_IMAGE,
   allowIndexing,
   SITE_DESCRIPTION,
@@ -45,7 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         {children}
         {/* Cookieless page views; see /privacy. */}
-        <Analytics />
+        <VercelAnalytics />
+        {/* Production only, so previews and local runs stay out of the
+            numbers. Asks first outside the US; see /privacy. */}
+        {vercel.isProduction() && <Analytics gaId={GA_MEASUREMENT_ID} />}
       </body>
     </html>
   );
