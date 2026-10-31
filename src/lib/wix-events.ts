@@ -32,6 +32,16 @@ const TYPE_CATEGORIES = new Map(
   ]),
 );
 
+/**
+ * The Wix category that keeps an event off the live site: it shows only in
+ * the local preview (/calendar?preview=drafts on `next dev`), marked Draft.
+ * Wix API keys can't read real Wix drafts, so a test event is published in
+ * Wix with this category instead. Matched however it's typed or spaced.
+ */
+export const DRAFT_CATEGORY = "IN DRAFT MODE - TESTING ONLY";
+const isDraftCategory = (name: string) =>
+  squash(name) === squash(DRAFT_CATEGORY);
+
 type RichNode = NonNullable<wixEventsV2.RichContent["nodes"]>[number];
 
 const SAFE_LINK = /^(https?:|mailto:)/i;
@@ -152,9 +162,15 @@ async function queryPublishedEvents(
 }
 
 export async function getPublishedWixEvents(): Promise<IcsEvent[]> {
-  const events = await queryPublishedEvents(["DETAILS", "TEXTS", "URLS"]);
+  const events = await queryPublishedEvents([
+    "DETAILS",
+    "TEXTS",
+    "URLS",
+    "CATEGORIES",
+  ]);
 
   return events.flatMap((event) => {
+    if (categoryNames(event).some(isDraftCategory)) return [];
     const normalized = toIcsEvent(event);
     return normalized ? [normalized] : [];
   });
@@ -326,11 +342,12 @@ function toCalendarEvent(event: wixEventsV2.Event): CalendarEvent | undefined {
     seats,
     description: event.shortDescription?.trim() || aboutPlainText(about),
     about: about.length ? about : undefined,
+    draft: names.some(isDraftCategory) || undefined,
   };
 }
 
-/** Published free Wix events, shaped for the calendar. */
-export async function getWixCalendarEvents(): Promise<CalendarEvent[]> {
+/** Every published free Wix event, draft-tagged ones included and marked. */
+async function loadCalendarEvents(): Promise<CalendarEvent[]> {
   const events = await queryPublishedEvents([
     "DETAILS",
     "TEXTS",
@@ -344,3 +361,14 @@ export async function getWixCalendarEvents(): Promise<CalendarEvent[]> {
     return mapped ? [mapped] : [];
   });
 }
+
+/**
+ * Published free Wix events, shaped for the calendar. Events tagged with
+ * DRAFT_CATEGORY are left out: this is what the live site shows.
+ */
+export async function getWixCalendarEvents(): Promise<CalendarEvent[]> {
+  return (await loadCalendarEvents()).filter((event) => !event.draft);
+}
+
+/** The live events plus the draft-tagged ones, for the local preview only. */
+export const getWixCalendarEventsWithDrafts = loadCalendarEvents;

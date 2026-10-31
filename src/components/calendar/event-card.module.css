@@ -61,6 +61,16 @@
   text-transform: uppercase;
 }
 
+/* Marks a Wix draft in the local draft preview; never seen on the live site. */
+.draft {
+  composes: tag;
+  margin-left: 8px;
+  background: transparent;
+  color: inherit;
+  outline: 2px dashed currentColor;
+  outline-offset: -2px;
+}
+
 .title {
   font-family: var(--font-display);
   font-weight: 400;

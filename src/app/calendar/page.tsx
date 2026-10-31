@@ -6,8 +6,11 @@ import { shopTodayKey } from "@/components/calendar/event-model";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
-import { MOCK_EVENTS_PREVIEW } from "@/lib/content/calendar";
-import { getCalendarEvents } from "@/lib/events";
+import {
+  DRAFT_EVENTS_PREVIEW,
+  MOCK_EVENTS_PREVIEW,
+} from "@/lib/content/calendar";
+import { getCalendarEvents, getDraftPreviewEvents } from "@/lib/events";
 import { mockCalendarEvents } from "@/lib/mock-events";
 import { pageMetadata } from "@/lib/site";
 
@@ -15,24 +18,41 @@ type CalendarPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
 
-/** ?preview=mock shows made-up events, outside production only. */
-async function isMock(searchParams: CalendarPageProps["searchParams"]) {
-  return (
-    MOCK_EVENTS_PREVIEW.allowed &&
-    (await searchParams)[MOCK_EVENTS_PREVIEW.param] === MOCK_EVENTS_PREVIEW.value
-  );
+type Preview = "mock" | "drafts" | undefined;
+
+/**
+ * ?preview=mock shows made-up events, outside production only.
+ * ?preview=drafts adds draft Wix events, on `next dev` only.
+ */
+async function previewMode(
+  searchParams: CalendarPageProps["searchParams"],
+): Promise<Preview> {
+  const value = (await searchParams)[MOCK_EVENTS_PREVIEW.param];
+  if (MOCK_EVENTS_PREVIEW.allowed && value === MOCK_EVENTS_PREVIEW.value) {
+    return "mock";
+  }
+  if (DRAFT_EVENTS_PREVIEW.allowed && value === DRAFT_EVENTS_PREVIEW.value) {
+    return "drafts";
+  }
+  return undefined;
 }
 
-async function loadEvents(searchParams: CalendarPageProps["searchParams"]) {
-  if (await isMock(searchParams)) return mockCalendarEvents(shopTodayKey());
+async function loadEvents(preview: Preview) {
+  if (preview === "mock") return mockCalendarEvents(shopTodayKey());
+  if (preview === "drafts") return getDraftPreviewEvents();
   return getCalendarEvents();
 }
+
+const EYEBROWS = {
+  mock: "Preview: mock events",
+  drafts: "Preview: drafts + live",
+} as const;
 
 export async function generateMetadata({
   searchParams,
 }: CalendarPageProps): Promise<Metadata> {
-  const mock = await isMock(searchParams);
-  const events = await loadEvents(searchParams);
+  const preview = await previewMode(searchParams);
+  const events = await loadEvents(preview);
 
   return {
     ...pageMetadata({
@@ -43,17 +63,17 @@ export async function generateMetadata({
           : "Workshops, classes and neighborhood nights at our El Cerrito shop are coming once we open.",
       path: "/calendar",
     }),
-    // An empty calendar is thin content, and made-up events aren't real;
-    // keep both out of search.
-    ...((mock || events.length === 0) && {
+    // An empty calendar is thin content, and previews aren't the real
+    // calendar; keep both out of search.
+    ...((preview || events.length === 0) && {
       robots: { index: false, follow: true },
     }),
   };
 }
 
 export default async function CalendarPage({ searchParams }: CalendarPageProps) {
-  const mock = await isMock(searchParams);
-  const events = await loadEvents(searchParams);
+  const preview = await previewMode(searchParams);
+  const events = await loadEvents(preview);
   const hasEvents = events.length > 0;
 
   return (
@@ -62,19 +82,27 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
 
       <main>
         <PageIntro
-          eyebrow={mock ? "Preview: mock events" : "Events + popups"}
+          eyebrow={preview ? EYEBROWS[preview] : "Events + popups"}
           eyebrowColor={
             hasEvents ? "var(--color-ecs-magenta)" : "var(--color-ecs-teal)"
           }
           eyebrowInk="#ffffff"
           title="Community calendar"
           lede={
-            hasEvents
+            preview === "drafts"
+              ? "Live events plus any tagged “IN DRAFT MODE - TESTING ONLY” in Wix. Take the tag off in Wix to put one live."
+              : hasEvents
               ? "Workshops, food popups, pick-ups and neighborhood nights at the shop. Find something and come by."
               : "Workshops, classes, food popups and neighborhood nights are a later chapter. First we’re getting the shop itself up and running."
           }
         />
-        {hasEvents ? <CommunityCalendar events={events} mock={mock} /> : <EmptyCalendar />}
+        {/* Sign-ups in any preview go nowhere, so checking a draft never
+            sends a real RSVP to Wix. */}
+        {hasEvents ? (
+          <CommunityCalendar events={events} mock={Boolean(preview)} />
+        ) : (
+          <EmptyCalendar />
+        )}
       </main>
 
       <SiteFooter />
