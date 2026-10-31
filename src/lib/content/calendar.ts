@@ -87,6 +87,11 @@ export type CalendarEvent = {
   description: string;
   /** The full About section, shown in the event pop-up. Unset when empty. */
   about?: AboutBlock[];
+  /**
+   * Tagged "IN DRAFT MODE - TESTING ONLY" in Wix: only the local draft
+   * preview shows it.
+   */
+  draft?: true;
 };
 
 /** Where the shop's events happen, for turning Wix's UTC times into days. */
@@ -101,6 +106,17 @@ export const MOCK_EVENTS_PREVIEW = {
   param: "preview",
   value: "mock",
   allowed: process.env.VERCEL_ENV !== "production",
+} as const;
+
+/**
+ * ?preview=drafts adds Wix events tagged "IN DRAFT MODE - TESTING ONLY"
+ * to /calendar, marked "Draft", so a new event can be checked before the tag
+ * comes off and it goes live. `next dev` only.
+ */
+export const DRAFT_EVENTS_PREVIEW = {
+  param: "preview",
+  value: "drafts",
+  allowed: process.env.NODE_ENV === "development",
 } as const;
 
 export const CATEGORIES: Record<

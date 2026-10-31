@@ -71,9 +71,9 @@ export function Analytics({ gaId }: { gaId: string }) {
   return (
     <section aria-label="Cookie choices" className={styles.banner}>
       <p className={styles.text}>
-        Can we use Google Analytics cookies to count visits and see which
-        pages people read? Nothing is used for ads.{" "}
-        <Link href="/privacy">Read more</Link>
+        We use cookies to improve your experience and analyze website
+        traffic. By clicking “Allow,” you agree to our use of cookies as
+        described in our <Link href="/privacy">Privacy Policy</Link>.
       </p>
       <div className={styles.actions}>
         <button

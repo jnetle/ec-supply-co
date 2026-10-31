@@ -118,7 +118,10 @@ export function EventDialog({
             >
               ×
             </Dialog.Close>
-            <div className={styles.category}>{event.categoryLabel}</div>
+            <div className={styles.category}>
+              {event.categoryLabel}
+              {event.draft && " · Draft"}
+            </div>
             <Dialog.Title className={styles.title}>{event.title}</Dialog.Title>
             <div className={styles.when}>
               {[event.longDate, event.time].filter(Boolean).join(" · ")}

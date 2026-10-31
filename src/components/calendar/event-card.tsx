@@ -61,6 +61,7 @@ export function EventCard({
         >
           {event.categoryLabel}
         </span>
+        {event.draft && <span className={styles.draft}>Draft</span>}
         <h3 className={styles.title}>{event.title}</h3>
         {event.description && (
           <p className={styles.blurb}>{event.description}</p>

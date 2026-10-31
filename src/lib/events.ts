@@ -5,7 +5,10 @@ import { cache } from "react";
 
 import type { CalendarEvent } from "@/lib/content/calendar";
 import { describeWixError } from "@/lib/wix";
-import { getWixCalendarEvents } from "@/lib/wix-events";
+import {
+  getWixCalendarEvents,
+  getWixCalendarEventsWithDrafts,
+} from "@/lib/wix-events";
 
 // Public visitors share one copy for a minute, so a busy day isn't a Wix call
 // per page view. Spots left can lag Wix by that long. It caches the raw load,
@@ -29,6 +32,22 @@ export const getCalendarEvents = cache(
       return await cachedWixEvents();
     } catch (error) {
       console.error("Loading Wix events failed", describeWixError(error));
+      return [];
+    }
+  },
+);
+
+/**
+ * Live events plus the ones tagged "IN DRAFT MODE - TESTING ONLY", for
+ * /calendar?preview=drafts. Never cached, so a refresh shows the latest edit
+ * in Wix. If Wix fails, the preview shows its empty state.
+ */
+export const getDraftPreviewEvents = cache(
+  async (): Promise<CalendarEvent[]> => {
+    try {
+      return await getWixCalendarEventsWithDrafts();
+    } catch (error) {
+      console.error("Loading draft Wix events failed", describeWixError(error));
       return [];
     }
   },
