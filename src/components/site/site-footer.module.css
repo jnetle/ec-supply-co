@@ -75,13 +75,24 @@
   color: color-mix(in srgb, var(--color-ecs-neutral-100) 70%, transparent);
 }
 
-/* A 44px tap target that doesn't push the colophon taller. */
+.colophonLinks {
+  display: flex;
+  gap: 18px;
+}
+
+/* A 44px tap target that doesn't push the colophon taller. Also styles the
+   "Cookie choices" button, so it reads as the link beside it. */
 .colophonLink {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
   margin: -14px 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
   color: inherit;
+  cursor: pointer;
   text-decoration: underline;
   text-underline-offset: 3px;
 }

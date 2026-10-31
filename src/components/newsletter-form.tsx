@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useRef } from "react";
 
 import { subscribe } from "@/app/actions/newsletter";
+import { trackEvent } from "@/components/site/analytics";
 import { HONEYPOT_FIELD, MAX_EMAIL_LENGTH } from "@/lib/form-limits";
 import { initialSubscribeState } from "@/lib/newsletter";
 import { button } from "@/components/ui/button";
@@ -19,7 +20,9 @@ export function NewsletterForm() {
   // The form, and the button that had focus, are gone; keep keyboard and
   // screen reader users on the confirmation instead of the top of the page.
   useEffect(() => {
-    if (state.status === "success") successRef.current?.focus();
+    if (state.status !== "success") return;
+    successRef.current?.focus();
+    trackEvent("newsletter_signup");
   }, [state.status]);
 
   if (state.status === "success") {

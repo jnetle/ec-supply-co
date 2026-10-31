@@ -5,6 +5,8 @@ import { vercel } from "@/lib/env";
 export const SITE_URL = "https://www.elcerritosupplyco.com";
 export const SITE_NAME = "El Cerrito Supply Co.";
 export const SITE_EMAIL = "info@elcerritosupplyco.com";
+/** Google Analytics 4 property. Public by design: it ships in the page. */
+export const GA_MEASUREMENT_ID = "G-6CRV3DGB77";
 export const SITE_DESCRIPTION =
   "Local makers, a tool library and a place to sit down, built by neighbors at 7523A Fairmount Ave in El Cerrito.";
 

@@ -10,6 +10,7 @@ import {
 } from "react";
 
 import { rsvpToEvent } from "@/app/actions/event-rsvp";
+import { trackEvent } from "@/components/site/analytics";
 import { button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { SHOP_ADDRESS } from "@/lib/content/nav";
@@ -208,9 +209,15 @@ function RsvpForm({
   useEffect(() => {
     if (reported.current === state) return;
     reported.current = state;
-    if (state.status === "reserved") onDone("reserved", state.seats ?? 1);
-    if (state.status === "waitlisted") onDone("waitlisted", 0);
-  }, [state, onDone]);
+    if (state.status === "reserved") {
+      if (!mock) trackEvent("event_rsvp", { seats: state.seats ?? 1 });
+      onDone("reserved", state.seats ?? 1);
+    }
+    if (state.status === "waitlisted") {
+      if (!mock) trackEvent("event_waitlist");
+      onDone("waitlisted", 0);
+    }
+  }, [state, onDone, mock]);
 
   return (
     <form action={formAction} className={formStyles.form}>
