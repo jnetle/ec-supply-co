@@ -89,27 +89,8 @@ export type CalendarEvent = {
   about?: AboutBlock[];
 };
 
-/**
- * Empty: real events come from Wix Events (see `getWixCalendarEvents`). Every
- * view that reads this has a zero-event state, and the .ics feed serves an
- * empty calendar to match.
- */
-export const CALENDAR_EVENTS: CalendarEvent[] = [];
-
 /** Where the shop's events happen, for turning Wix's UTC times into days. */
 export const SHOP_TIME_ZONE = "America/Los_Angeles";
-
-/**
- * TODO: turn on once free events are set up in Wix and tested through the
- * preview. Shows Wix Events on /calendar, and the "What's coming up" section
- * on the home page, for everyone. While off, both show them only with
- * `?preview=events` (EVENTS_PREVIEW): the home section is hidden, and nobody
- * else sees a difference.
- */
-export const EVENTS_ENABLED = false;
-
-/** The query string that previews Wix events on /calendar: ?preview=events. */
-export const EVENTS_PREVIEW = { param: "preview", value: "events" } as const;
 
 /**
  * ?preview=mock fills /calendar with made-up events, one per state, to try

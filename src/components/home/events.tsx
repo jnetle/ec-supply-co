@@ -5,25 +5,17 @@ import {
 } from "@/components/calendar/event-model";
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import {
-  CALENDAR_SUBSCRIBE_ENABLED,
-  EVENTS_PREVIEW,
-} from "@/lib/content/calendar";
+import { CALENDAR_SUBSCRIBE_ENABLED } from "@/lib/content/calendar";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 import { getCalendarEvents } from "@/lib/events";
 
 import styles from "./events.module.css";
 import { UpcomingEvents } from "./upcoming-events";
 
-const CALENDAR_PREVIEW_HREF = `/calendar?${EVENTS_PREVIEW.param}=${EVENTS_PREVIEW.value}`;
-
-/**
- * The next few events from the community calendar, the one source of truth.
- * `preview` shows Wix events before they're switched on for everyone.
- */
-export async function Events({ preview = false }: { preview?: boolean }) {
+/** The next few events from the community calendar, the one source of truth. */
+export async function Events() {
   const today = shopTodayKey();
-  const events = upcomingEvents(await getCalendarEvents(preview), today, 4);
+  const events = upcomingEvents(await getCalendarEvents(), today, 4);
 
   return (
     <section id="events" className={styles.section}>
@@ -34,14 +26,14 @@ export async function Events({ preview = false }: { preview?: boolean }) {
             ink="#ffffff"
             className="mb-[18px]"
           >
-            {preview ? "Preview: Wix events" : "Fall calendar"}
+            Fall calendar
           </Eyebrow>
           <h2 className={styles.heading}>What&rsquo;s coming up</h2>
         </div>
 
         <div className={styles.actions}>
           <Link
-            href={preview ? CALENDAR_PREVIEW_HREF : "/calendar"}
+            href="/calendar"
             className={button({ variant: "outline", tone: "navy" })}
           >
             See the full calendar →
