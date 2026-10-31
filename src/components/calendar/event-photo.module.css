@@ -1,8 +1,9 @@
-/* An event's photo with its date chip. Square everywhere it appears, so an
-   event photo only ever has to work at one crop. */
+/* An event's photo with its date chip. The frame takes the photo's own shape,
+   from square to a 3:4 portrait (set inline as --photo-ratio), so a square
+   Canva graphic and an Instagram-sized 4:5 flyer both show whole. */
 .photo {
   position: relative;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: var(--photo-ratio, 1);
   overflow: hidden;
   border-radius: 18px;
   background: var(--color-ecs-sky-pale);
@@ -11,6 +12,23 @@
 .photo img {
   object-fit: cover;
   transition: transform 400ms ease;
+}
+
+/* The whole photo, letterboxed over a soft blur of itself. */
+.whole > img {
+  object-fit: contain;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+}
+
+*:hover > .photo .backdrop img,
+.photo .backdrop img {
+  object-fit: cover;
+  filter: blur(18px) saturate(1.1);
+  transform: scale(1.15);
 }
 
 /* Zooms when the card or row holding the photo is hovered. */
@@ -34,6 +52,7 @@
 /* Pinned over the photo's corner, like a sticker on a flyer. */
 .pinned {
   position: absolute;
+  z-index: 2;
   left: 8px;
   top: 8px;
 }

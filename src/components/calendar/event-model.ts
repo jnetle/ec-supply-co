@@ -112,8 +112,13 @@ export type DecoratedEvent = CalendarEvent & {
   /** Seats this visitor has already saved. */
   mine: number;
   dropIn: boolean;
-  /** Where sign-ups stand; null for a drop-in event. */
+  /** Where sign-ups stand; null for a drop-in or external event. */
   availability: Availability | null;
+  /** The host's page to sign up or order on, for an external event (a
+   * vendor's workshop, a pick-up's preorder). Unset when there's no link. */
+  orderUrl?: string;
+  /** What that link does: "Preorder" for a pick-up, else "Sign up". */
+  orderLabel: string;
   /** Seats one sign-up may save. */
   maxSeats: number;
   categoryLabel: string;
@@ -125,6 +130,7 @@ export type DecoratedEvent = CalendarEvent & {
   time: string;
   shortTime: string;
   priceLabel: string;
+  /** Empty for a pick-up, where "Preorder" already says it all. */
   spotsLabel: string;
   cta: string;
   /** Details-only buttons step back to an outline. */
@@ -153,7 +159,24 @@ export function decorate(
   // Noon avoids the date shifting under time zones either side of UTC.
   const date = new Date(`${event.date}T12:00:00`);
 
-  const spotsLabel = availability ? SPOTS_LABELS[availability] : "Drop in";
+  const orderUrl =
+    event.seats.kind === "external"
+      ? event.seats.url
+      : undefined;
+
+  const external = event.seats.kind === "external";
+  const pickup = event.category === "pickup";
+  const orderLabel = pickup ? "Preorder" : "Sign up";
+
+  // An external event's price and seats live on the host's site, so the
+  // shop's "Free" (Wix's price is always 0 here) would be wrong.
+  const spotsLabel = availability
+    ? SPOTS_LABELS[availability]
+    : external
+      ? pickup
+        ? ""
+        : "Sign up ahead"
+      : "Drop in";
 
   const cta = past
     ? "Past"
@@ -161,7 +184,9 @@ export function decorate(
       ? "You're in"
       : availability
         ? CTA_LABELS[availability]
-        : "Details";
+        : orderUrl
+          ? orderLabel
+          : "Details";
 
   return {
     ...event,
@@ -169,6 +194,8 @@ export function decorate(
     mine,
     dropIn,
     availability,
+    orderUrl,
+    orderLabel,
     maxSeats: event.seats.kind === "rsvp" ? event.seats.maxSeats : 0,
     categoryLabel: category.label,
     categoryColor: category.color,
@@ -183,7 +210,13 @@ export function decorate(
         ? `${formatTime(event.start)}–${formatTime(event.end)}`
         : formatTime(event.start),
     shortTime: event.timeTba ? "" : formatTime(event.start),
-    priceLabel: event.price ? `$${event.price}` : "Free",
+    priceLabel: pickup
+      ? "Preorder"
+      : external
+        ? "Set by the host"
+        : event.price
+          ? `$${event.price}`
+          : "Free",
     spotsLabel,
     cta,
     ctaVariant: cta === "Details" ? "outline" : "solid",

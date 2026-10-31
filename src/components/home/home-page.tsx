@@ -11,17 +11,9 @@ import { StoreJsonLd } from "@/components/seo/store-json-ld";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { ScrollEffects } from "@/components/ui/scroll-effects";
-import { EVENTS_ENABLED } from "@/lib/content/calendar";
 
-/**
- * The whole home page. `previewEvents` fills "What's coming up" with Wix
- * events before they're switched on for everyone (see /home-preview).
- */
-export function HomePage({
-  previewEvents = false,
-}: {
-  previewEvents?: boolean;
-}) {
+/** The whole home page. */
+export function HomePage() {
   return (
     <>
       <StoreJsonLd />
@@ -36,9 +28,7 @@ export function HomePage({
         <Hennai />
         <Carts />
         <Tools />
-        {(EVENTS_ENABLED || previewEvents) && (
-          <Events preview={previewEvents} />
-        )}
+        <Events />
         <MakerSpotlight />
         <Visit />
         <Signup />

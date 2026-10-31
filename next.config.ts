@@ -11,19 +11,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "64kb",
     },
   },
-  async rewrites() {
-    return {
-      // /?preview=events shows Wix events on the home page before they're
-      // public. A separate route, so the real home page stays static.
-      beforeFiles: [
-        {
-          source: "/",
-          has: [{ type: "query", key: "preview", value: "events" }],
-          destination: "/home-preview",
-        },
-      ],
-    };
-  },
   images: {
     // AVIF is about 20% smaller than WebP; browsers without it get WebP.
     formats: ["image/avif", "image/webp"],

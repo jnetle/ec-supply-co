@@ -1,35 +1,21 @@
 import Link from "next/link";
-import type { CSSProperties } from "react";
-
-import { EventPhoto } from "@/components/calendar/event-photo";
 import {
-  type DecoratedEvent,
-  decorate,
   shopTodayKey,
   upcomingEvents,
 } from "@/components/calendar/event-model";
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
-import {
-  CALENDAR_SUBSCRIBE_ENABLED,
-  EVENTS_PREVIEW,
-} from "@/lib/content/calendar";
+import { CALENDAR_SUBSCRIBE_ENABLED } from "@/lib/content/calendar";
 import { HOST_WITH_US_ENABLED } from "@/lib/content/host-with-us";
 import { getCalendarEvents } from "@/lib/events";
 
 import styles from "./events.module.css";
+import { UpcomingEvents } from "./upcoming-events";
 
-const CALENDAR_PREVIEW_HREF = `/calendar?${EVENTS_PREVIEW.param}=${EVENTS_PREVIEW.value}`;
-
-/**
- * The next few events from the community calendar, the one source of truth.
- * `preview` shows Wix events before they're switched on for everyone.
- */
-export async function Events({ preview = false }: { preview?: boolean }) {
+/** The next few events from the community calendar, the one source of truth. */
+export async function Events() {
   const today = shopTodayKey();
-  const events = upcomingEvents(await getCalendarEvents(preview), today, 4).map(
-    (e) => decorate(e, {}, today),
-  );
+  const events = upcomingEvents(await getCalendarEvents(), today, 4);
 
   return (
     <section id="events" className={styles.section}>
@@ -40,17 +26,17 @@ export async function Events({ preview = false }: { preview?: boolean }) {
             ink="#ffffff"
             className="mb-[18px]"
           >
-            {preview ? "Preview: Wix events" : "Fall calendar"}
+            Events + popups
           </Eyebrow>
           <h2 className={styles.heading}>What&rsquo;s coming up</h2>
         </div>
 
         <div className={styles.actions}>
           <Link
-            href={preview ? CALENDAR_PREVIEW_HREF : "/calendar"}
+            href="/calendar"
             className={button({ variant: "outline", tone: "navy" })}
           >
-            Full calendar + sign-ups →
+            See the full calendar →
           </Link>
           {HOST_WITH_US_ENABLED && (
             <Link
@@ -65,92 +51,10 @@ export async function Events({ preview = false }: { preview?: boolean }) {
 
       {events.length === 0 ? (
         <EmptyBoard />
-      ) : events.length === 1 ? (
-        <div className={styles.solo}>
-          <FeaturedEvent event={events[0]} preview={preview} />
-          <MoreOnTheWay />
-        </div>
       ) : (
-        <div className={styles.grid}>
-          {events.map((event) => (
-            <article key={event.id} data-reveal className={styles.card}>
-              <EventPhoto
-                event={event}
-                className={styles.cardPhoto}
-                sizes="(max-width: 700px) 100vw, 270px"
-              />
-              <div className={styles.cardBody}>
-                <div className={styles.cardMeta}>
-                  {[event.longDate, event.time, event.priceLabel]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </div>
-                <h3 className={styles.cardTitle}>{event.title}</h3>
-                <p className={styles.cardBlurb}>{event.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <UpcomingEvents events={events} more={<MoreOnTheWay />} />
       )}
     </section>
-  );
-}
-
-/**
- * A lone event gets the room four cards would have shared: a wide card with
- * the details a visitor needs to decide, beside a nudge to hear about the next.
- */
-function FeaturedEvent({
-  event,
-  preview,
-}: {
-  event: DecoratedEvent;
-  preview: boolean;
-}) {
-  return (
-    <article data-reveal className={styles.feature}>
-      <EventPhoto
-        event={event}
-        className={styles.featurePhoto}
-        sizes="(max-width: 640px) 100vw, 460px"
-      />
-      <div className={styles.featureBody}>
-        <span
-          className={styles.featureTag}
-          style={
-            {
-              "--tag-color": event.categoryColor,
-              "--tag-ink": event.categoryInk,
-            } as CSSProperties
-          }
-        >
-          {event.categoryLabel}
-        </span>
-        <h3 className={styles.featureTitle}>{event.title}</h3>
-        <p className={styles.featureHost}>with {event.host}</p>
-        <p className={styles.featureBlurb}>{event.description}</p>
-
-        <dl className={styles.featureFacts}>
-          <div>
-            <dt>When</dt>
-            <dd>{event.longDate}</dd>
-            {event.time && <dd>{event.time}</dd>}
-          </div>
-          <div>
-            <dt>Cost</dt>
-            <dd>{event.priceLabel}</dd>
-            <dd>{event.spotsLabel}</dd>
-          </div>
-        </dl>
-
-        <Link
-          href={preview ? CALENDAR_PREVIEW_HREF : "/calendar"}
-          className={button({ tone: "navy", className: styles.featureCta })}
-        >
-          {event.cta === "Details" ? "See details" : event.cta} →
-        </Link>
-      </div>
-    </article>
   );
 }
 

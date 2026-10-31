@@ -175,6 +175,21 @@
   }
 }
 
+/* A quiet month (see WIDE_MAX): a wide card per event, capped so a lone
+   one doesn't stretch thin across a wide screen; two share the row. */
+@media (min-width: 900px) {
+  .wide {
+    grid-template-columns: repeat(var(--count), minmax(0, 880px));
+  }
+}
+
+/* Two wide cards get too narrow for their photos below this. */
+@media (max-width: 1180px) {
+  .wide {
+    grid-template-columns: minmax(0, 880px);
+  }
+}
+
 /* A month with nothing on it: a note on the board instead of a blank. */
 .emptyMonth {
   display: grid;
@@ -207,110 +222,6 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-top: 4px;
-}
-
-/* One event: a big square photo (often a Canva graphic, so nothing sits on
-   top of it), then the date beside the title, details, and the action. */
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow: hidden;
-  background: var(--color-ecs-sky-surface);
-  border-radius: 24px;
-  padding-bottom: 20px;
-  opacity: var(--row-opacity, 1);
-}
-
-/* The photo runs edge to edge across the top of the card. */
-.row .rowPhoto {
-  width: 100%;
-  border-radius: 0;
-}
-
-.row > :not(.rowPhoto) {
-  margin-inline: clamp(14px, 1.4vw, 18px);
-}
-
-.rowHead {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-}
-
-/* Takes the leftover height, so every card's action lines up. */
-.rowBody {
-  flex: 1;
-}
-
-.rowMeta {
-  font-family: var(--font-heading);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-ecs-teal-deep);
-}
-
-.rowTitle {
-  margin: 4px 0 0;
-  font-family: var(--font-heading);
-  font-weight: 600;
-  font-size: clamp(1.05rem, 1.7vw, 1.4rem);
-  line-height: 1.15;
-}
-
-.rowDetail {
-  margin-top: 4px;
-  font-size: 14px;
-  line-height: 1.45;
-}
-
-.hostLink {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-ecs-teal);
-  text-decoration: underline;
-  text-decoration-thickness: 2px;
-  text-decoration-color: transparent;
-  text-underline-offset: 4px;
-  transition: text-decoration-color 220ms ease;
-}
-
-.hostLink:hover,
-.hostLink:focus-visible {
-  text-decoration-color: currentColor;
-}
-
-.hostLinkBadge {
-  display: inline-grid;
-  place-items: center;
-  width: 1.3em;
-  height: 1.3em;
-  border-radius: 999px;
-  background: var(--color-ecs-teal);
-  color: #ffffff;
-  transition: transform 220ms ease;
-}
-
-.hostLink:hover .hostLinkBadge,
-.hostLink:focus-visible .hostLinkBadge {
-  transform: rotate(-12deg) scale(1.08);
-}
-
-.rowCta {
-  align-self: flex-start;
-  white-space: nowrap;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hostLinkBadge {
-    transition: none;
-  }
 }
 
 /* ── Month grid ────────────────────────────────────────────────────────── */

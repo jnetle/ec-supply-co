@@ -46,7 +46,7 @@ const CALENDAR_ROUTE: Route = {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // /calendar is left out while empty, when the page is noindex.
-  const hasEvents = (await getCalendarEvents(false)).length > 0;
+  const hasEvents = (await getCalendarEvents()).length > 0;
   const routes = hasEvents ? [...ROUTES, CALENDAR_ROUTE] : ROUTES;
 
   return routes.map(({ path, changeFrequency, priority }) => ({

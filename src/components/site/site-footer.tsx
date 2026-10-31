@@ -9,6 +9,7 @@ import {
   NAV_GROUPS,
   SHOP_ADDRESS,
 } from '@/lib/content/nav';
+import { vercel } from '@/lib/env';
 
 import styles from './site-footer.module.css';
 
@@ -52,7 +53,11 @@ export function SiteFooter() {
           Reserved.
         </span>
         <span className={styles.colophonLinks}>
-          <CookieChoicesButton className={styles.colophonLink} />
+          {/* Google Analytics, and so its cookie banner, only runs on the
+              live site; elsewhere this button would have nothing to open. */}
+          {vercel.isProduction() && (
+            <CookieChoicesButton className={styles.colophonLink} />
+          )}
           <Link href="/privacy" className={styles.colophonLink}>
             Privacy
           </Link>

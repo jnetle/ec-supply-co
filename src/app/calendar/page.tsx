@@ -6,7 +6,7 @@ import { shopTodayKey } from "@/components/calendar/event-model";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { PageIntro } from "@/components/ui/page-intro";
-import { EVENTS_PREVIEW, MOCK_EVENTS_PREVIEW } from "@/lib/content/calendar";
+import { MOCK_EVENTS_PREVIEW } from "@/lib/content/calendar";
 import { getCalendarEvents } from "@/lib/events";
 import { mockCalendarEvents } from "@/lib/mock-events";
 import { pageMetadata } from "@/lib/site";
@@ -14,11 +14,6 @@ import { pageMetadata } from "@/lib/site";
 type CalendarPageProps = {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
-
-/** ?preview=events shows Wix events before they're switched on for everyone. */
-async function isPreview(searchParams: CalendarPageProps["searchParams"]) {
-  return (await searchParams)[EVENTS_PREVIEW.param] === EVENTS_PREVIEW.value;
-}
 
 /** ?preview=mock shows made-up events, outside production only. */
 async function isMock(searchParams: CalendarPageProps["searchParams"]) {
@@ -30,14 +25,13 @@ async function isMock(searchParams: CalendarPageProps["searchParams"]) {
 
 async function loadEvents(searchParams: CalendarPageProps["searchParams"]) {
   if (await isMock(searchParams)) return mockCalendarEvents(shopTodayKey());
-  return getCalendarEvents(await isPreview(searchParams));
+  return getCalendarEvents();
 }
 
 export async function generateMetadata({
   searchParams,
 }: CalendarPageProps): Promise<Metadata> {
-  const preview =
-    (await isPreview(searchParams)) || (await isMock(searchParams));
+  const mock = await isMock(searchParams);
   const events = await loadEvents(searchParams);
 
   return {
@@ -45,20 +39,19 @@ export async function generateMetadata({
       title: "Community calendar",
       description:
         events.length > 0
-          ? "Workshops, classes, food popups and neighborhood nights at our shop in El Cerrito. Pick something, save a seat."
+          ? "Workshops, food popups, pick-ups and neighborhood nights at our shop in El Cerrito."
           : "Workshops, classes and neighborhood nights at our El Cerrito shop are coming once we open.",
       path: "/calendar",
     }),
-    // An empty calendar is thin content, and a preview isn't public yet;
+    // An empty calendar is thin content, and made-up events aren't real;
     // keep both out of search.
-    ...((preview || events.length === 0) && {
+    ...((mock || events.length === 0) && {
       robots: { index: false, follow: true },
     }),
   };
 }
 
 export default async function CalendarPage({ searchParams }: CalendarPageProps) {
-  const preview = await isPreview(searchParams);
   const mock = await isMock(searchParams);
   const events = await loadEvents(searchParams);
   const hasEvents = events.length > 0;
@@ -69,13 +62,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
 
       <main>
         <PageIntro
-          eyebrow={
-            mock
-              ? "Preview: mock events"
-              : preview
-                ? "Preview: Wix events"
-                : "Workshops + classes"
-          }
+          eyebrow={mock ? "Preview: mock events" : "Events + popups"}
           eyebrowColor={
             hasEvents ? "var(--color-ecs-magenta)" : "var(--color-ecs-teal)"
           }
@@ -83,7 +70,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
           title="Community calendar"
           lede={
             hasEvents
-              ? "Workshops, classes, food popups and neighborhood nights at the shop. Pick something, save a seat."
+              ? "Workshops, food popups, pick-ups and neighborhood nights at the shop. Find something and come by."
               : "Workshops, classes, food popups and neighborhood nights are a later chapter. First we’re getting the shop itself up and running."
           }
         />

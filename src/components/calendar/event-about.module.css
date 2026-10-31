@@ -1,0 +1,27 @@
+/* An event's About section from Wix: text, headings, lists and links only. */
+.about {
+  display: grid;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.about :where(p, h3, ul, ol) {
+  margin: 0;
+}
+
+.about h3 {
+  font-family: var(--font-heading);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.about :where(ul, ol) {
+  padding-left: 1.25em;
+}
+
+.about a {
+  color: var(--color-ecs-teal-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
