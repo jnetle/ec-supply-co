@@ -176,10 +176,13 @@
 }
 
 /* A quiet month (see WIDE_MAX): a wide card per event, capped so a lone
-   one doesn't stretch thin across a wide screen; two share the row. */
+   one doesn't stretch thin across a wide screen; two share the row. Each
+   keeps its own height, so a taller neighbour never stretches a card and
+   scales its photo up past 4:5, cropping the flyer's edges. */
 @media (min-width: 900px) {
   .wide {
     grid-template-columns: repeat(var(--count), minmax(0, 880px));
+    align-items: start;
   }
 }
 

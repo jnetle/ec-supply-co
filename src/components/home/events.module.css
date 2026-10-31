@@ -46,6 +46,9 @@
 .pair {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 880px));
+  /* Each card keeps its own height, so a taller neighbour never stretches
+     it and scales its photo up past 4:5. */
+  align-items: start;
   gap: clamp(16px, 2.4vw, 30px);
 }
 
