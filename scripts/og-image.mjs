@@ -10,7 +10,9 @@ import { readFile, writeFile } from "node:fs/promises";
 import { ImageResponse } from "next/og.js";
 
 const WIDTH = 1200;
-const HEIGHT = 630;
+// Square. The lockup stays in the middle band, so it survives the 1.91:1
+// centre crop that X and Facebook apply to large link previews.
+const HEIGHT = 1200;
 
 const COLORS = {
   ground: "#0a3940", // --color-ecs-teal-deep

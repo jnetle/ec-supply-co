@@ -17,7 +17,7 @@ export const SITE_DESCRIPTION =
 export const SHARE_IMAGE = {
   url: "/og-image.png",
   width: 1200,
-  height: 630,
+  height: 1200,
   alt: "El Cerrito Supply Co., 7523A Fairmount Ave, El Cerrito, CA",
 };
 
