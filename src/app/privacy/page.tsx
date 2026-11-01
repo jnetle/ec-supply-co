@@ -80,6 +80,7 @@ export default function PrivacyPage() {
               pages they read. Both count page views, the page that sent you
               here, your browser, device type and rough location, and whether a
               newsletter sign-up, maker submission or event RSVP went through.
+              Google Analytics also notes which links and buttons you click.
               Neither tells us who you are.
             </p>
             <p>

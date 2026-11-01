@@ -50,6 +50,15 @@ export function Analytics({ gaId }: { gaId: string }) {
     if (mode === "load") gaLoaded = true;
   }, [mode]);
 
+  // Once GA is running, report every link and button click. One listener for
+  // the whole page, so nothing has to be wired up per button.
+  useEffect(() => {
+    if (mode !== "load") return;
+    document.addEventListener("click", reportClick, { capture: true });
+    return () =>
+      document.removeEventListener("click", reportClick, { capture: true });
+  }, [mode]);
+
   const choose = (choice: Choice) => {
     write(localStorage, CHOICE_KEY, choice);
     if (choice === "granted") {
@@ -69,7 +78,11 @@ export function Analytics({ gaId }: { gaId: string }) {
   if (mode !== "ask") return null;
 
   return (
-    <section aria-label="Cookie choices" className={styles.banner}>
+    <section
+      aria-label="Cookie choices"
+      className={styles.banner}
+      data-no-track
+    >
       <p className={styles.text}>
         We use cookies to improve your experience and analyze website
         traffic. By clicking “Allow,” you agree to our use of cookies as
@@ -106,6 +119,62 @@ export function CookieChoicesButton({ className }: { className?: string }) {
       Cookie choices
     </button>
   );
+}
+
+const CLICKABLE = "a[href], button, [role='button'], summary";
+const AREA = "[role='dialog'], section, nav, header, footer, aside, main";
+
+/**
+ * Sends a `site_click` event for a click on a link or button: what it said,
+ * where it goes, and which part of the page it was in. Page path comes along
+ * with every GA event already.
+ */
+function reportClick(event: MouseEvent) {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const el = target.closest<HTMLElement>(CLICKABLE);
+  if (!el || el.closest("[data-no-track]")) return;
+
+  const params: Record<string, unknown> = {
+    link_text: label(el),
+    click_section: section(el),
+  };
+  if (el instanceof HTMLAnchorElement) {
+    const url = new URL(el.href, location.href);
+    const outbound = url.origin !== location.origin;
+    params.link_url = outbound
+      ? url.href
+      : url.pathname + url.search + url.hash;
+    params.outbound = outbound;
+  }
+  trackEvent("site_click", params);
+}
+
+function label(el: HTMLElement) {
+  const text =
+    el.getAttribute("aria-label") ||
+    el.innerText ||
+    el.querySelector("img")?.alt ||
+    "";
+  return text.replace(/\s+/g, " ").trim().slice(0, 100) || "(no label)";
+}
+
+/** The nearest named part of the page: its aria-label, or its id. */
+function section(el: HTMLElement) {
+  for (
+    let node = el.closest(AREA);
+    node;
+    node = node.parentElement?.closest(AREA) ?? null
+  ) {
+    if (node.getAttribute("role") === "dialog") {
+      const heading = node.getAttribute("aria-labelledby");
+      const title = heading && document.getElementById(heading)?.innerText;
+      return `dialog: ${(title || "untitled").trim().slice(0, 60)}`;
+    }
+    const name = node.getAttribute("aria-label") || node.id;
+    if (name) return name;
+  }
+  return el.closest(AREA)?.tagName.toLowerCase() ?? "page";
 }
 
 async function decide(): Promise<Mode> {
