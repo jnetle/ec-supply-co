@@ -323,23 +323,22 @@ and confirm it persists under the maker form in Wix before deploying.
 ## Popup application
 
 `/popup-with-us` posts the food and beverage popup application to its own Wix
-form. Create a standalone form named **Popup application** the same way as the
-maker form, with these fields. After creating each one, set its field key
-(Wix calls it the field's **target**) to the value in the last column, or update
-`POPUP_FORM_FIELDS` in `src/lib/wix-form-config.ts` to match what Wix gave it.
+form, a standalone form named **Popup application** with these fields. The
+targets are the field keys Wix generated from each label; if a field is renamed
+or rebuilt, update `POPUP_FORM_FIELDS` in `src/lib/wix-form-config.ts` to match.
 
-| Wix field label          | Wix field type | Required | Target          |
-| ------------------------ | -------------- | -------- | --------------- |
-| First name               | Short answer   | Yes      | `first_name`    |
-| Last name                | Short answer   | Yes      | `last_name`     |
-| Business name            | Short answer   | Yes      | `business_name` |
-| Email                    | Email          | Yes      | `email`         |
-| Website or social media  | Short answer   | Yes      | `link`          |
-| About the popup          | Long answer    | Yes      | `about`         |
-| Current city             | Short answer   | No       | `city`          |
-| Connection to El Cerrito | Long answer    | No       | `connection`    |
-| Health permit            | Short answer   | Yes      | `health_permit` |
-| Accepts payment          | Short answer   | Yes      | `payment`       |
+| Wix field label          | Wix field type | Required | Target                     |
+| ------------------------ | -------------- | -------- | -------------------------- |
+| First name               | Short answer   | Yes      | `first_name`               |
+| Last name                | Short answer   | Yes      | `last_name`                |
+| Business name            | Short answer   | Yes      | `business_name`            |
+| Email                    | Email          | Yes      | `email`                    |
+| Website or social media  | Short answer   | Yes      | `website_or_social_media`  |
+| About the popup          | Long answer    | Yes      | `about_the_popup`          |
+| Current city             | Short answer   | No       | `current_city`             |
+| Connection to El Cerrito | Long answer    | No       | `connection_to_el_cerrito` |
+| Health permit            | Short answer   | Yes      | `health_permit`            |
+| Accepts payment          | Short answer   | Yes      | `accepts_payment`          |
 
 The permit answer arrives as Yes, No or Working on it; payment as Yes
 or No. Set spam protection to **None** or **Basic**, run `npm run wix:forms` to
