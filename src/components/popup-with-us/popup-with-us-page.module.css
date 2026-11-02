@@ -1,0 +1,26 @@
+/* The intro copy sits under the headline, with the photo beside it. */
+.introProse {
+  margin-top: clamp(22px, 3.5vh, 36px);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* "Good to know" set on a navy band, torn-paper edges top and bottom,
+   with blobs drifting behind. The inner grid is the maker page's `.policy`. */
+.band {
+  position: relative;
+  overflow-x: clip;
+  background: var(--color-ecs-navy);
+  color: var(--color-ecs-surface);
+  margin: clamp(20px, 4vh, 48px) 0;
+  padding: clamp(20px, 4vh, 40px) 0;
+}
+
+.bandInner {
+  position: relative;
+}

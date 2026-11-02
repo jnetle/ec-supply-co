@@ -19,7 +19,7 @@ export const metadata: Metadata = pageMetadata({
  * Bump this whenever the policy's substance changes: a new form, a new
  * service that receives visitor data, or a change to what analytics records.
  */
-const EFFECTIVE_DATE = "October 31, 2026";
+const EFFECTIVE_DATE = "November 1, 2026";
 
 export default function PrivacyPage() {
   return (
@@ -63,6 +63,12 @@ export default function PrivacyPage() {
                 to you.
               </li>
               <li>
+                <strong>Popup applications:</strong> your name, business name,
+                email, a link to your popup, your city and your answers to the
+                application questions, so we can review your popup and get back
+                to you.
+              </li>
+              <li>
                 <strong>Event sign-ups:</strong> your name, email and how many
                 seats you&rsquo;re saving, so the event knows who&rsquo;s
                 coming and can send your confirmation. If you tick the box,
@@ -79,7 +85,8 @@ export default function PrivacyPage() {
               We use two analytics tools to see how many people visit and which
               pages they read. Both count page views, the page that sent you
               here, your browser, device type and rough location, and whether a
-              newsletter sign-up, maker submission or event RSVP went through.
+              newsletter sign-up, maker or popup application, or event RSVP went
+              through.
               Google Analytics also notes which links and buttons you click.
               Neither tells us who you are.
             </p>
@@ -121,8 +128,8 @@ export default function PrivacyPage() {
             <h2>How long we keep it</h2>
             <p>
               Newsletter addresses stay on the list until you ask to come off
-              it. Maker submissions are kept while we review them and for
-              future rounds. Event sign-ups are kept with the event&rsquo;s
+              it. Maker submissions and popup applications are kept while we
+              review them and for future rounds. Event sign-ups are kept with the event&rsquo;s
               guest list. Ask us any time and we&rsquo;ll delete yours.
             </p>
           </section>

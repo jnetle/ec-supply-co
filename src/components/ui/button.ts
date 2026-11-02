@@ -10,7 +10,7 @@ export type ButtonTone =
   | "magenta"
   | "plum"
   | "marigold"
-  | "cerulean"
+  | "ceruleanDeep"
   | "red"
   | "navy"
   | "ink"

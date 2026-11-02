@@ -10,8 +10,9 @@ import { addToNewsletter } from "@/lib/newsletter-signup";
 import { describeWixError } from "@/lib/wix";
 
 // Rate limited by a Vercel Firewall custom rule, not in code: POST requests
-// with a `next-action` header to / or /sell-with-us, 5 per IP per 60s fixed
-// window, then deny (429). /calendar's RSVP action needs the same rule.
+// with a `next-action` header to /, /sell-with-us or /popup-with-us, 5 per
+// IP per 60s fixed window, then deny (429). /calendar's RSVP action needs the
+// same rule.
 
 const SUCCESS_MESSAGE = "You're on the list. Thanks for subscribing!";
 const FAILURE_MESSAGE = "Something went wrong on our end. Please try again.";

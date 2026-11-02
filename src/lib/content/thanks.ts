@@ -155,7 +155,7 @@ export const MADE_OF: MadeOfEntry[] = [
  * passes it. A photo left out here simply shows no credit.
  */
 export const PHOTO_CREDITS: Record<string, Helper["id"]> = {
-  // "/assets/photos/id-42-1600-1000.jpg": "stephanie-dolen",
+  // "/assets/photos/shop/lounge.jpg": "stephanie-dolen",
 };
 
 export function photoCredit(src: string | undefined): Helper | undefined {

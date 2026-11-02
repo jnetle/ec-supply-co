@@ -4,19 +4,19 @@ import { track } from "@vercel/analytics/server";
 import { headers } from "next/headers";
 import type { z } from "zod";
 
+import type { ApplicationState } from "@/lib/application-state";
+import { formValue, looksLikeABot } from "@/lib/application-submission";
 import { env } from "@/lib/env";
-import { MIN_APPLICATION_FILL_MS } from "@/lib/form-limits";
 import {
   makerApplicationSchema,
   type MakerApplication,
 } from "@/lib/form-schemas";
-import type { MakerApplicationState } from "@/lib/maker-application";
 import { describeWixError, getWixClient } from "@/lib/wix";
 import { MAKER_FORM_FIELDS } from "@/lib/wix-form-config";
 
 // Rate limited by a Vercel Firewall custom rule, not in code: POST requests
-// with a `next-action` header to / or /sell-with-us, 5 per IP per 60s fixed
-// window, then deny (429).
+// with a `next-action` header to /, /sell-with-us or /popup-with-us, 5 per
+// IP per 60s fixed window, then deny (429).
 
 const WHOLESALE_ANSWERS = {
   yes: "Yes",
@@ -33,13 +33,6 @@ const PRICING_ANSWERS = {
 const SUCCESS_MESSAGE =
   "Your submission is in. We will read it with the next round, and if it is a fit, you will hear from us. Best of luck!";
 const FAILURE_MESSAGE = "Something went wrong on our end. Please try again.";
-
-function formValue(
-  formData: FormData,
-  name: string,
-): FormDataEntryValue | string {
-  return formData.get(name) ?? "";
-}
 
 const FIELD_LABELS: Record<keyof MakerApplication, string> = {
   first: "First name",
@@ -81,21 +74,13 @@ function validationMessage(error: z.ZodError<MakerApplication>): string {
   }
 }
 
-/** True when the form was sent too soon after it loaded, or with no start. */
-function sentTooFast(formData: FormData): boolean {
-  const started = Number(formData.get("started"));
-  const elapsed = Date.now() - started;
-  return !Number.isFinite(started) || started <= 0 || elapsed < MIN_APPLICATION_FILL_MS;
-}
-
 export async function submitMakerApplication(
-  _prevState: MakerApplicationState,
+  _prevState: ApplicationState,
   formData: FormData,
-): Promise<MakerApplicationState> {
-  // Bots commonly fill hidden fields, and send within seconds of the form
-  // loading; nobody reads and fills this form that fast. Return success so
-  // they receive no signal that the submission was discarded.
-  if (formData.get("fax") || sentTooFast(formData)) {
+): Promise<ApplicationState> {
+  // Return success to bots so they receive no signal that the submission
+  // was discarded.
+  if (looksLikeABot(formData)) {
     return { status: "success", message: SUCCESS_MESSAGE };
   }
 

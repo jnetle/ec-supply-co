@@ -1,6 +1,5 @@
 /* A photographer's credit, set inside the photo like a pencilled note on the
-   back of a print: small, quiet, and only loud enough to find. Sits above the
-   frame's grain overlay. */
+   back of a print: small, quiet, and only loud enough to find. */
 .credit {
   position: absolute;
   z-index: 1;

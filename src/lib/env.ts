@@ -13,6 +13,7 @@ const HINTS = {
     "Find it in the Wix dashboard under Settings > Development & integrations > Headless Settings.",
   WIX_NEWSLETTER_FORM_ID: FORMS_HINT,
   WIX_MAKER_FORM_ID: FORMS_HINT,
+  WIX_POPUP_FORM_ID: FORMS_HINT,
 } as const;
 
 type EnvKey = keyof typeof HINTS;
@@ -37,6 +38,7 @@ export const env = {
   wixClientId: () => required("WIX_CLIENT_ID"),
   newsletterFormId: () => required("WIX_NEWSLETTER_FORM_ID"),
   makerFormId: () => required("WIX_MAKER_FORM_ID"),
+  popupFormId: () => required("WIX_POPUP_FORM_ID"),
 };
 
 /**
