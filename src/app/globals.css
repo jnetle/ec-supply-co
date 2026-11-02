@@ -44,6 +44,8 @@
   /* Blues, from the brand swatches */
   --color-ecs-cobalt: #004aad;
   --color-ecs-cerulean: #0097b2;
+  /* Deep enough for white text (5.4:1); cerulean itself is only 3.5:1. */
+  --color-ecs-cerulean-deep: #00758a;
   --color-ecs-ultramarine: #130284;
 
   /* Sky: the calendar's cool surfaces and lines, in place of ply */

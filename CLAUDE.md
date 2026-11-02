@@ -29,8 +29,8 @@ class list, so it works on `<button>`, `<a>`, `<Link>` and Radix triggers.
    data, such as event categories. `film` (a pearly film fill, ink text)
    is solid only and for at most one headline action per page; today
    that is the newsletter submit. The maker application submit is
-   `cerulean` (ink text, since white fails contrast); every other form
-   submit is `tealDeep`.
+   `ceruleanDeep` (white text; plain cerulean is too light for white);
+   every other form submit is `tealDeep`.
    Never use red, magenta or plum for a submit: magenta is the form's
    error colour, and the reds all read as a warning. Adding a tone is a
    design decision.

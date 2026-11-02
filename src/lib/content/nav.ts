@@ -71,6 +71,11 @@ export const NAV_GROUPS: NavGroup[] = [
         note: "Workshops, classes + popups",
         href: "/calendar",
       },
+      {
+        label: "Pop up with us",
+        note: "Food + drink vendors",
+        href: "/popup-with-us",
+      },
       ...(HOST_WITH_US_ENABLED
         ? [
             {

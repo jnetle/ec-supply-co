@@ -49,6 +49,20 @@ const email = z
   .max(MAX_EMAIL_LENGTH)
   .pipe(z.email());
 
+// People type "myshop.com" or "instagram.com/me", so a missing scheme gets
+// https:// added. After that it must be http(s) with a real domain: no
+// javascript:, no localhost, no bare IPs.
+const webLink = z
+  .string()
+  .trim()
+  .max(MAX_URL_LENGTH)
+  .overwrite((value) =>
+    value === "" || /^[a-z][a-z\d+.-]*:\/\//i.test(value)
+      ? value
+      : `https://${value.replace(/^\/\//, "")}`,
+  )
+  .pipe(z.url({ protocol: /^https?$/, hostname: z.regexes.domain }));
+
 export const newsletterSchema = z.object({ email });
 
 export const makerApplicationSchema = z.object({
@@ -56,19 +70,7 @@ export const makerApplicationSchema = z.object({
   last: requiredShortText,
   business: requiredShortText,
   email,
-  // People type "myshop.com" or "instagram.com/me", so a missing scheme gets
-  // https:// added. After that it must be http(s) with a real domain: no
-  // javascript:, no localhost, no bare IPs.
-  link: z
-    .string()
-    .trim()
-    .max(MAX_URL_LENGTH)
-    .overwrite((value) =>
-      value === "" || /^[a-z][a-z\d+.-]*:\/\//i.test(value)
-        ? value
-        : `https://${value.replace(/^\/\//, "")}`,
-    )
-    .pipe(z.url({ protocol: /^https?$/, hostname: z.regexes.domain })),
+  link: webLink,
   about: longText.min(1),
   city: optionalShortText,
   connection: longText,
@@ -77,6 +79,21 @@ export const makerApplicationSchema = z.object({
 });
 
 export type MakerApplication = z.infer<typeof makerApplicationSchema>;
+
+export const popupApplicationSchema = z.object({
+  first: requiredShortText,
+  last: requiredShortText,
+  business: requiredShortText,
+  email,
+  link: webLink,
+  about: longText.min(1),
+  city: optionalShortText,
+  connection: longText,
+  permit: z.enum(["yes", "no", "working"]),
+  payment: z.enum(["yes", "no"]),
+});
+
+export type PopupApplication = z.infer<typeof popupApplicationSchema>;
 
 export const eventRsvpSchema = z.object({
   // A Wix event ID. z.guid() rather than z.uuid(), which also checks the

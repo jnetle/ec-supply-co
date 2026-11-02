@@ -1,15 +1,16 @@
 "use client";
 
-import {
-  useActionState,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { useState } from "react";
 
 import { submitMakerApplication } from "@/app/actions/maker-application";
-import { trackEvent } from "@/components/site/analytics";
+import {
+  ApplicationSection,
+  ApplicationSent,
+  Honeypot,
+  lengthHint,
+  useApplicationForm,
+  type ApplicationFieldsProps,
+} from "@/components/ui/application-form";
 import { button } from "@/components/ui/button";
 import { Field, Required } from "@/components/ui/field";
 import {
@@ -18,21 +19,8 @@ import {
   MAX_SHORT_TEXT_LENGTH,
   MAX_URL_LENGTH,
 } from "@/lib/form-limits";
-import { initialMakerApplicationState } from "@/lib/maker-application";
 
 import styles from "@/components/ui/form.module.css";
-
-/** Clears the sticky header when the form scrolls itself into view. */
-const SCROLL_OFFSET = 80;
-
-/** "Up to 5,000 characters" when empty, then a running count. Fixed to
- * en-US so the prerender and the client agree. */
-function lengthHint(value: string, max: number) {
-  const limit = max.toLocaleString("en-US");
-  return value.length === 0
-    ? `Up to ${limit} characters`
-    : `${value.length.toLocaleString("en-US")} of ${limit} characters`;
-}
 
 const WHOLESALE_UNDERSTANDING = [
   { value: "yes", label: "Yes" },
@@ -72,63 +60,27 @@ const EMPTY_APPLICATION: ApplicationFormValues = {
   pricing: "",
 };
 
-type ApplicationFormFieldsProps = {
-  onReset: () => void;
-  scrollToTop: () => void;
-};
-
 function ApplicationFormFields({
   onReset,
   scrollToTop,
-}: ApplicationFormFieldsProps) {
-  const [state, formAction, pending] = useActionState(
+}: ApplicationFieldsProps) {
+  const { state, submit, pending, sentTitleRef } = useApplicationForm(
     submitMakerApplication,
-    initialMakerApplicationState,
+    "maker_application",
+    scrollToTop,
   );
   const [values, setValues] = useState(EMPTY_APPLICATION);
-  // When the form appeared, for the server's too-fast-to-be-human check. Added
-  // at submit rather than as a hidden input, which React resets after each
-  // attempt, and set after mount so it isn't the prerender's build time.
-  const startedRef = useRef(0);
-  const sentTitleRef = useRef<HTMLHeadingElement>(null);
-
   const updateValue = (name: keyof ApplicationFormValues, value: string) => {
     setValues((current) => ({ ...current, [name]: value }));
   };
 
-  useEffect(() => {
-    startedRef.current = Date.now();
-  }, []);
-
-  const submit = (formData: FormData) => {
-    formData.set("started", String(startedRef.current));
-    formAction(formData);
-  };
-
-  useEffect(() => {
-    if (state.status !== "success") return;
-    trackEvent("maker_application");
-    scrollToTop();
-    // The submit button that had focus is gone; land on the thank-you
-    // instead. scrollToTop already handles the scroll.
-    sentTitleRef.current?.focus({ preventScroll: true });
-  }, [state.status, scrollToTop]);
-
   if (state.status === "success") {
     return (
-      <div className={styles.sent} aria-live="polite">
-        <h2 ref={sentTitleRef} tabIndex={-1} className={styles.sentTitle}>
-          Thank you so much!
-        </h2>
-        <p className={styles.sentBody}>{state.message}</p>
-        <button
-          type="button"
-          className={button({ variant: "outline", tone: "ply" })}
-          onClick={onReset}
-        >
-          Submit another
-        </button>
-      </div>
+      <ApplicationSent
+        message={state.message}
+        titleRef={sentTitleRef}
+        onReset={onReset}
+      />
     );
   }
 
@@ -322,22 +274,14 @@ function ApplicationFormFields({
         </div>
       </fieldset>
 
-      {/* Honeypot: hidden from users and assistive tech, tempting to bots. */}
-      <input
-        type="text"
-        name="fax"
-        tabIndex={-1}
-        autoComplete="off"
-        aria-hidden="true"
-        className="sr-only"
-      />
+      <Honeypot />
 
       <button
         type="submit"
         aria-busy={pending}
         disabled={pending}
         className={button({
-          tone: "cerulean",
+          tone: "ceruleanDeep",
           size: "lg",
           className: styles.submit,
         })}
@@ -353,33 +297,5 @@ function ApplicationFormFields({
 }
 
 export function ApplicationForm() {
-  const [attempt, setAttempt] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const scrollToTop = useCallback(() => {
-    const top = sectionRef.current?.getBoundingClientRect().top ?? 0;
-    window.scrollTo({
-      top: window.scrollY + top - SCROLL_OFFSET,
-      behavior: "smooth",
-    });
-  }, []);
-
-  return (
-    <section
-      id="apply"
-      ref={sectionRef}
-      className="px-[clamp(14px,4vw,52px)] py-[clamp(24px,4vh,48px)] pb-[clamp(56px,10vh,120px)]"
-    >
-      <div className={styles.card}>
-        <ApplicationFormFields
-          key={attempt}
-          scrollToTop={scrollToTop}
-          onReset={() => {
-            setAttempt((current) => current + 1);
-            scrollToTop();
-          }}
-        />
-      </div>
-    </section>
-  );
+  return <ApplicationSection fields={ApplicationFormFields} />;
 }
