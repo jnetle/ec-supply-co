@@ -175,12 +175,13 @@ export function Tools() {
       paragraphs={[
         "Learn the skill without storing the tool. Borrow what the job needs, do it yourself, and keep your closet and your cash. The broken thing gets fixed instead of tossed.",
         "No hourly meter, so work at your own pace and bring it back when you're done. No question is too basic to ask, and the neighbor next to you probably has a tip.",
+        "Got tools? Hand tools and crafting tools are welcome. Drop them off at the shop on Wednesdays, 9 to 12.",
       ]}
       tags={[
         { label: "Free to borrow", color: "var(--color-ecs-ink)", ink: "#ffffff" },
         { label: "On your schedule", color: "#ffffff", ink: "var(--color-ecs-ply-ink)" },
         {
-          label: "Donations welcome",
+          label: "Drop-offs Wed 9–12",
           color: "var(--color-ecs-red)",
           ink: "#ffffff",
         },
