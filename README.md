@@ -18,7 +18,7 @@ Vercel; live since 2026-10-19 at
 | `/calendar`       | Community calendar. No events yet, so it shows an empty state and is `noindex`     |
 | `/the-build`      | How the shop was built: materials, and the people who helped                       |
 | `/privacy`        | What the site collects (Vercel Analytics, the two forms) and why                   |
-| `/host-with-us`   | Rent the room. **Hidden for launch** (404s); see [Launch flags](#launch-flags)     |
+| `/host-with-us`   | Rent the space. **Unlisted**, reachable by URL; see [Launch flags](#launch-flags)  |
 | `/manifesto`      | The nine rules. **Hidden for launch** (404s)                                       |
 | `/api/events.ics` | Public iCalendar feed. Serves a valid, empty calendar until Wix Events is wired up |
 
@@ -74,7 +74,7 @@ header dropdowns, the mobile drawer and the footer sitemap all read from it.
 
 Photography is the shop's own, in `public/assets/photos/{shop,build,hennai}`.
 The numbered `id-*.jpg` files are leftover stock from the handoff; only the
-hidden `/host-with-us` still uses one.
+mock events in `src/lib/mock-events.ts` still use them.
 
 `CALENDAR_EVENTS` in `src/lib/content/calendar.ts` is empty until phase two
 connects Wix Events. Every view that reads it has a zero-event state, and
@@ -88,7 +88,7 @@ feature too, not just the feature.
 
 | Flag                            | File                              | While `false`                                                   |
 | ------------------------------- | --------------------------------- | --------------------------------------------------------------- |
-| `HOST_WITH_US_ENABLED`          | `src/lib/content/host-with-us.ts` | `/host-with-us` 404s; nav, footer, sitemap and booking links go |
+| `HOST_WITH_US_ENABLED`          | `src/lib/content/host-with-us.ts` | `/host-with-us` loads but is `noindex`; nav, footer, sitemap and booking links go |
 | `CO_MARKETING_WORKSHOP_ENABLED` | `src/lib/content/host-with-us.ts` | Drops the workshop card and rental option on `/host-with-us`    |
 | `MANIFESTO_ENABLED`             | `src/lib/content/manifesto.ts`    | `/manifesto` 404s; the home page teaser goes                    |
 | `HOME_EVENTS_ENABLED`           | `src/lib/content/calendar.ts`     | Hides "What's coming up" on the home page                       |

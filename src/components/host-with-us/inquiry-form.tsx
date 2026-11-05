@@ -16,6 +16,16 @@ import styles from "@/components/ui/form.module.css";
 const AFTER_HOURS_HINT =
   "Please keep in mind that private events are held outside of normal operating hours.";
 
+const CATERING = [
+  { value: "coffee-cart", label: "A coffee cart" },
+  { value: "food-vendor", label: "A food vendor from the community" },
+];
+
+const SPACE_NEEDS = [
+  { value: "additional-table", label: "An additional table" },
+  { value: "garden-area", label: "The garden in the back, if available" },
+];
+
 export const RENTAL_TYPES = [
   { value: "private-event", label: "Private event" },
   { value: "co-marketing-workshop", label: "Co-marketing workshop" },
@@ -60,8 +70,8 @@ export function InquiryTypeLink({
 }
 
 /**
- * One inquiry for every way to use the room. The rental type dropdown tells
- * us which kind it is.
+ * One inquiry for every way to use the space. The dropdown tells us which of
+ * the ways it is.
  *
  * TODO: wire the submit endpoint. The newsletter signup in
  * src/app/actions/newsletter.ts shows the shape.
@@ -109,7 +119,7 @@ export function InquiryForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className={styles.form}>
-          <h3 className={styles.heading}>Rental inquiry</h3>
+          <h3 className={styles.heading}>Get in touch</h3>
 
           <fieldset className={styles.fieldset}>
             <legend className={styles.legend}>Contact name</legend>
@@ -149,12 +159,11 @@ export function InquiryForm() {
             )}
           </Field>
 
-          <label className={styles.checkbox}>
-            <input type="checkbox" name="news" />
-            Sign up for news and updates
-          </label>
-
-          <Field id="inquiry-type" label="Type of rental" required>
+          <Field
+            id="inquiry-type"
+            label="How would you like to use the space?"
+            required
+          >
             {(props) => (
               <select
                 {...props}
@@ -183,6 +192,40 @@ export function InquiryForm() {
           >
             {(props) => <input {...props} type="datetime-local" name="when" />}
           </Field>
+
+          <Field id="inquiry-people" label="How many people?">
+            {(props) => (
+              <input {...props} type="number" name="people" min={1} />
+            )}
+          </Field>
+
+          <fieldset className={styles.fieldset}>
+            <legend className={`${styles.legend} ${styles.legendQuestion}`}>
+              Do you need outside catering?
+            </legend>
+            <div className={styles.choices}>
+              {CATERING.map((option) => (
+                <label key={option.value} className={styles.choice}>
+                  <input type="checkbox" name="catering" value={option.value} />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className={styles.fieldset}>
+            <legend className={`${styles.legend} ${styles.legendQuestion}`}>
+              What else do you need?
+            </legend>
+            <div className={styles.choices}>
+              {SPACE_NEEDS.map((option) => (
+                <label key={option.value} className={styles.choice}>
+                  <input type="checkbox" name="needs" value={option.value} />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
 
           <Field
             id="inquiry-about"

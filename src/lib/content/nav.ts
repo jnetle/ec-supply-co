@@ -80,7 +80,7 @@ export const NAV_GROUPS: NavGroup[] = [
         ? [
             {
               label: "Host with us",
-              note: "Private events, collabs + ideas",
+              note: "Private events, workshops + collabs",
               href: "/host-with-us",
             },
           ]
