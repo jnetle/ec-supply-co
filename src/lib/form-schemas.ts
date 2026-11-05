@@ -95,6 +95,22 @@ export const popupApplicationSchema = z.object({
 
 export type PopupApplication = z.infer<typeof popupApplicationSchema>;
 
+export const hostInquirySchema = z.object({
+  first: requiredShortText,
+  last: requiredShortText,
+  email,
+  type: z.enum(["private-event", "co-marketing-workshop", "pitch-an-idea"]),
+  // From a datetime-local input, which has no time zone.
+  when: z.union([z.literal(""), z.iso.datetime({ local: true })]),
+  people: z.string().trim().regex(/^(?:[1-9]\d{0,3})?$/),
+  catering: z.array(z.enum(["coffee-cart", "food-vendor"])).max(2),
+  needs: z.array(z.enum(["additional-table", "garden-area"])).max(2),
+  about: longText.min(1),
+  notes: longText,
+});
+
+export type HostInquiry = z.infer<typeof hostInquirySchema>;
+
 export const eventRsvpSchema = z.object({
   // A Wix event ID. z.guid() rather than z.uuid(), which also checks the
   // RFC version bits that Wix's IDs don't promise.

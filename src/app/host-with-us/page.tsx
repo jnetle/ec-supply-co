@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { notFound } from 'next/navigation';
 
 import {
   InquiryForm,
@@ -21,13 +20,17 @@ import { pageMetadata } from '@/lib/site';
 
 import styles from '@/components/host-with-us/host-with-us-page.module.css';
 
-export const metadata: Metadata = pageMetadata({
-  title: 'Host with us',
-  description: CO_MARKETING_WORKSHOP_ENABLED
-    ? 'Rent the shop for a private event, run a co-marketing workshop with us, or pitch us an idea.'
-    : 'Rent the shop for a private event, or pitch us an idea.',
-  path: '/host-with-us',
-});
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: 'Host with us',
+    description: CO_MARKETING_WORKSHOP_ENABLED
+      ? 'Rent the shop for a private event, run a co-marketing workshop with us, or pitch us an idea.'
+      : 'Rent the shop for a private event, or pitch us an idea.',
+    path: '/host-with-us',
+  }),
+  // Reachable by URL for review, but kept out of search until it's public.
+  ...(!HOST_WITH_US_ENABLED && { robots: { index: false, follow: false } }),
+};
 
 const WAYS: {
   type: RentalType;
@@ -39,7 +42,7 @@ const WAYS: {
   {
     type: 'private-event',
     label: 'Private event',
-    title: 'The room is yours.',
+    title: 'The space is yours.',
     body: 'Birthdays, showers, book clubs, meetings or a class of your own. Rent the space and bring your people.',
     cta: 'Plan a private event',
   },
@@ -47,7 +50,7 @@ const WAYS: {
     type: 'co-marketing-workshop',
     label: 'Co-marketing workshop',
     title: 'Host it with us.',
-    body: 'Run a workshop together with the shop. You bring the craft, we bring the room, and we both get the word out to our communities.',
+    body: 'Run a workshop together with the shop. You bring the craft, we bring the space, and we both get the word out to our communities.',
     cta: 'Team up on a workshop',
   },
   {
@@ -65,15 +68,11 @@ const OFFERED_WAYS = WAYS.filter(
 );
 
 const RENTAL_FACTS = [
-  { value: '$75', unit: ' / hour', note: 'Rental rates start here' },
-  { value: '12 seats', note: 'At our long center table' },
   { value: 'Catering + BYOB', note: 'Outside catering welcome' },
-  { value: 'Mornings + evenings', note: 'Both are available' },
+  { value: 'Outside store hours', note: 'Mornings and evenings' },
 ];
 
 export default function HostWithUsPage() {
-  if (!HOST_WITH_US_ENABLED) notFound();
-
   return (
     <>
       <SiteHeader />
@@ -81,7 +80,7 @@ export default function HostWithUsPage() {
       <main>
         <PageIntro
           eyebrow="Gather here"
-          eyebrowColor="var(--color-ecs-pink-deep)"
+          eyebrowColor="var(--color-ecs-teal-deep)"
           eyebrowInk="#ffffff"
           title="Book the space."
           lede={
@@ -92,12 +91,12 @@ export default function HostWithUsPage() {
         />
 
         <section id="ways" className={`${styles.band} ${styles.ways}`}>
-          <WaveDivider edge="top" fill="var(--color-ecs-pink)" />
-          <WaveDivider edge="bottom" fill="var(--color-ecs-pink)" />
+          <WaveDivider edge="top" fill="var(--color-ecs-teal-pale)" />
+          <WaveDivider edge="bottom" fill="var(--color-ecs-teal-pale)" />
 
           <div className={styles.waysIntro}>
             <Eyebrow
-              color="var(--color-ecs-pink-deep)"
+              color="var(--color-ecs-teal-deep)"
               ink="#ffffff"
               className="mb-[18px]"
             >
@@ -122,7 +121,7 @@ export default function HostWithUsPage() {
                   type={way.type}
                   className={button({
                     variant: 'link',
-                    tone: 'magenta',
+                    tone: 'tealDeep',
                     size: 'lg',
                     className: styles.cardCta,
                   })}
@@ -147,31 +146,26 @@ export default function HostWithUsPage() {
               The space
             </Eyebrow>
             <h2 className={styles.heading}>
-              One room, whatever you&rsquo;re planning.
+              Make the space yours, whatever you&rsquo;re planning.
             </h2>
             <p className={styles.lede}>
-              Whichever way you use it, here&rsquo;s what you get. Pick your
-              rental type in the form and we&rsquo;ll get back to you with
-              options and availability.
+              Whichever way you use it, here&rsquo;s what you get. Tell us how
+              you&rsquo;d like to use it in the form and we&rsquo;ll get back
+              to you with options and availability.
             </p>
 
             <div className={styles.tiles}>
               {RENTAL_FACTS.map((fact) => (
                 <div key={fact.note} className={styles.tile}>
-                  <div className={styles.tileValue}>
-                    {fact.value}
-                    {fact.unit ? (
-                      <span className={styles.tileUnit}>{fact.unit}</span>
-                    ) : null}
-                  </div>
+                  <div className={styles.tileValue}>{fact.value}</div>
                   <div className={styles.tileNote}>{fact.note}</div>
                 </div>
               ))}
             </div>
 
             <BlobImage
-              src="/assets/photos/id-195-1200-900.jpg"
-              alt="The long center table set up for a private event"
+              src="/assets/photos/build/big-table-tight.jpg"
+              alt="The long wood table in the middle of the shop, with the pine shelving, the orange sofa and the arched plywood wall behind it"
               radius="44% 56% 20% 20% / 40% 36% 8% 10%"
               ratio="4/3"
               sizes="(max-width: 800px) 100vw, 45vw"

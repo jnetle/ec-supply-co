@@ -15,8 +15,8 @@ import { describeWixError, getWixClient } from "@/lib/wix";
 import { MAKER_FORM_FIELDS } from "@/lib/wix-form-config";
 
 // Rate limited by a Vercel Firewall custom rule, not in code: POST requests
-// with a `next-action` header to /, /sell-with-us or /popup-with-us, 5 per
-// IP per 60s fixed window, then deny (429).
+// with a `next-action` header to /, /sell-with-us, /popup-with-us or
+// /host-with-us, 5 per IP per 60s fixed window, then deny (429).
 
 const WHOLESALE_ANSWERS = {
   yes: "Yes",

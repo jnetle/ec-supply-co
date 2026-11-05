@@ -14,6 +14,7 @@ const HINTS = {
   WIX_NEWSLETTER_FORM_ID: FORMS_HINT,
   WIX_MAKER_FORM_ID: FORMS_HINT,
   WIX_POPUP_FORM_ID: FORMS_HINT,
+  WIX_HOST_FORM_ID: FORMS_HINT,
 } as const;
 
 type EnvKey = keyof typeof HINTS;
@@ -39,6 +40,7 @@ export const env = {
   newsletterFormId: () => required("WIX_NEWSLETTER_FORM_ID"),
   makerFormId: () => required("WIX_MAKER_FORM_ID"),
   popupFormId: () => required("WIX_POPUP_FORM_ID"),
+  hostFormId: () => required("WIX_HOST_FORM_ID"),
 };
 
 /**

@@ -40,6 +40,21 @@ export type ApplicationFieldsProps = {
   scrollToTop: () => void;
 };
 
+/** Scrolls the element the returned ref is on to just below the header. */
+export function useScrollToTop<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  const scrollToTop = useCallback(() => {
+    const top = ref.current?.getBoundingClientRect().top ?? 0;
+    window.scrollTo({
+      top: window.scrollY + top - SCROLL_OFFSET,
+      behavior: "smooth",
+    });
+  }, []);
+
+  return { ref, scrollToTop };
+}
+
 type ApplicationAction = (
   state: ApplicationState,
   formData: FormData,
@@ -136,15 +151,7 @@ export function ApplicationSection({
   fields: ComponentType<ApplicationFieldsProps>;
 }) {
   const [attempt, setAttempt] = useState(0);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const scrollToTop = useCallback(() => {
-    const top = sectionRef.current?.getBoundingClientRect().top ?? 0;
-    window.scrollTo({
-      top: window.scrollY + top - SCROLL_OFFSET,
-      behavior: "smooth",
-    });
-  }, []);
+  const { ref: sectionRef, scrollToTop } = useScrollToTop<HTMLElement>();
 
   return (
     <section

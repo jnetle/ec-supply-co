@@ -18,7 +18,7 @@ Vercel; live since 2026-10-19 at
 | `/calendar`       | Community calendar. No events yet, so it shows an empty state and is `noindex`     |
 | `/the-build`      | How the shop was built: materials, and the people who helped                       |
 | `/privacy`        | What the site collects (Vercel Analytics, the two forms) and why                   |
-| `/host-with-us`   | Rent the room. **Hidden for launch** (404s); see [Launch flags](#launch-flags)     |
+| `/host-with-us`   | Rent the space. **Unlisted**, reachable by URL; see [Launch flags](#launch-flags)  |
 | `/manifesto`      | The nine rules. **Hidden for launch** (404s)                                       |
 | `/api/events.ics` | Public iCalendar feed. Serves a valid, empty calendar until Wix Events is wired up |
 
@@ -74,7 +74,7 @@ header dropdowns, the mobile drawer and the footer sitemap all read from it.
 
 Photography is the shop's own, in `public/assets/photos/{shop,build,hennai}`.
 The numbered `id-*.jpg` files are leftover stock from the handoff; only the
-hidden `/host-with-us` still uses one.
+mock events in `src/lib/mock-events.ts` still use them.
 
 `CALENDAR_EVENTS` in `src/lib/content/calendar.ts` is empty until phase two
 connects Wix Events. Every view that reads it has a zero-event state, and
@@ -88,7 +88,7 @@ feature too, not just the feature.
 
 | Flag                            | File                              | While `false`                                                   |
 | ------------------------------- | --------------------------------- | --------------------------------------------------------------- |
-| `HOST_WITH_US_ENABLED`          | `src/lib/content/host-with-us.ts` | `/host-with-us` 404s; nav, footer, sitemap and booking links go |
+| `HOST_WITH_US_ENABLED`          | `src/lib/content/host-with-us.ts` | `/host-with-us` loads but is `noindex`; nav, footer, sitemap and booking links go |
 | `CO_MARKETING_WORKSHOP_ENABLED` | `src/lib/content/host-with-us.ts` | Drops the workshop card and rental option on `/host-with-us`    |
 | `MANIFESTO_ENABLED`             | `src/lib/content/manifesto.ts`    | `/manifesto` 404s; the home page teaser goes                    |
 | `HOME_EVENTS_ENABLED`           | `src/lib/content/calendar.ts`     | Hides "What's coming up" on the home page                       |
@@ -99,9 +99,6 @@ not a launch flag (see the motion section above).
 
 ## Known gaps
 
-- The `/host-with-us` inquiry form is client-side only; it has a `TODO` where
-  the submit endpoint goes. The maker application and newsletter submit to Wix
-  Forms.
 - No events yet: the calendar and the `.ics` feed are both empty until Wix
   Events is connected (phase two). `src/lib/wix-events.ts` is already written
   for it.
@@ -346,15 +343,38 @@ confirm the targets, and set `WIX_POPUP_FORM_ID` in `.env.local` and every
 Vercel environment. Add `/popup-with-us` to the Vercel Firewall rate-limit rule
 that covers `/sell-with-us`.
 
+## Host inquiry
+
+`/host-with-us` posts its inquiry to a standalone Wix form named **Event Host
+Inquiry**. If a field is renamed or rebuilt, update `HOST_FORM_FIELDS` in
+`src/lib/wix-form-config.ts` to match. Every field is text in Wix, even the
+choices; the site shows the choices and sends the answer as words.
+
+| Wix field label                      | Wix field type | Required | Target                   |
+| ------------------------------------ | -------------- | -------- | ------------------------ |
+| First name                           | Short answer   | Yes      | `first_name`             |
+| Last name                            | Short answer   | Yes      | `last_name`              |
+| Email                                | Email          | Yes      | `email`                  |
+| How would you like to use the space? | Short answer   | Yes      | `use_of_space`           |
+| Preferred date/time                  | Short answer   | No       | `preferred_date_time`    |
+| How many people?                     | Short answer   | No       | `people`                 |
+| Outside catering                     | Short answer   | No       | `outside_catering`       |
+| What else is needed                  | Short answer   | No       | `space_needs`            |
+| About the event or idea              | Long answer    | Yes      | `about_the_event`        |
+| Any additional information           | Long answer    | No       | `additional_information` |
+
+Set spam protection to **None** or **Basic**, and set `WIX_HOST_FORM_ID` in
+`.env.local` and every Vercel environment. Add `/host-with-us` to the Vercel
+Firewall rate-limit rule that covers `/sell-with-us`.
+
 ## Configuration
 
 ### All environments use the same Wix forms
 
 Local development, Vercel preview deployments and production must all use the
 same Wix site, Newsletter Subscription form and Maker Application form. Set the
-same `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID`, `WIX_MAKER_FORM_ID` and
-`WIX_POPUP_FORM_ID` values in
-every environment.
+same `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID`, `WIX_MAKER_FORM_ID`,
+`WIX_POPUP_FORM_ID` and `WIX_HOST_FORM_ID` values in every environment.
 
 This is required because the forms' stable field targets are compiled into
 `src/lib/wix-form-config.ts`. Pointing an environment at a different Wix form may
@@ -381,9 +401,8 @@ script or GitHub Actions workflow:
 - Every other branch and PR gets a preview deployment, linked from the PR.
 - Vercel runs `next build` with its Next.js defaults; there is no `vercel.json`.
 
-Set `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID`, `WIX_MAKER_FORM_ID` and
-`WIX_POPUP_FORM_ID` in every
-Vercel environment, pointing at the live premium Wix site.
+Set `WIX_CLIENT_ID`, `WIX_NEWSLETTER_FORM_ID`, `WIX_MAKER_FORM_ID`,
+`WIX_POPUP_FORM_ID` and `WIX_HOST_FORM_ID` in every Vercel environment, pointing at the live premium Wix site.
 
 `docs/domain-move.md` is the runbook for moving to `elcerritosupply.co`: Google
 Workspace, the code changes, and the Vercel domains and DNS.
