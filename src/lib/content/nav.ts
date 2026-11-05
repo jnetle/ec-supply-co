@@ -147,5 +147,5 @@ export const SHOP_ADDRESS = {
   postalCode: "94530",
   hours: "Opening soon",
   instagram: "https://instagram.com/elcerritosupplyco",
-  maps: "https://www.google.com/maps/search/?api=1&query=7523A+Fairmount+Ave%2C+El+Cerrito%2C+CA+94530",
+  maps: "https://maps.app.goo.gl/3bBzoZqY7isjhpDYA",
 };
