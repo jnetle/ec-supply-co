@@ -32,7 +32,7 @@ export function StoreJsonLd() {
       postalCode: SHOP_ADDRESS.postalCode,
       addressCountry: "US",
     },
-    sameAs: [SHOP_ADDRESS.instagram],
+    sameAs: [SHOP_ADDRESS.instagram, SHOP_ADDRESS.maps],
   };
 
   return (
