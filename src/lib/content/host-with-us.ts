@@ -1,9 +1,9 @@
 /**
- * TODO: turn on when the shop is ready to take bookings, and only once the
- * inquiry form really submits. While off, /host-with-us still loads for anyone
- * with the URL, so it can be reviewed, but it stays out of search, and its nav
- * and footer link, sitemap entry, the empty calendar's "Host an event" button
- * and the home events section's booking links are all gone.
+ * TODO: turn on when the shop is ready to take bookings. While off,
+ * /host-with-us still loads for anyone with the URL, so it can be reviewed, but
+ * it stays out of search, and its nav and footer link, sitemap entry, the empty
+ * calendar's "Host an event" button and the home events section's booking links
+ * are all gone.
  */
 export const HOST_WITH_US_ENABLED = false;
 

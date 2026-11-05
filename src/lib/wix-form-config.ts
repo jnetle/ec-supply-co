@@ -32,3 +32,17 @@ export const POPUP_FORM_FIELDS = {
   permit: "health_permit",
   payment: "accepts_payment",
 } as const;
+
+/** Stable Wix field targets for the Event Host Inquiry form. */
+export const HOST_FORM_FIELDS = {
+  firstName: "first_name",
+  lastName: "last_name",
+  email: "email",
+  use: "use_of_space",
+  when: "preferred_date_time",
+  people: "people",
+  catering: "outside_catering",
+  needs: "space_needs",
+  about: "about_the_event",
+  notes: "additional_information",
+} as const;
