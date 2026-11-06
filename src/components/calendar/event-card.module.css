@@ -34,11 +34,10 @@
 }
 
 /* The wide card. With room, the 4:5 photo sits beside the text, 45% of the
-   card wide up to 420px, and every wide card is exactly the photo's height
-   (about 395x495 on a full-width card). The photo is never stretched past
-   4:5, so a flyer keeps its margins. The text fits that height: a smaller
-   title, and a blurb that gives up lines first if space runs short; the
-   pop-up has it all. Without room, the photo goes on top, full width. */
+   card wide up to 420px, and a wide card is at least the photo's height
+   (about 395x495 on a full-width card). Longer text makes the card taller:
+   the photo keeps its size and shape, centred, so a flyer is never stretched
+   or cropped. Without room, the photo goes on top, full width. */
 .wide {
   --photo-width: min(420px, 45cqi);
   container-type: inline-size;
@@ -48,35 +47,17 @@
   .wide .layout {
     grid-template-columns: auto minmax(0, 1fr);
     grid-template-rows: none;
-    height: calc(var(--photo-width) * 1.25);
+    min-height: calc(var(--photo-width) * 1.25);
   }
 
   .wide .photo {
     width: var(--photo-width);
-    height: 100%;
-  }
-
-  .wide .body {
-    min-height: 0;
-    overflow: hidden;
+    align-self: center;
   }
 
   .wide .title {
     font-size: clamp(1.4rem, 2.2vw, 2.1rem);
   }
-
-  .wide .blurb {
-    flex-shrink: 1;
-    min-height: 0;
-  }
-}
-
-.wide .blurb {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
 }
 
 .body {
@@ -88,6 +69,13 @@
 
 .stacked .body {
   padding: 20px 20px 24px;
+}
+
+/* The category and, in the draft preview, the Draft label, on one line. */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .tag {
@@ -105,7 +93,6 @@
 /* Marks a Wix draft in the local draft preview; never seen on the live site. */
 .draft {
   composes: tag;
-  margin-left: 8px;
   background: transparent;
   color: inherit;
   outline: 2px dashed currentColor;
@@ -136,21 +123,39 @@
   font-size: 15px;
 }
 
-.facts {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  width: min(100%, 560px);
+/* Keeps a gap above the footer, however tall the card is. */
+.intro {
+  margin-bottom: 20px;
+}
+
+/* The date and cost beside the button, under a loose, hand-drawn squiggle.
+   Pinned to the bottom so cards in a row line up. The button drops to its
+   own line when they don't fit side by side. */
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  width: 100%;
   position: relative;
-  margin: 20px 0 24px;
+  margin-top: auto;
   padding-top: 32px;
 }
 
-/* A loose, hand-drawn squiggle across the top, in place of a ruled line. The
-   waves differ in width and height so it doesn't read as a pattern, and the
-   tile ends where it starts so the repeat can't be seen. Coloured through a
-   mask so it takes any colour. */
-.facts::before {
+.facts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, max-content);
+  gap: 16px 32px;
+  min-width: 0;
+  margin: 0;
+}
+
+/* The waves differ in width and height so it doesn't read as a pattern, and
+   the tile ends where it starts so the repeat can't be seen. Coloured through
+   a mask so it takes any colour. */
+.footer::before {
   content: "";
   position: absolute;
   top: 0;
@@ -176,14 +181,12 @@
   font-size: 15px;
 }
 
-/* The main button and, for a host-booked event, its Details link. Pinned to
-   the bottom so cards in a row line their buttons up. */
+/* The main button and, for a host-booked event, its Details link. */
 .actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 18px;
-  margin-top: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {

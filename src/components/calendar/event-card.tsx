@@ -46,69 +46,75 @@ export function EventCard({
         <EventPhoto event={event} className={styles.photo} sizes={sizes} />
 
         <div className={styles.body}>
-          <span
-            className={styles.tag}
-            style={
-              {
-                "--tag-color": event.categoryColor,
-                "--tag-ink": event.categoryInk,
-              } as CSSProperties
-            }
-          >
-            {event.categoryLabel}
-          </span>
-          {event.draft && <span className={styles.draft}>Draft</span>}
-          <h3 className={styles.title}>{event.title}</h3>
-          {event.description && (
-            <p className={styles.blurb}>{event.description}</p>
-          )}
-
-          <dl className={styles.facts}>
-            <div>
-              <dt>When</dt>
-              <dd>{event.longDate}</dd>
-              {event.time && <dd>{event.time}</dd>}
+          <div className={styles.intro}>
+            <div className={styles.tags}>
+              <span
+                className={styles.tag}
+                style={
+                  {
+                    "--tag-color": event.categoryColor,
+                    "--tag-ink": event.categoryInk,
+                  } as CSSProperties
+                }
+              >
+                {event.categoryLabel}
+              </span>
+              {event.draft && <span className={styles.draft}>Draft</span>}
             </div>
-            {event.priceLabel && (
-              <div>
-                <dt>Cost</dt>
-                <dd>{event.priceLabel}</dd>
-                {event.spotsLabel && <dd>{event.spotsLabel}</dd>}
-              </div>
+            <h3 className={styles.title}>{event.title}</h3>
+            {event.description && (
+              <p className={styles.blurb}>{event.description}</p>
             )}
-          </dl>
+          </div>
 
-          <div className={styles.actions}>
-            {event.orderUrl && !event.past ? (
-              <>
-                <a
-                  href={event.orderUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={button({ tone: "navy" })}
-                >
-                  {event.cta} →
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
+          <div className={styles.footer}>
+            <dl className={styles.facts}>
+              <div>
+                <dt>When</dt>
+                <dd>{event.longDate}</dd>
+                {event.time && <dd>{event.time}</dd>}
+              </div>
+              {event.priceLabel && (
+                <div>
+                  <dt>Cost</dt>
+                  <dd>{event.priceLabel}</dd>
+                  {event.spotsLabel && <dd>{event.spotsLabel}</dd>}
+                </div>
+              )}
+            </dl>
+
+            <div className={styles.actions}>
+              {event.orderUrl && !event.past ? (
+                <>
+                  <a
+                    href={event.orderUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={button({ tone: "navy" })}
+                  >
+                    {event.cta} →
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(event.id)}
+                    className={button({ variant: "link", tone: "navy" })}
+                  >
+                    Details
+                    <span className="sr-only"> about {event.title}</span>
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
                   onClick={() => onSelect(event.id)}
-                  className={button({ variant: "link", tone: "navy" })}
+                  disabled={event.past}
+                  className={button({ variant: event.ctaVariant, tone: "navy" })}
                 >
-                  Details
-                  <span className="sr-only"> about {event.title}</span>
+                  {event.cta}
                 </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => onSelect(event.id)}
-                disabled={event.past}
-                className={button({ variant: event.ctaVariant, tone: "navy" })}
-              >
-                {event.cta}
-              </button>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>
