@@ -145,7 +145,9 @@ export const SHOP_ADDRESS = {
   locality: "El Cerrito",
   region: "CA",
   postalCode: "94530",
-  hours: "Opening soon",
+  hours: "Now open",
   instagram: "https://instagram.com/elcerritosupplyco",
   maps: "https://maps.app.goo.gl/3bBzoZqY7isjhpDYA",
+  /** The Google Business Profile, for its hours. Matches the `maps` link. */
+  googlePlaceId: "ChIJOW7bvqJ5hYAR4hiEucRknic",
 };

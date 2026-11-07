@@ -2,10 +2,15 @@ import { BlobImage } from "@/components/ui/blob-image";
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { SHOP_ADDRESS } from "@/lib/content/nav";
+import { getShopHours } from "@/lib/google-hours";
 
+import { HoursTable } from "./hours-table";
 import styles from "./visit.module.css";
 
-export function Visit() {
+/** Where to find the shop, with its hours straight from the Google profile. */
+export async function Visit() {
+  const hours = await getShopHours();
+
   return (
     <section id="visit" className={styles.section}>
       <div data-reveal>
@@ -16,7 +21,7 @@ export function Visit() {
         >
           Come by
         </Eyebrow>
-        <h2 className={styles.heading}>Opening soon on Fairmount</h2>
+        <h2 className={styles.heading}>Now open</h2>
 
         <div className={styles.address}>
           {SHOP_ADDRESS.street}
@@ -24,31 +29,43 @@ export function Visit() {
           {SHOP_ADDRESS.city}
         </div>
 
-        <a
-          href={SHOP_ADDRESS.maps}
-          target="_blank"
-          rel="noreferrer"
-          className={button({
-            variant: "link",
-            className: styles.directions,
-          })}
-        >
-          Get directions
-        </a>
-
-        {/* Holds the hours card's place until the hours are set. */}
         <div className={`film ${styles.hours}`}>
-          <div className={styles.hoursTitle}>Hours coming soon</div>
-          <p className={styles.hoursNote}>
-            We&rsquo;re still setting our schedule. Get the newsletter or
-            follow along on Instagram to hear first when the doors open.
-          </p>
-          <div className={styles.hoursLinks}>
-            <a href="#signup">Get the newsletter</a>
-            <a href={SHOP_ADDRESS.instagram} target="_blank" rel="noreferrer">
-              Instagram
-            </a>
-          </div>
+          <h3 className={styles.hoursTitle}>Hours</h3>
+          {hours ? (
+            <>
+              <HoursTable hours={hours} />
+              <p className={styles.hoursNote}>
+                We&rsquo;re soft-opening while we settle on our regular hours,
+                so these may shift. For the latest, visit us on Google or
+                Instagram.
+              </p>
+              <p className={styles.credit}>Hours from Google</p>
+            </>
+          ) : (
+            <p className={styles.hoursNote}>
+              We&rsquo;re soft-opening while we settle on our regular hours.
+              For the latest on hours, visit us on Google or Instagram.
+            </p>
+          )}
+        </div>
+
+        <div className={styles.actions}>
+          <a
+            href={SHOP_ADDRESS.maps}
+            target="_blank"
+            rel="noreferrer"
+            className={button()}
+          >
+            Find us on Google
+          </a>
+          <a
+            href={SHOP_ADDRESS.instagram}
+            target="_blank"
+            rel="noreferrer"
+            className={button({ variant: "outline" })}
+          >
+            Follow on Instagram
+          </a>
         </div>
       </div>
 
