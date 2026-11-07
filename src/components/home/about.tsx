@@ -14,8 +14,8 @@ const PHASE_ONE = [
     fg: '#ffffff',
   },
   {
-    title: 'Popup vendors',
-    note: 'Coffee + food, always rotating',
+    title: 'Coffee + popups',
+    note: 'Coffee, food and a place to sit',
     bg: 'var(--color-ecs-teal)',
     fg: '#ffffff',
   },
