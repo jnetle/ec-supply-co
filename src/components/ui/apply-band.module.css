@@ -9,7 +9,6 @@
   justify-content: space-between;
   gap: 18px;
   padding: clamp(24px, 4vw, 44px);
-  background: var(--color-ecs-teal-deep);
   color: var(--color-ecs-neutral-100);
   border-radius: clamp(24px, 2.6vw, 40px);
 }
@@ -32,3 +31,25 @@
   line-height: 1.5;
 }
 
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 24px;
+}
+
+/* Inside another band's copy column: tighter, and the title steps down. */
+.compact {
+  /* Fill the host band's flex actions row instead of shrinking to fit. */
+  flex: 1 1 100%;
+  padding: clamp(18px, 2.4vw, 28px);
+  border-radius: clamp(20px, 2vw, 30px);
+}
+
+.compact .title {
+  font-size: clamp(1.25rem, 2.2vw, 1.8rem);
+}
+
+.compact .note {
+  font-size: 15px;
+}

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PopupApplicationForm } from "@/components/popup-with-us/popup-application-form";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { Blob } from "@/components/ui/blob";
 import { BlobImage } from "@/components/ui/blob-image";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Tag } from "@/components/ui/tag";
 import { WaveDivider } from "@/components/ui/wave-divider";
@@ -80,6 +82,16 @@ export default function PopupWithUsPage() {
                   </Tag>
                 ))}
               </div>
+              <Link
+                href="/sell-with-us"
+                className={button({
+                  variant: "link",
+                  tone: "navy",
+                  className: "justify-self-start",
+                })}
+              >
+                Make goods, not food? Sell with us instead →
+              </Link>
             </div>
           </div>
 

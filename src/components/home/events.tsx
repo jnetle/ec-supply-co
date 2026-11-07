@@ -60,7 +60,8 @@ export async function Events() {
 
 /**
  * Beside a lone event, so it doesn't sit by itself. No newsletter pitch here;
- * the section's empty board and the signup band below already make it.
+ * the section's empty board and the signup band below already make it. While
+ * Host with us is off, it points food vendors at the popup application.
  */
 function MoreOnTheWay() {
   return (
@@ -69,18 +70,16 @@ function MoreOnTheWay() {
       <p className={styles.moreCopy}>
         {HOST_WITH_US_ENABLED
           ? "Workshops, pop-ups and neighborhood nights are filling in. Got one of your own? We have room."
-          : "Workshops, pop-ups and neighborhood nights are filling in. Check back here as the calendar grows."}
+          : "Workshops, pop-ups and neighborhood nights are filling in. Run a food popup? We’re taking applications."}
       </p>
-      {HOST_WITH_US_ENABLED && (
-        <div className={styles.moreLinks}>
-          <Link
-            href="/host-with-us"
-            className={button({ variant: "outline", tone: "navy", size: "sm" })}
-          >
-            Pitch a pop-up →
-          </Link>
-        </div>
-      )}
+      <div className={styles.moreLinks}>
+        <Link
+          href={HOST_WITH_US_ENABLED ? "/host-with-us" : "/popup-with-us"}
+          className={button({ variant: "outline", tone: "navy", size: "sm" })}
+        >
+          {HOST_WITH_US_ENABLED ? "Pitch a pop-up →" : "Pop up with us →"}
+        </Link>
+      </div>
     </aside>
   );
 }

@@ -5,6 +5,7 @@ import { EmptyCalendar } from "@/components/calendar/empty-calendar";
 import { shopTodayKey } from "@/components/calendar/event-model";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { PopupWithUsBand } from "@/components/ui/apply-band";
 import { PageIntro } from "@/components/ui/page-intro";
 import {
   DRAFT_EVENTS_PREVIEW,
@@ -103,6 +104,7 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
         ) : (
           <EmptyCalendar />
         )}
+        <PopupWithUsBand />
       </main>
 
       <SiteFooter />

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { ApplicationForm } from "@/components/sell-with-us/application-form";
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
+import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { WaveDivider } from "@/components/ui/wave-divider";
 import { SUBMISSION_CRITERIA } from "@/lib/content/criteria";
@@ -51,6 +53,16 @@ export default function SellWithUsPage() {
               look, and we are especially glad to hear from artists who have not
               had a shelf of their own yet.
             </p>
+            <Link
+              href="/popup-with-us"
+              className={button({
+                variant: "link",
+                tone: "plum",
+                className: "justify-self-start",
+              })}
+            >
+              Running a food or drink popup? Pop up with us instead →
+            </Link>
           </div>
         </section>
 

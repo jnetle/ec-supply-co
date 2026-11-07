@@ -5,7 +5,7 @@ import { SiteFooter } from '@/components/site/site-footer';
 import { SiteHeader } from '@/components/site/site-header';
 import { PageIntro } from '@/components/ui/page-intro';
 import { ScrollEffects } from '@/components/ui/scroll-effects';
-import { SellWithUsBand } from '@/components/ui/sell-with-us-band';
+import { SellWithUsBand } from '@/components/ui/apply-band';
 import { getDirectoryMakers } from '@/lib/makers';
 import { pageMetadata } from '@/lib/site';
 
