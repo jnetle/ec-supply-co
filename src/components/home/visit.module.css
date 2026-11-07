@@ -21,11 +21,7 @@
   line-height: 1.7;
 }
 
-.directions {
-  margin-top: 4px;
-}
-
-/* The hours card (for now, a "coming soon" note in its place) reads as a painted sign hung slightly off true, on a
+/* The hours card reads as a painted sign hung slightly off true, on a
    pane of the shop's filmed glass (`film` in globals.css). */
 .hours {
   margin-top: 26px;
@@ -51,7 +47,7 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   color: var(--color-ecs-marigold);
-  margin-bottom: 6px;
+  margin: 0 0 6px;
 }
 
 .hoursNote {
@@ -60,18 +56,56 @@
   line-height: 1.5;
 }
 
-.hoursLinks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 18px;
-  margin-top: 4px;
+.status {
+  margin: -2px 0 2px;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.hoursLinks a {
-  font-weight: 600;
-  color: #ffffff;
-  text-decoration: underline;
-  text-decoration-color: var(--color-ecs-marigold);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 3px;
+.status[data-open="true"] {
+  color: var(--color-ecs-marigold);
+}
+
+.week {
+  margin: 0 0 6px;
+  display: grid;
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.day {
+  display: grid;
+  grid-template-columns: 7.5em 1fr;
+  gap: 12px;
+  padding: 5px 0;
+}
+
+.day + .day {
+  border-top: 1px solid color-mix(in srgb, #ffffff 22%, transparent);
+}
+
+.day dt,
+.day dd {
+  margin: 0;
+}
+
+/* Today reads like the hand-painted line on the sign. */
+.day[aria-current] {
+  color: var(--color-ecs-marigold);
+  font-weight: 700;
+}
+
+.credit {
+  margin: 0;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
 }
