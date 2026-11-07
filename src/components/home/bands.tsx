@@ -116,8 +116,8 @@ export function Carts() {
       kicker="Coffee + food, cycling in and out"
       kickerColor="#ffffff"
       paragraphs={[
-        "Coffee purveyors and food vendors pop up through the week and cycle in and out, so there is usually something new to try.",
-        "Walk up, no sign-up needed. Just see who’s out front today.",
+        "A coffee cart usually pops up inside. Order a drink and settle onto the couch or the big table, or take it around the shelves.",
+        "Food vendors pop up through the week. Keep an eye on the community calendar to see who’s coming.",
       ]}
       tags={[
         {

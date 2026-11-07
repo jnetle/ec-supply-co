@@ -39,13 +39,13 @@ export function Signup() {
               ink="var(--color-ecs-ink)"
               className="justify-self-start"
             >
-              Still building
+              Soft open
             </Eyebrow>
             <h2 className={styles.heading}>Nosy neighbors, sign up here.</h2>
             <p className={styles.lede}>
-              The shelves are still filling up. Get a note when something opens
-              — a new maker, a workshop night, the day the coffee machine
-              finally lands — or follow along on Instagram.
+              We’re open and still finding our rhythm. Get a note when
+              something new lands — a new maker, a workshop night, a weekend
+              pop-up — or follow along on Instagram.
             </p>
           </div>
 
