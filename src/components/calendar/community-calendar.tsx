@@ -308,16 +308,29 @@ function EmptyMonth({
           </div>
         </>
       ) : (
-        // Until the pitch form opens, the newsletter is how people hear first.
+        // Until the pitch form opens, point popups and makers at the
+        // applications that are open, and everyone else at the newsletter.
         <>
           <p className={styles.emptyCopy}>
             We’re still lining up the pop-ups, workshops and neighborhood
-            nights. Want to run one here? We’re opening up spots for makers,
-            cooks and teachers soon. Get the newsletter and you’ll be the first
-            to know.
+            nights. Run a food popup or make something for the shelves? We’re
+            taking applications now. Or get the newsletter and hear first when
+            new dates go up.
           </p>
           <div className={styles.emptyActions}>
-            <Link href="/#signup" className={button({ tone: "tealDeep" })}>
+            <Link href="/popup-with-us" className={button({ tone: "tealDeep" })}>
+              Pop up with us →
+            </Link>
+            <Link
+              href="/sell-with-us"
+              className={button({ variant: "outline", tone: "tealDeep" })}
+            >
+              Sell with us →
+            </Link>
+            <Link
+              href="/#signup"
+              className={button({ variant: "outline", tone: "tealDeep" })}
+            >
               Get the newsletter
             </Link>
           </div>

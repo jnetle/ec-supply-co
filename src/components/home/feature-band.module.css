@@ -85,3 +85,48 @@
     order: -1;
   }
 }
+
+/* Actions set apart from the copy (`actionsAtBottom`). Stacked, they come
+   after the photo. Side by side, the photo spans two rows and the actions
+   take the lower one, level with the photo's foot, under the copy. */
+.bottomActions {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.bandActions {
+  order: 3;
+  margin-top: 0;
+}
+
+@media (min-width: 700px) {
+  .bottomActions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: 1fr auto;
+    row-gap: 28px;
+  }
+
+  .bottomActions .copy {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+  }
+
+  .bottomActions .media {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .bottomActions .bandActions {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .bottomActionsMirror .copy,
+  .bottomActionsMirror .bandActions {
+    grid-column: 2;
+  }
+
+  .bottomActionsMirror .media {
+    grid-column: 1;
+  }
+}

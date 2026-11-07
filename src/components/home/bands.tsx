@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import { Blob } from "@/components/ui/blob";
 import { BlobImage } from "@/components/ui/blob-image";
+import { PopupVendorsCallout } from "@/components/ui/apply-band";
 
 import { FeatureBand } from "./feature-band";
 import hennaiLogo from "../../../public/assets/brand/hennai-logo.svg";
@@ -130,6 +131,8 @@ export function Carts() {
           ink: "#ffffff",
         },
       ]}
+      actions={<PopupVendorsCallout />}
+      actionsAtBottom
       mediaFirst
       decoration={
         <Blob

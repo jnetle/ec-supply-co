@@ -30,14 +30,14 @@ export function EmptyCalendar() {
           "Right now we’re focused on opening the shop: the retail counter, popup vendors, the tool library and maker shelves. A calendar of workshops, food popups and neighborhood nights comes after that, and we’ll shape it as we learn what the space wants to be.",
           HOST_WITH_US_ENABLED
             ? "Get the newsletter to follow along. Have an idea for a class or a night? Tell us. It helps us plan what comes next."
-            : "Get the newsletter to follow along.",
+            : "Get the newsletter to follow along. Run a food popup or make something for the shelves? Those applications are open now.",
         ]}
         actions={
           <>
             <Link href="/#signup" className={button({ tone: "paper" })}>
               Get the newsletter
             </Link>
-            {HOST_WITH_US_ENABLED && (
+            {HOST_WITH_US_ENABLED ? (
               <Link
                 href="/host-with-us"
                 className={button({
@@ -47,6 +47,21 @@ export function EmptyCalendar() {
               >
                 Host an event →
               </Link>
+            ) : (
+              <>
+                <Link
+                  href="/popup-with-us"
+                  className={button({ variant: "outline", tone: "paper" })}
+                >
+                  Pop up with us →
+                </Link>
+                <Link
+                  href="/sell-with-us"
+                  className={button({ variant: "outline", tone: "paper" })}
+                >
+                  Sell with us →
+                </Link>
+              </>
             )}
           </>
         }

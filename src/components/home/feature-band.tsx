@@ -23,6 +23,11 @@ type FeatureBandProps = {
   tags?: BandTag[];
   /** Links or buttons under the tags. */
   actions?: ReactNode;
+  /**
+   * Sets `actions` apart from the copy: level with the photo's foot when side
+   * by side, and after the photo when stacked on a phone.
+   */
+  actionsAtBottom?: boolean;
   /** The photo column. */
   media: ReactNode;
   /** Puts the photo column first on wide screens. */
@@ -42,6 +47,7 @@ export function FeatureBand({
   paragraphs,
   tags,
   actions,
+  actionsAtBottom = false,
   media,
   mediaFirst = false,
   decoration,
@@ -49,7 +55,13 @@ export function FeatureBand({
   return (
     <section
       id={id}
-      className={styles.band}
+      className={[
+        styles.band,
+        actionsAtBottom && styles.bottomActions,
+        actionsAtBottom && mediaFirst && styles.bottomActionsMirror,
+      ]
+        .filter(Boolean)
+        .join(" ")}
       style={
         {
           "--band-bg": background,
@@ -85,7 +97,9 @@ export function FeatureBand({
           </div>
         ) : null}
 
-        {actions ? <div className={styles.actions}>{actions}</div> : null}
+        {actions && !actionsAtBottom ? (
+          <div className={styles.actions}>{actions}</div>
+        ) : null}
       </div>
 
       <div
@@ -94,6 +108,12 @@ export function FeatureBand({
       >
         {media}
       </div>
+
+      {actions && actionsAtBottom ? (
+        <div data-reveal className={`${styles.actions} ${styles.bandActions}`}>
+          {actions}
+        </div>
+      ) : null}
     </section>
   );
 }
