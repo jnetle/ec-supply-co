@@ -77,29 +77,62 @@
   }
 }
 
+/* The month's masthead: its name big and a little crooked, like it was
+   lettered on the wall calendar, between the arrows. */
 .toolbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 18px;
+  margin-bottom: clamp(18px, 3vh, 30px);
 }
 
 .monthNav {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: clamp(14px, 2vw, 24px);
 }
 
 .monthLabel {
-  font-family: var(--font-display);
-  font-weight: 400;
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 0.35em;
   margin: 0;
-  font-size: clamp(1.2rem, 2.2vw, 1.9rem);
+  padding-bottom: 10px;
+  font-weight: 400;
   line-height: 1;
+  transform: rotate(-2.5deg);
+}
+
+.monthName {
+  font-family: var(--font-display);
+  font-size: clamp(2.6rem, 5.6vw, 4.6rem);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+}
+
+.monthYear {
+  font-family: var(--font-heading);
+  font-size: clamp(0.95rem, 1.4vw, 1.2rem);
+  font-weight: 600;
+  letter-spacing: 0.3em;
+}
+
+.monthScribble {
+  position: absolute;
+  left: 2%;
+  bottom: -2px;
+  width: 70%;
+  height: 12px;
+  color: var(--color-ecs-magenta);
+}
+
+.hint {
+  margin: 0;
+  font-style: italic;
+  color: var(--color-ecs-neutral-700);
 }
 
 /* Everything you click to narrow the month, in one row: the type filters on
@@ -230,81 +263,318 @@
 
 /* ── Month grid ────────────────────────────────────────────────────────── */
 
+/* A wall calendar on the page itself, no panel behind it: the weekday
+   names float over the days, and the days are ruled by GridLines. */
 .grid {
-  border: 3px solid var(--color-ecs-sky-line);
-  border-radius: 26px;
-  overflow: hidden;
-  background: var(--color-ecs-sky-pale);
+  --cell-pad: 10px;
+  /* How far a strip of tape reaches past its day (no gutters here). */
+  --gap: 0px;
 }
 
 .weekdays,
 .days {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 1px;
 }
 
-.weekdays {
-  background: var(--color-ecs-sky-pale);
-  padding: 12px 0;
+/* Every week as tall as the tallest, so GridLines' even rows line up. */
+.days {
+  position: relative;
+  grid-auto-rows: minmax(132px, 1fr);
+}
+
+.gridLines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--color-ecs-ink);
+  pointer-events: none;
 }
 
 .weekday {
+  padding: 0 0 12px;
   font-family: var(--font-heading);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.32em;
+  text-align: center;
   text-transform: uppercase;
-  color: var(--color-ecs-navy);
-  padding-left: 12px;
 }
 
 .cell {
-  min-height: 116px;
-  padding: 8px;
-  background: var(--color-ecs-sky-surface);
-  display: grid;
-  align-content: start;
-  gap: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 132px;
+  /* Room round the date for a rule that bows into the day. */
+  padding: 22px var(--cell-pad) 14px;
 }
 
-.cellEmpty {
-  background: transparent;
-}
-
+/* The date sits in the corner, as on a paper calendar. */
 .cellDay {
+  position: relative;
+  align-self: flex-end;
+  min-width: 1.6em;
+  margin-right: 8px;
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 14px;
-  color: var(--color-ecs-navy);
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.cellPast .cellDay {
+  color: var(--color-ecs-neutral-600);
 }
 
 .cellToday {
-  box-shadow: inset 0 0 0 2px var(--color-ecs-magenta);
-}
-
-.cellToday .cellDay {
   color: var(--color-ecs-magenta);
 }
 
-.chip {
-  display: block;
-  width: 100%;
-  text-align: left;
-  border: none;
-  cursor: pointer;
-  border-radius: 10px;
-  padding: 5px 7px;
-  background: var(--chip-color);
-  color: var(--chip-ink);
-  font-family: var(--font-body);
-  font-size: 11px;
-  line-height: 1.25;
-  opacity: var(--chip-opacity, 1);
+.todayCircle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 2.7em;
+  height: 2.1em;
+  transform: translate(-52%, -50%) rotate(-6deg);
+  pointer-events: none;
 }
 
-.chip strong {
+/* A one-off event: a die-cut sticker of its category's colour in an
+   irregular round shape (its corner radii come from the event's id, as do
+   --tilt and --nudge, so it looks the same every visit), with a white
+   edge and a shadow, stuck on a little crooked. Not a button in the
+   button() sense; see CLAUDE.md's exceptions. */
+.blob {
+  position: relative;
+  z-index: 1;
+  /* Free to run over the rules into the next day, like a sticker slapped
+     on without lining it up. */
+  max-width: calc(100% + 12px);
+  margin: 0 -6px;
+  padding: 12px 15px 13px;
+  border: 3px solid #ffffff;
+  background: var(--chip-color);
+  color: var(--chip-ink);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+  transform: translateX(var(--nudge, 0)) rotate(var(--tilt, 0deg));
+  filter: drop-shadow(0 1px 1px rgb(38 36 36 / 0.25))
+    drop-shadow(0 3px 5px rgb(38 36 36 / 0.12));
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.cellPast .blob {
+  opacity: 0.5;
+}
+
+/* Hover peels it up off the page and straightens it out. */
+@media (hover: hover) and (pointer: fine) {
+  .blob:hover {
+    z-index: 2;
+    transform: translate(var(--nudge, 0), -3px) rotate(0deg);
+    filter: drop-shadow(0 2px 1px rgb(38 36 36 / 0.2))
+      drop-shadow(0 8px 10px rgb(38 36 36 / 0.18));
+  }
+}
+
+/* Lifted, the white edge catches the shop's iridescent film, like holo
+   sticker paper: a ring of --ec-film laid over the 3px edge (inset is from
+   the padding box), fading in and drifting along as the buttons' does. */
+.blob::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  padding: 3px;
+  border-radius: inherit;
+  background-image: var(--ec-film);
+  background-size: 160% 100%;
+  background-position: 0% 0;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 320ms ease,
+    background-position 1600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .blob:hover::before {
+    opacity: 1;
+    background-position: 100% 0;
+  }
+}
+
+.blob:focus-visible::before {
+  opacity: 1;
+  background-position: 100% 0;
+}
+
+.blob:focus-visible {
+  z-index: 2;
+  transform: translate(var(--nudge, 0), -3px) rotate(0deg);
+  outline-offset: 4px;
+}
+
+.blobTime {
+  display: block;
+  margin-bottom: 3px;
+  font-family: var(--font-body);
+  font-size: 11px;
   font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.blobTitle {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  font-family: var(--font-display);
+  font-size: clamp(10px, 0.95vw, 13.5px);
+  line-height: 1.08;
+  text-transform: uppercase;
+  hyphens: auto;
+  overflow-wrap: break-word;
+}
+
+/* A run of days: a strip of washi tape along the foot of each day. The
+   strips meet edge to edge across a week, so the run reads as one piece,
+   torn off where it starts and ends. Its name rides on the first strip of
+   each week, running on over the next days' strips (--span of them). */
+.tapes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 5px;
+  align-self: stretch;
+  /* Out to the day's edges and over the rule, so a week's strips meet. */
+  margin: auto calc((var(--cell-pad) + var(--gap)) * -1) 0
+    calc(var(--cell-pad) * -1);
+}
+
+.cell:nth-child(7n) .tapes {
+  margin-right: calc(var(--cell-pad) * -1);
+}
+
+.tape {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 24px;
+  padding: 0 8px;
+  border: 0;
+  background: none;
+  color: var(--color-ecs-ink);
+  text-align: left;
+  cursor: pointer;
+  --tape-a: 48%;
+  --tape-b: 38%;
+  /* Opaque, so the rules between days don't show through and break the
+     strip up. */
+  --tape-under: var(--color-ecs-bg);
+}
+
+/* The tape itself is a layer behind the name, so tearing its ends never
+   clips a name that runs on past its first day. */
+.tape::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    color-mix(in srgb, var(--chip-color) var(--tape-a), var(--tape-under)) 0 7px,
+    color-mix(in srgb, var(--chip-color) var(--tape-b), var(--tape-under)) 7px
+      14px
+  );
+}
+
+.cellPast .tape {
+  opacity: 0.5;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tape:hover {
+    --tape-a: 66%;
+    --tape-b: 54%;
+  }
+}
+
+.tapeLabelled {
+  z-index: 2;
+}
+
+.tapeLabel {
+  display: block;
+  width: max-content;
+  max-width: calc(var(--span, 1) * (100% + 16px) - 24px);
+  overflow: hidden;
+  font-family: var(--font-display);
+  font-size: 12px;
+  line-height: 24px;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tornStart {
+  margin-left: 6px;
+}
+
+.tornStart::before {
+  mask:
+    conic-gradient(from 45deg at 0 50%, #000 90deg, #0000 0) 0 0 / 4px 6px
+      repeat-y,
+    linear-gradient(#000 0 0) 4px 0 / 100% 100% no-repeat;
+}
+
+.tornEnd {
+  margin-right: calc(var(--gap) + 6px);
+}
+
+.cell:nth-child(7n) .tornEnd {
+  margin-right: 6px;
+}
+
+.tornEnd::before {
+  mask:
+    conic-gradient(from 225deg at 100% 50%, #000 90deg, #0000 0) 100% 0 /
+      4px 6px repeat-y,
+    linear-gradient(#000 0 0) calc(100% - 4px) 0 / calc(100% - 4px) 100%
+      no-repeat;
+}
+
+.tornStart.tornEnd::before {
+  mask:
+    conic-gradient(from 45deg at 0 50%, #000 90deg, #0000 0) 0 0 / 4px 6px
+      repeat-y,
+    conic-gradient(from 225deg at 100% 50%, #000 90deg, #0000 0) 100% 0 /
+      4px 6px repeat-y,
+    linear-gradient(#000 0 0) 50% 0 / calc(100% - 8px) 100% no-repeat;
+}
+
+/* Narrow days: thinner margins so a long word fits whole. */
+@media (max-width: 1100px) {
+  .blob {
+    padding-inline: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    transition: none;
+  }
 }
 
 /* The grid is unusable at phone widths, so phones get the cards in either
