@@ -136,7 +136,6 @@ export function CommunityCalendar({
 
   const atFirst = index <= MIN_INDEX;
   const atLast = index >= MAX_INDEX;
-  const monthLabel = `${MONTHS[month]} ${year}`;
 
   const goPrev = () => setIndex(Math.max(MIN_INDEX, index - 1));
   const goNext = () => setIndex(Math.min(MAX_INDEX, index + 1));
@@ -204,7 +203,24 @@ export function CommunityCalendar({
               >
                 ←
               </button>
-              <h2 className={styles.monthLabel}>{monthLabel}</h2>
+              <h2 className={styles.monthLabel}>
+                <span className={styles.monthName}>{MONTHS[month]}</span>{" "}
+                <span className={styles.monthYear}>{year}</span>
+                <svg
+                  className={styles.monthScribble}
+                  viewBox="0 0 220 14"
+                  fill="none"
+                  preserveAspectRatio="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M3 9c22-6 41 4 63-1s35-5 55-1 38 4 58-2 28 1 38 3"
+                    stroke="currentColor"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </h2>
               <button
                 type="button"
                 aria-label="Next month"
@@ -215,6 +231,7 @@ export function CommunityCalendar({
                 →
               </button>
             </div>
+            <p className={styles.hint}>Tap an event for the details.</p>
           </div>
 
           {inMonth.length > 0 ? (
@@ -419,7 +436,34 @@ function MonthList({
   );
 }
 
-/** The month as a calendar: whole weeks, each event a chip on its day. */
+const BLOB_ALIGN = ["flex-start", "center", "flex-end"] as const;
+
+/** A stable 0–1 number from a string, so a blob keeps its shape and tilt. */
+function jitter(seed: string) {
+  let hash = 2166136261;
+  for (let i = 0; i < seed.length; i++) {
+    hash = Math.imul(hash ^ seed.charCodeAt(i), 16777619);
+  }
+  return (hash >>> 0) / 4294967296;
+}
+
+/** How many days a run carries on from cell `i` without leaving its week. */
+function tapeSpan(cells: MonthCell[], i: number, eventId: string) {
+  let span = 1;
+  while (
+    (i + span) % 7 !== 0 &&
+    cells[i + span]?.events.some((e) => e.id === eventId)
+  ) {
+    span++;
+  }
+  return span;
+}
+
+/**
+ * The month as a wall calendar: each one-off event a dab of its category's
+ * colour on its day, and each run of days a strip of tape across
+ * the days it's on.
+ */
 function MonthGrid({
   cells,
   onSelect,
@@ -438,35 +482,171 @@ function MonthGrid({
       </div>
 
       <div className={styles.days}>
-        {cells.map((cell) => (
-          <div
-            key={cell.key}
-            className={`${styles.cell} ${cell.day === null ? styles.cellEmpty : ""} ${cell.isToday ? styles.cellToday : ""}`}
-          >
-            <div className={styles.cellDay}>{cell.day ?? ""}</div>
-            {cell.events.map((event) => (
-              <button
-                key={event.id}
-                type="button"
-                title={event.title}
-                onClick={() => onSelect(event.id)}
-                className={styles.chip}
-                style={
-                  {
-                    "--chip-color": event.categoryColor,
-                    "--chip-ink": event.categoryInk,
-                    "--chip-opacity": event.past || cell.past ? 0.5 : 1,
-                  } as CSSProperties
-                }
+        <GridLines
+          rows={cells.length / 7}
+          seed={cells.find((cell) => cell.day !== null)?.key ?? ""}
+        />
+        {cells.map((cell, i) => {
+          const blobs = cell.events.filter((e) => !e.lastDate);
+          const runs = cell.events.filter((e) => e.lastDate);
+          return (
+            <div
+              key={cell.key}
+              className={`${styles.cell} ${cell.past ? styles.cellPast : ""}`}
+            >
+              <div
+                className={`${styles.cellDay} ${cell.isToday ? styles.cellToday : ""}`}
               >
-                {event.shortTime && <strong>{event.shortTime} </strong>}
-                {event.title}
-              </button>
-            ))}
-          </div>
-        ))}
+                {cell.day ?? ""}
+                {cell.isToday && <TodayCircle />}
+              </div>
+
+              {blobs.map((event) => {
+                const a = jitter(event.id);
+                const b = jitter(`${event.id}:nudge`);
+                // Eight corner radii, a sticker cut to its own shape:, each 14–34%: nearly a rectangle, still lumpy.
+                const r = (k: number) =>
+                  `${Math.round(14 + jitter(`${event.id}:r${k}`) * 20)}%`;
+                return (
+                  <button
+                    key={event.id}
+                    type="button"
+                    title={event.title}
+                    onClick={() => onSelect(event.id)}
+                    className={styles.blob}
+                    style={
+                      {
+                        "--chip-color": event.categoryColor,
+                        "--chip-ink": event.categoryInk,
+                        "--tilt": `${(a * 2 - 1) * 5}deg`,
+                        "--nudge": `${(b * 2 - 1) * 10}px`,
+                        borderRadius: `${r(0)} ${r(1)} ${r(2)} ${r(3)} / ${r(4)} ${r(5)} ${r(6)} ${r(7)}`,
+                        alignSelf: BLOB_ALIGN[Math.floor(b * 3)],
+                      } as CSSProperties
+                    }
+                  >
+                    {event.shortTime && (
+                      <span className={styles.blobTime}>{event.shortTime}</span>
+                    )}
+                    <span className={styles.blobTitle}>{event.title}</span>
+                  </button>
+                );
+              })}
+
+              {runs.length > 0 && (
+                <div className={styles.tapes}>
+                  {runs.map((event) => {
+                    const first = cell.key === event.date;
+                    const last = cell.key === lastDayOf(event);
+                    // The name goes where the strip starts, and again at
+                    // the start of each week it carries on into.
+                    const labelled = first || i % 7 === 0 || cell.day === 1;
+                    return (
+                      <button
+                        key={event.id}
+                        type="button"
+                        title={event.title}
+                        aria-label={`${event.title}, ${event.longDate}`}
+                        onClick={() => onSelect(event.id)}
+                        className={`${styles.tape} ${first ? styles.tornStart : ""} ${last ? styles.tornEnd : ""} ${labelled ? styles.tapeLabelled : ""}`}
+                        style={
+                          {
+                            "--chip-color": event.categoryColor,
+                            "--span": tapeSpan(cells, i, event.id),
+                          } as CSSProperties
+                        }
+                      >
+                        {labelled && (
+                          <span className={styles.tapeLabel} aria-hidden="true">
+                            {event.title}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
+  );
+}
+
+/**
+ * The month's rules: bold, smooth lines, each with its own gentle bow and
+ * running a touch past the corners, like a quick marker line rather than a
+ * ruler. Drawn in a 100-units-per-day box stretched over the days (rows are
+ * all one height, see .days), with the stroke kept at its own width. The bow
+ * of each line is fixed per month, so a month always looks the same.
+ */
+function GridLines({ rows, seed }: { rows: number; seed: string }) {
+  const width = 700;
+  const height = rows * 100;
+  const over = 5;
+  const bend = (key: string, amount: number) =>
+    (jitter(`${seed}:${key}`) * 2 - 1) * amount;
+
+  const across = Array.from({ length: rows + 1 }, (_, i) => {
+    const y = i * 100;
+    return `M${-over} ${y + bend(`h${i}a`, 4)} Q${width / 2 + bend(`h${i}m`, 160)} ${y + bend(`h${i}b`, 13)} ${width + over} ${y + bend(`h${i}c`, 4)}`;
+  });
+  const down = Array.from({ length: 8 }, (_, i) => {
+    const x = i * 100;
+    return `M${x + bend(`v${i}a`, 4)} ${-over} Q${x + bend(`v${i}b`, 11)} ${height / 2 + bend(`v${i}m`, height / 5)} ${x + bend(`v${i}c`, 4)} ${height + over}`;
+  });
+
+  return (
+    <svg
+      className={styles.gridLines}
+      viewBox={`0 0 ${width} ${height}`}
+      preserveAspectRatio="none"
+      fill="none"
+      aria-hidden="true"
+      focusable="false"
+    >
+      {[...across, ...down].map((d) => (
+        <path
+          key={d}
+          d={d}
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      ))}
+    </svg>
+  );
+}
+
+/** A thick loop of the shop's iridescent film (--ec-film's stops) around today's date. */
+function TodayCircle() {
+  return (
+    <svg
+      className={styles.todayCircle}
+      viewBox="0 0 48 36"
+      fill="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <linearGradient id="cal-today-film" x1="0" y1="0" x2="1" y2="0.6">
+          <stop offset="0" stopColor="#8ee6d8" />
+          <stop offset="0.17" stopColor="#a9b6ff" />
+          <stop offset="0.33" stopColor="#f2a9de" />
+          <stop offset="0.5" stopColor="#ffe1a4" />
+          <stop offset="0.67" stopColor="#a2f0cb" />
+          <stop offset="0.83" stopColor="#9cc3ff" />
+          <stop offset="1" stopColor="#8ee6d8" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M36 6C25 0 6 3 4 16c-2 13 17 18 30 15 12-3 12-17 3-23-5-3-12-4-18-3"
+        stroke="url(#cal-today-film)"
+        strokeWidth="4.5"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }
 
