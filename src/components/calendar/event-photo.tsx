@@ -99,15 +99,18 @@ function PhotoImage({
 export function EventDateChip({
   event,
   className = "",
+  "aria-hidden": ariaHidden,
 }: {
   event: Pick<
     DecoratedEvent,
     "dow" | "day" | "month" | "categoryColor" | "categoryInk"
   >;
   className?: string;
+  "aria-hidden"?: boolean;
 }) {
   return (
     <div
+      aria-hidden={ariaHidden || undefined}
       className={`${styles.chip} ${className}`}
       style={
         {
