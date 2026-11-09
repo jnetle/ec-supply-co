@@ -15,6 +15,9 @@ const HINTS = {
   WIX_MAKER_FORM_ID: FORMS_HINT,
   WIX_POPUP_FORM_ID: FORMS_HINT,
   WIX_HOST_FORM_ID: FORMS_HINT,
+  WIX_API_KEY:
+    "Wix dashboard > Settings > API Keys. Tick the Wix Events permission. Server-only: never prefix it NEXT_PUBLIC_.",
+  WIX_SITE_ID: "The ID after /dashboard/ in the Wix dashboard's address bar.",
   GOOGLE_PLACES_API_KEY:
     "Google Cloud console > APIs & Services > Credentials. Enable Places API (New) and restrict the key to it.",
 } as const;
@@ -43,6 +46,9 @@ export const env = {
   makerFormId: () => required("WIX_MAKER_FORM_ID"),
   popupFormId: () => required("WIX_POPUP_FORM_ID"),
   hostFormId: () => required("WIX_HOST_FORM_ID"),
+  // Acts as the site owner, so it can read guest lists. Server-only.
+  wixApiKey: () => required("WIX_API_KEY"),
+  wixSiteId: () => required("WIX_SITE_ID"),
   // Optional: without a key the visit section falls back to a note and links.
   googlePlacesApiKey: () => optional("GOOGLE_PLACES_API_KEY"),
 };

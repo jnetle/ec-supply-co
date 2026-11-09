@@ -72,7 +72,9 @@ export async function generateMetadata({
   };
 }
 
-export default async function CalendarPage({ searchParams }: CalendarPageProps) {
+export default async function CalendarPage({
+  searchParams,
+}: CalendarPageProps) {
   const preview = await previewMode(searchParams);
   const events = await loadEvents(preview);
   const hasEvents = events.length > 0;
@@ -93,14 +95,15 @@ export default async function CalendarPage({ searchParams }: CalendarPageProps) 
             preview === "drafts"
               ? "Live events plus any tagged “IN DRAFT MODE - TESTING ONLY” in Wix. Take the tag off in Wix to put one live."
               : hasEvents
-              ? "Workshops, food popups, pick-ups and neighborhood nights at the shop. Find something and come by."
-              : "Workshops, classes, food popups and neighborhood nights are a later chapter. First we’re getting the shop itself up and running."
+                ? "Workshops, food popups, pick-ups and neighborhood nights at the shop. Find something and come by."
+                : "Workshops, classes, food popups and neighborhood nights are a later chapter. First we’re getting the shop itself up and running."
           }
         />
-        {/* Sign-ups in any preview go nowhere, so checking a draft never
-            sends a real RSVP to Wix. */}
+        {/* Made-up events fake their sign-ups. Draft events sign up for real,
+            so a new event's seats, waitlist and emails can be tested before
+            it goes live; test guests are removed in Wix afterwards. */}
         {hasEvents ? (
-          <CommunityCalendar events={events} mock={Boolean(preview)} />
+          <CommunityCalendar events={events} mock={preview === "mock"} />
         ) : (
           <EmptyCalendar />
         )}

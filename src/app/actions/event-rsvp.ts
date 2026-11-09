@@ -8,6 +8,7 @@ import { eventRsvpSchema } from "@/lib/form-schemas";
 import type { RsvpState } from "@/lib/event-rsvp";
 import { addToNewsletter } from "@/lib/newsletter-signup";
 import { describeWixError, getWixClient } from "@/lib/wix";
+import { existingRsvpStatus } from "@/lib/wix-admin";
 
 // Needs the same Vercel Firewall rate limit as the newsletter action, with
 // /calendar added to its paths.
@@ -69,6 +70,28 @@ export async function rsvpToEvent(
         ),
       }
     : undefined;
+
+  // Wix takes the same email twice, so look first. If the lookup itself
+  // fails, sign them up anyway: a repeat is better than a lost sign-up.
+  try {
+    const existing = await existingRsvpStatus(eventId, email);
+    if (existing) {
+      return {
+        status: "error",
+        message:
+          existing === "WAITLIST"
+            ? "That email is already on the waitlist for this event."
+            : "That email is already signed up for this event.",
+      };
+    }
+  } catch (error) {
+    console.error(
+      "Checking for an earlier RSVP failed",
+      error instanceof Error && !("details" in error)
+        ? error.message
+        : describeWixError(error),
+    );
+  }
 
   try {
     // Wix sends the confirmation (or waitlist) email itself.

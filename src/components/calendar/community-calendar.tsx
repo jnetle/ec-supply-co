@@ -28,7 +28,7 @@ import {
   type DecoratedEvent,
   type MonthCell,
 } from "./event-model";
-import { useMySeats, useToday } from "./signups-store";
+import { useToday } from "./use-today";
 
 type Filter = "all" | EventCategory;
 
@@ -90,9 +90,7 @@ export function CommunityCalendar({
   const [view, setView] = useState<View>("list");
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
-  // Both come from the browser, so both are empty on the server and fill in
-  // on hydration.
-  const { seats: mySeats, reserve } = useMySeats();
+  // From the browser, so empty on the server and filled in on hydration.
   const today = useToday();
 
   const year = Math.floor(index / 12);
@@ -103,8 +101,8 @@ export function CommunityCalendar({
     () =>
       events
         .filter((e) => filter === "all" || e.category === filter)
-        .map((e) => decorate(e, mySeats, today)),
-    [events, filter, mySeats, today],
+        .map((e) => decorate(e, today)),
+    [events, filter, today],
   );
 
   // Anything on during the month, a run that started before it included.
@@ -118,7 +116,11 @@ export function CommunityCalendar({
 
   // The list shows everything still to come, a section per month.
   const months = useMemo(
-    () => groupByMonth(visible.filter((e) => !e.past), today),
+    () =>
+      groupByMonth(
+        visible.filter((e) => !e.past),
+        today,
+      ),
     [visible, today],
   );
 
@@ -131,7 +133,7 @@ export function CommunityCalendar({
     ? (visible.find((e) => e.id === selectedId) ??
       events
         .filter((e) => e.id === selectedId)
-        .map((e) => decorate(e, mySeats, today))[0])
+        .map((e) => decorate(e, today))[0])
     : null;
 
   const atFirst = index <= MIN_INDEX;
@@ -259,7 +261,6 @@ export function CommunityCalendar({
       <EventDialog
         event={selected}
         onClose={() => setSelectedId(null)}
-        onReserve={reserve}
         mock={mock}
       />
     </section>
@@ -335,7 +336,10 @@ function EmptyMonth({
             new dates go up.
           </p>
           <div className={styles.emptyActions}>
-            <Link href="/popup-with-us" className={button({ tone: "tealDeep" })}>
+            <Link
+              href="/popup-with-us"
+              className={button({ tone: "tealDeep" })}
+            >
               Pop up with us →
             </Link>
             <Link
@@ -365,10 +369,7 @@ type MonthGroup = { key: string; label: string; events: DecoratedEvent[] };
  * any month that starts a new year carry the year ("November 2026",
  * "December", "January 2027"), so it's always on screen without repeating.
  */
-function groupByMonth(
-  events: DecoratedEvent[],
-  today: string,
-): MonthGroup[] {
+function groupByMonth(events: DecoratedEvent[], today: string): MonthGroup[] {
   const groups: MonthGroup[] = [];
   const sorted = events.toSorted(byListDate(today));
   for (const event of sorted) {
