@@ -193,7 +193,8 @@ export type DecoratedEvent = CalendarEvent & {
   shortTime: string;
   /** "Preorder" for a pick-up; empty, and not shown, for everything else. */
   priceLabel: string;
-  /** Empty for a pick-up, where "Preorder" already says it all. */
+  /** Empty for a pick-up, where "Preorder" already says it all, and for a
+   * drop-in, whose note says it. */
   spotsLabel: string;
   cta: string;
   /** Details-only buttons step back to an outline. */
@@ -226,13 +227,12 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
   const pickup = event.category === "pickup";
   const orderLabel = pickup ? "Preorder" : "Sign up";
 
+  // A drop-in shows no chip: the dialog's note already says "Just come by."
   const spotsLabel = availability
     ? SPOTS_LABELS[availability]
-    : external
-      ? pickup
-        ? ""
-        : "Sign up ahead"
-      : "Drop in";
+    : external && !pickup
+      ? "Sign up ahead"
+      : "";
 
   const cta = past
     ? "Past"
