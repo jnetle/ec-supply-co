@@ -6,7 +6,7 @@ import { button } from "@/components/ui/button";
 
 import styles from "./event-card.module.css";
 import type { DecoratedEvent } from "./event-model";
-import { EventPhoto } from "./event-photo";
+import { EventDateChip, EventPhoto } from "./event-photo";
 
 /**
  * One event, the same card on the home page and the calendar.
@@ -43,10 +43,18 @@ export function EventCard({
       style={{ "--card-opacity": event.past ? 0.5 : 1 } as CSSProperties}
     >
       <div className={styles.layout}>
-        <EventPhoto event={event} className={styles.photo} sizes={sizes} />
+        <EventPhoto
+          event={event}
+          className={styles.photo}
+          sizes={sizes}
+          chip={false}
+        />
 
         <div className={styles.body}>
           <div className={styles.intro}>
+            {/* Beside the title, off the photo, so it never covers a
+                flyer's own text or logo. The When line says it in words. */}
+            <EventDateChip event={event} className={styles.date} aria-hidden />
             <div className={styles.tags}>
               <span
                 className={styles.tag}
@@ -109,7 +117,10 @@ export function EventCard({
                   type="button"
                   onClick={() => onSelect(event.id)}
                   disabled={event.past}
-                  className={button({ variant: event.ctaVariant, tone: "navy" })}
+                  className={button({
+                    variant: event.ctaVariant,
+                    tone: "navy",
+                  })}
                 >
                   {event.cta}
                 </button>

@@ -123,9 +123,17 @@
   font-size: 15px;
 }
 
-/* Keeps a gap above the footer, however tall the card is. */
+/* Keeps a gap above the footer, however tall the card is. The date chip
+   floats into the top right, so the tag and title wrap beside it and the
+   blurb runs full width under it. */
 .intro {
+  width: 100%;
   margin-bottom: 20px;
+}
+
+.date {
+  float: right;
+  margin: 0 0 8px 16px;
 }
 
 /* The date and cost beside the button, under a loose, hand-drawn squiggle.
