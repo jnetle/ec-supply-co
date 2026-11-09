@@ -3,6 +3,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import {
   useActionState,
+  useCallback,
   useEffect,
   useRef,
   useState,
@@ -37,19 +38,17 @@ type Outcome = "reserved" | "waitlisted";
 type EventDialogProps = {
   event: DecoratedEvent | null;
   onClose: () => void;
-  /** Remembers the seats in this browser; the parent owns persistence. */
-  onReserve: (eventId: string, seats: number) => void;
-  /** A made-up event: the form fakes its result instead of calling Wix. */
+  /** A preview: the form fakes its result instead of calling Wix. */
   mock?: boolean;
 };
 
 export function EventDialog({
   event,
   onClose,
-  onReserve,
   mock = false,
 }: EventDialogProps) {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
+  const { bodyRef, moreBelow, scrollDown } = useMoreBelow();
 
   if (!event) return null;
 
@@ -57,10 +56,7 @@ export function EventDialog({
   const showTeaser =
     !event.about || event.description !== aboutPlainText(event.about);
   const canJoin =
-    !event.past &&
-    !event.mine &&
-    !outcome &&
-    (event.availability === "open" || isWaitlist);
+    !event.past && !outcome && (event.availability === "open" || isWaitlist);
 
   const note = outcome
     ? null
@@ -74,18 +70,11 @@ export function EventDialog({
               ? "Preorder on the vendor's site, then pick it up at the shop."
               : "Sign-ups are on the host's own site."
             : "Sign-up details are on the way."
-          : event.mine
-            ? `You have ${event.mine} ${event.mine === 1 ? "seat" : "seats"} saved. See you there.`
-            : event.availability === "full"
-              ? "This one is full."
-              : event.availability === "closed"
-                ? "Sign-ups for this one are closed."
-                : null;
-
-  const handleDone = (next: Outcome, seats: number) => {
-    setOutcome(next);
-    if (next === "reserved") onReserve(event.id, seats);
-  };
+          : event.availability === "full"
+            ? "This one is full."
+            : event.availability === "closed"
+              ? "Sign-ups for this one are closed."
+              : null;
 
   const handleOpenChange = (next: boolean) => {
     if (next) return;
@@ -128,7 +117,7 @@ export function EventDialog({
             </div>
           </div>
 
-          <div className={styles.body}>
+          <div ref={bodyRef} className={styles.body}>
             {/* The short teaser, then the full About section. With no teaser
                 the blurb is the About text itself, so it isn't shown twice,
                 and the About section describes the dialog instead. */}
@@ -216,15 +205,88 @@ export function EventDialog({
                 eventId={event.id}
                 waitlist={isWaitlist}
                 maxSeats={event.maxSeats}
+                draft={Boolean(event.draft)}
                 mock={mock}
-                onDone={handleDone}
+                onDone={setOutcome}
               />
             ) : null}
           </div>
+
+          {moreBelow ? (
+            <div className={styles.more}>
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={scrollDown}
+                className={button({
+                  variant: "link",
+                  tone: "navy",
+                  className: styles.moreCue,
+                })}
+              >
+                More below ↓
+              </button>
+            </div>
+          ) : null}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
   );
+}
+
+/**
+ * Whether the dialog's body has more to scroll to. Rechecked on scroll and
+ * whenever the body or its content changes size (a form result, a font
+ * loading, the window turning), so the cue goes once the end is in view.
+ * The callback ref attaches when the body mounts, after the dialog's portal.
+ */
+function useMoreBelow() {
+  const [moreBelow, setMoreBelow] = useState(false);
+  const cleanup = useRef<(() => void) | null>(null);
+  const element = useRef<HTMLDivElement | null>(null);
+
+  const bodyRef = useCallback((body: HTMLDivElement | null) => {
+    cleanup.current?.();
+    cleanup.current = null;
+    element.current = body;
+    if (!body) {
+      setMoreBelow(false);
+      return;
+    }
+
+    const check = () =>
+      setMoreBelow(body.scrollHeight - body.scrollTop - body.clientHeight > 8);
+    check();
+
+    const observer = new ResizeObserver(check);
+    observer.observe(body);
+    Array.from(body.children).forEach((child) => observer.observe(child));
+    const mutations = new MutationObserver(() => {
+      Array.from(body.children).forEach((child) => observer.observe(child));
+      check();
+    });
+    mutations.observe(body, { childList: true, subtree: true });
+    body.addEventListener("scroll", check, { passive: true });
+
+    cleanup.current = () => {
+      observer.disconnect();
+      mutations.disconnect();
+      body.removeEventListener("scroll", check);
+    };
+  }, []);
+
+  const scrollDown = useCallback(() => {
+    const body = element.current;
+    if (!body) return;
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)")
+      .matches;
+    body.scrollBy({
+      top: body.clientHeight * 0.8,
+      behavior: smooth ? "smooth" : "auto",
+    });
+  }, []);
+
+  return { bodyRef, moreBelow, scrollDown };
 }
 
 type RsvpFormProps = {
@@ -233,14 +295,17 @@ type RsvpFormProps = {
   waitlist: boolean;
   /** Seats one RSVP may save; the picker is hidden at 1. */
   maxSeats: number;
+  /** A draft event: the sign-up is real, which the form says. */
+  draft: boolean;
   mock: boolean;
-  onDone: (outcome: Outcome, seats: number) => void;
+  onDone: (outcome: Outcome) => void;
 };
 
 function RsvpForm({
   eventId,
   waitlist,
   maxSeats,
+  draft,
   mock,
   onDone,
 }: RsvpFormProps) {
@@ -256,11 +321,11 @@ function RsvpForm({
     reported.current = state;
     if (state.status === "reserved") {
       if (!mock) trackEvent("event_rsvp", { seats: state.seats ?? 1 });
-      onDone("reserved", state.seats ?? 1);
+      onDone("reserved");
     }
     if (state.status === "waitlisted") {
       if (!mock) trackEvent("event_waitlist");
-      onDone("waitlisted", 0);
+      onDone("waitlisted");
     }
   }, [state, onDone, mock]);
 
@@ -358,6 +423,17 @@ function RsvpForm({
       <p aria-live="polite" className={formStyles.error}>
         {state.status === "error" ? state.message : ""}
       </p>
+
+      {mock ? (
+        <p className={styles.note}>
+          Preview: this sign-up isn&rsquo;t sent to Wix.
+        </p>
+      ) : draft ? (
+        <p className={styles.note}>
+          Draft event: this sign-up is real. It goes on the guest list in Wix
+          and takes a seat; remove it there after testing.
+        </p>
+      ) : null}
     </form>
   );
 }

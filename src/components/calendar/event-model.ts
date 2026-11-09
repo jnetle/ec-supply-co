@@ -171,8 +171,6 @@ export const monthIndex = (year: number, month: number) => year * 12 + month;
 
 export type DecoratedEvent = CalendarEvent & {
   past: boolean;
-  /** Seats this visitor has already saved. */
-  mine: number;
   dropIn: boolean;
   /** Where sign-ups stand; null for a drop-in or external event. */
   availability: Availability | null;
@@ -206,17 +204,11 @@ export type DecoratedEvent = CalendarEvent & {
 
 /**
  * Everything the list, grid and modal need to render one event — derived
- * rather than stored, because it depends on today's date and on the seats
- * this visitor has saved.
+ * rather than stored, because it depends on today's date.
  */
-export function decorate(
-  event: CalendarEvent,
-  mySeats: Record<string, number>,
-  today: string,
-): DecoratedEvent {
+export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
   const category = CATEGORIES[event.category];
   const past = lastDayOf(event) < today;
-  const mine = mySeats[event.id] ?? 0;
   const dropIn = event.seats.kind === "drop-in";
   const availability =
     event.seats.kind === "rsvp" ? event.seats.availability : null;
@@ -244,18 +236,15 @@ export function decorate(
 
   const cta = past
     ? "Past"
-    : mine
-      ? "You're in"
-      : availability
-        ? CTA_LABELS[availability]
-        : orderUrl
-          ? orderLabel
-          : "Details";
+    : availability
+      ? CTA_LABELS[availability]
+      : orderUrl
+        ? orderLabel
+        : "Details";
 
   return {
     ...event,
     past,
-    mine,
     dropIn,
     availability,
     orderUrl,
@@ -287,16 +276,8 @@ export function decorate(
     spotsLabel,
     cta,
     ctaVariant: cta === "Details" ? "outline" : "solid",
-    ctaColor: past
-      ? "var(--color-ecs-ply-pale)"
-      : mine
-        ? "var(--color-ecs-teal-pale)"
-        : "var(--color-ecs-teal)",
-    ctaInk: past
-      ? "var(--color-ecs-ply-ink)"
-      : mine
-        ? "var(--color-ecs-teal-deep)"
-        : "#ffffff",
+    ctaColor: past ? "var(--color-ecs-ply-pale)" : "var(--color-ecs-teal)",
+    ctaInk: past ? "var(--color-ecs-ply-ink)" : "#ffffff",
   };
 }
 

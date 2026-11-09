@@ -5,7 +5,7 @@ import { useMemo, useState, type ReactNode } from "react";
 import { EventCard } from "@/components/calendar/event-card";
 import { EventDialog } from "@/components/calendar/event-dialog";
 import { decorate } from "@/components/calendar/event-model";
-import { useMySeats, useToday } from "@/components/calendar/signups-store";
+import { useToday } from "@/components/calendar/use-today";
 import type { CalendarEvent } from "@/lib/content/calendar";
 
 import styles from "./events.module.css";
@@ -23,13 +23,12 @@ export function UpcomingEvents({
   /** Beside a lone event, so it doesn't sit by itself. */
   more: ReactNode;
 }) {
-  const { seats, reserve } = useMySeats();
   const today = useToday();
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const decorated = useMemo(
-    () => events.map((event) => decorate(event, seats, today)),
-    [events, seats, today],
+    () => events.map((event) => decorate(event, today)),
+    [events, today],
   );
   const selected = decorated.find((event) => event.id === selectedId) ?? null;
 
@@ -74,7 +73,6 @@ export function UpcomingEvents({
       <EventDialog
         event={selected}
         onClose={() => setSelectedId(null)}
-        onReserve={reserve}
       />
     </>
   );

@@ -51,7 +51,12 @@ export type AboutBlock =
 export function aboutPlainText(blocks: AboutBlock[]): string {
   return blocks
     .flatMap((block) => (block.kind === "list" ? block.items : [block.content]))
-    .map((runs) => runs.map((run) => run.text).join("").trim())
+    .map((runs) =>
+      runs
+        .map((run) => run.text)
+        .join("")
+        .trim(),
+    )
     .filter(Boolean)
     .join("\n");
 }
@@ -158,6 +163,3 @@ export const CATEGORIES: Record<
  * at /api/events.ics.
  */
 export const CALENDAR_SUBSCRIBE_ENABLED = false;
-
-/** Where a visitor's own seat reservations are remembered, per browser. */
-export const SIGNUPS_STORAGE_KEY = "ecs-cal-signups-v1";

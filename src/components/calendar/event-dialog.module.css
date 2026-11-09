@@ -6,27 +6,56 @@
 }
 
 .content {
+  /* A centred box. The header (title, date, close) stays put and only the
+     body scrolls; while there's more below, a fade and a "More below" cue
+     say so, since a scrolling box on its own gives no sign of it. */
   position: fixed;
   z-index: 101;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   width: min(560px, calc(100vw - 32px));
-  max-height: min(86vh, 760px);
-  overflow: auto;
+  max-height: min(86dvh, 760px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   background: var(--color-ecs-sky-surface);
   color: var(--color-ecs-ink);
   border: 3px solid var(--color-ecs-sky-line);
   border-radius: clamp(24px, 3vw, 36px);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--color-ecs-ink) 35%, transparent);
+  box-shadow: 0 24px 60px
+    color-mix(in srgb, var(--color-ecs-ink) 35%, transparent);
   /* The shared form styles draw their lines in ply; the calendar's dialog
      draws them in sky, like the rest of the page. */
   --color-ecs-ply: var(--color-ecs-sky-line);
   --color-ecs-ply-ink: var(--color-ecs-navy);
 }
 
+/* Over the bottom of the body while it has more to scroll to. Clicks pass
+   through the fade to the content; only the cue itself takes them. */
+.more {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px 4px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--color-ecs-sky-surface) 70%
+  );
+  pointer-events: none;
+}
+
+.moreCue {
+  pointer-events: auto;
+}
+
 .header {
   position: relative;
+  flex: none;
   padding: clamp(24px, 4vw, 34px);
   background: var(--header-color);
   color: var(--header-ink);
@@ -59,6 +88,10 @@
 }
 
 .body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: clamp(24px, 4vw, 34px);
   display: grid;
   gap: 18px;

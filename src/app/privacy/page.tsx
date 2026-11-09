@@ -96,13 +96,6 @@ export default function PrivacyPage() {
               Google Analytics also notes which links and buttons you click.
               Neither tells us who you are.
             </p>
-            <p>
-              When you sign up for an event, your browser also remembers it
-              (in its own storage, not a cookie) so the calendar can show
-              &ldquo;You&rsquo;re in&rdquo;. It stays on your device and
-              isn&rsquo;t sent to us; clearing your browser&rsquo;s site data
-              removes it.
-            </p>
             <ul>
               <li>
                 <strong>Vercel Analytics</strong>, from the company that hosts
