@@ -36,7 +36,7 @@ export async function Visit() {
               <HoursTable hours={hours} />
               <p className={styles.hoursNote}>
                 We&rsquo;re soft-opening while we settle on our regular hours,
-                so these may shift. For the latest, visit us on Google or
+                so these may shift. Any last-minute changes go up on
                 Instagram.
               </p>
               <p className={styles.credit}>Hours from Google</p>
