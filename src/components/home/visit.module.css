@@ -56,18 +56,6 @@
   line-height: 1.5;
 }
 
-.status {
-  margin: -2px 0 2px;
-  font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.status[data-open="true"] {
-  color: var(--color-ecs-marigold);
-}
-
 .week {
   margin: 0 0 6px;
   display: grid;
