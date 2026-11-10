@@ -24,3 +24,28 @@
 .bandInner {
   position: relative;
 }
+
+/* The form's last questions and submit, with the marigolds standing in the
+   card's otherwise empty bottom-right corner. Phones have no room beside the
+   radios, so the photo drops out there. */
+.closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(200px, 26vw, 300px);
+  gap: clamp(18px, 3vw, 40px);
+  align-items: end;
+}
+
+.closingPhoto {
+  /* Lifts clear of the empty error line under the submit. */
+  margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+  .closing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .closingPhoto {
+    display: none;
+  }
+}

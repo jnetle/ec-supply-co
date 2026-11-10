@@ -11,6 +11,7 @@ import {
   useApplicationForm,
   type ApplicationFieldsProps,
 } from "@/components/ui/application-form";
+import { BlobImage } from "@/components/ui/blob-image";
 import { button } from "@/components/ui/button";
 import { Field, Required } from "@/components/ui/field";
 import {
@@ -21,6 +22,8 @@ import {
 } from "@/lib/form-limits";
 
 import styles from "@/components/ui/form.module.css";
+
+import popupStyles from "./popup-with-us-page.module.css";
 
 const HEALTH_PERMIT = [
   { value: "yes", label: "Yes" },
@@ -220,66 +223,85 @@ function PopupApplicationFields({
         )}
       </Field>
 
-      <fieldset className={styles.fieldset}>
-        <legend className={`${styles.legend} ${styles.legendQuestion}`}>
-          Do you have a health permit? <Required />
-        </legend>
-        <div className={styles.choices}>
-          {HEALTH_PERMIT.map((option) => (
-            <label key={option.value} className={styles.choice}>
-              <input
-                type="radio"
-                name="permit"
-                value={option.value}
-                required
-                checked={values.permit === option.value}
-                onChange={(event) => updateValue("permit", event.target.value)}
-              />
-              {option.label}
-            </label>
-          ))}
+      {/* The last questions and the submit sit beside the marigolds, filling
+          the card's empty corner. */}
+      <div className={popupStyles.closing}>
+        <div className={styles.form}>
+          <fieldset className={styles.fieldset}>
+            <legend className={`${styles.legend} ${styles.legendQuestion}`}>
+              Do you have a health permit? <Required />
+            </legend>
+            <div className={styles.choices}>
+              {HEALTH_PERMIT.map((option) => (
+                <label key={option.value} className={styles.choice}>
+                  <input
+                    type="radio"
+                    name="permit"
+                    value={option.value}
+                    required
+                    checked={values.permit === option.value}
+                    onChange={(event) =>
+                      updateValue("permit", event.target.value)
+                    }
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <fieldset className={styles.fieldset}>
+            <legend className={`${styles.legend} ${styles.legendQuestion}`}>
+              Do you have a way to accept payment? <Required />
+            </legend>
+            <div className={styles.choices}>
+              {TAKES_PAYMENT.map((option) => (
+                <label key={option.value} className={styles.choice}>
+                  <input
+                    type="radio"
+                    name="payment"
+                    value={option.value}
+                    required
+                    checked={values.payment === option.value}
+                    onChange={(event) =>
+                      updateValue("payment", event.target.value)
+                    }
+                  />
+                  {option.label}
+                </label>
+              ))}
+            </div>
+          </fieldset>
+
+          <Honeypot />
+
+          <button
+            type="submit"
+            aria-busy={pending}
+            disabled={pending}
+            className={button({
+              tone: "tealDeep",
+              size: "lg",
+              className: styles.submit,
+            })}
+          >
+            {pending ? "Submitting…" : "Submit application"}
+          </button>
+
+          <p className={styles.error} aria-live="polite">
+            {state.status === "error" ? state.message : ""}
+          </p>
         </div>
-      </fieldset>
 
-      <fieldset className={styles.fieldset}>
-        <legend className={`${styles.legend} ${styles.legendQuestion}`}>
-          Do you have a way to accept payment? <Required />
-        </legend>
-        <div className={styles.choices}>
-          {TAKES_PAYMENT.map((option) => (
-            <label key={option.value} className={styles.choice}>
-              <input
-                type="radio"
-                name="payment"
-                value={option.value}
-                required
-                checked={values.payment === option.value}
-                onChange={(event) => updateValue("payment", event.target.value)}
-              />
-              {option.label}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-
-      <Honeypot />
-
-      <button
-        type="submit"
-        aria-busy={pending}
-        disabled={pending}
-        className={button({
-          tone: "tealDeep",
-          size: "lg",
-          className: styles.submit,
-        })}
-      >
-        {pending ? "Submitting…" : "Submit application"}
-      </button>
-
-      <p className={styles.error} aria-live="polite">
-        {state.status === "error" ? state.message : ""}
-      </p>
+        <BlobImage
+          src="/assets/photos/shop/marigolds-seat-sign.jpg"
+          alt="A cup of orange marigolds on the big wooden table beside a letterboard sign that says please take a seat"
+          radius="18% 34% 16% 30% / 24% 32% 20% 28%"
+          ratio="10/9"
+          sizes="300px"
+          className={popupStyles.closingPhoto}
+        />
+      </div>
     </form>
   );
 }
