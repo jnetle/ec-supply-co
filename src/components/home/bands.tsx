@@ -12,28 +12,35 @@ import styles from "./bands.module.css";
 const HALF_COLUMN = "(max-width: 700px) 100vw, 50vw";
 
 /** Hennai's shelf: a few things you'd actually find there. `cell` places
-    each photo in bands.module.css; later photos sit on top of earlier ones. */
+    each photo in bands.module.css; later photos sit on top of earlier ones.
+    Each cell matches its photo's own shape, and each mask is drawn around
+    what's in focus, so nothing on the table, no utensil and no shelf gets
+    cut off. */
 const SHELF = [
   {
-    cell: "shelfBase",
-    src: "/assets/photos/hennai/cheese-knives.jpg",
-    alt: "Walnut cheese knives on an oak board with olives and crackers",
-    radius: "38% 62% 30% 24% / 52% 48% 22% 26%",
+    cell: "shelfSide",
+    src: "/assets/photos/hennai/hennai-utensils-wide.jpg",
+    alt: "Walnut spatulas and spoons in glass jars on a wooden tray, with tea towels and a small walnut plate",
+    // A lopsided pebble around the spatulas and spoon jars.
+    radius: "58% 42% 46% 54% / 52% 60% 40% 48%",
+    sizes: "(max-width: 700px) 46vw, 23vw",
   },
   {
     cell: "shelfTop",
-    src: "/assets/photos/hennai/coaster-bowl.jpg",
-    alt: "Enamel coasters in a stone bowl, with a glass of wine resting on one",
-    // A tight top-left corner keeps the glass on its coaster in frame, and
-    // the parallax zoom would push it out again.
-    radius: "10% 50% 48% 52% / 10% 46% 54% 50%",
-    parallax: false,
+    src: "/assets/photos/hennai/hennai-shelves-wide.jpg",
+    alt: "Pine shelves of ribbed bud vases, cookbooks, bottled mixers, candles and jarred pantry goods",
+    // The one wide shot, to balance the two tall ones.
+    radius: "28% 34% 26% 30% / 36% 40% 34% 38%",
+    sizes: "(max-width: 700px) 50vw, 25vw",
   },
   {
-    cell: "shelfBottom",
-    src: "/assets/photos/hennai/cutting-vase.jpg",
-    alt: "A pothos cutting in a glass tube held by a pale blue frame",
-    radius: "44% 56% 50% 50% / 50% 46% 54% 50%",
+    cell: "shelfBase",
+    src: "/assets/photos/hennai/hennai-table.jpg",
+    alt: "A round table set with enamel coasters, a succulent bowl, bottled mixers and wooden spoons, shelves of candles and cards behind",
+    // An arch: the blurred shelves up top round off, and the bottom corners
+    // curve just enough to trim floor, missing the coaster box and the plate.
+    radius: "48% 50% 6% 5% / 36% 30% 7% 6%",
+    sizes: "(max-width: 700px) 58vw, 29vw",
   },
 ] as const;
 
@@ -86,12 +93,10 @@ export function Hennai() {
               alt={photo.alt}
               radius={photo.radius}
               ratio="auto"
-              parallax={"parallax" in photo ? photo.parallax : true}
-              sizes={
-                photo.cell === "shelfBase"
-                  ? HALF_COLUMN
-                  : "(max-width: 700px) 42vw, 21vw"
-              }
+              // The parallax overscales the photo, which would push the
+              // edges of the table and the shelves back out of frame.
+              parallax={false}
+              sizes={photo.sizes}
               className={styles[photo.cell]}
             />
           ))}

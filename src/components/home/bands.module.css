@@ -1,30 +1,35 @@
-/* Hennai's photo column: the warm wood shot as a wide base, with the two
-   white-background shots pinned to opposite corners so they never sit side
-   by side. A 12-track square grid places them; the small photos overlap
-   the base and are cut out of it by a ring of the band's own colour. */
+/* Hennai's photo column, a square like the other bands': the tall table
+   scene on the left, and the two wide shots stacked down the right (utensil
+   tray above, shelves below), each tucked under the table's right edge. A
+   grid of square tracks places them, and each cell keeps its photo's own
+   shape (0.855 table, 1.09 tray, 1.23 shelves), so nothing is cropped. The
+   table only covers the tray's succulent pot and the shelves' bare wall, and
+   is cut out of them by a ring of the band's own colour. */
 .shelf {
   display: grid;
   min-width: 0;
   aspect-ratio: 1;
-  grid-template-columns: repeat(12, minmax(0, 1fr));
-  grid-template-rows: repeat(12, minmax(0, 1fr));
+  grid-template-columns: repeat(50, minmax(0, 1fr));
+  grid-template-rows: repeat(50, minmax(0, 1fr));
 }
 
 .shelfBase {
-  grid-area: 3 / 1 / 11 / 13;
-}
-
-.shelfTop,
-.shelfBottom {
+  grid-area: 9 / 1 / 43 / 30;
   box-shadow: 0 0 0 clamp(6px, 0.9vw, 12px) var(--band-bg);
 }
 
-.shelfTop {
-  grid-area: 1 / 8 / 6 / 13;
+/* If the cell's shape is a hair off the photo's, trim the blurred top,
+   never the table's front edge. */
+.shelfBase img {
+  object-position: bottom;
 }
 
-.shelfBottom {
-  grid-area: 8 / 1 / 13 / 6;
+.shelfSide {
+  grid-area: 3 / 28 / 24 / 51;
+}
+
+.shelfTop {
+  grid-area: 27 / 26 / 47 / 51;
 }
 
 /* Hennai's logo stands in for the band heading, so it is sized like one:
