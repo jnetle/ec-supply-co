@@ -96,11 +96,12 @@ export default function PopupWithUsPage() {
           </div>
 
           <BlobImage
-            src="/assets/photos/shop/storefront-awning.jpg"
-            alt="The front of the shop: a white storefront under a scalloped blue-and-white awning, the blue door at 7523A, Supply Co. lettering on the window above a red brick sill, and a blue bistro table and two folding chairs on the sidewalk"
+            src="/assets/photos/shop/coffee-popup-bar.jpg"
+            alt="Two baristas from a coffee popup at work behind the shop's bar, one in a white cowboy hat at the espresso machine and one pouring a pour-over, an El Cerrito city limit sign on the wall behind"
             radius="20% 44% 18% 40% / 26% 36% 20% 30%"
             ratio="3/2"
-            sizes="(max-width: 700px) 100vw, 50vw"
+            // The intro tops out at 1400px, so this column never passes ~610px.
+            sizes="(max-width: 700px) 100vw, min(50vw, 640px)"
             parallax={false}
             eager
           />
