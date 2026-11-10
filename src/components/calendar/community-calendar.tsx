@@ -124,8 +124,21 @@ export function CommunityCalendar({
     [visible, today],
   );
 
+  // A run across most of the month would stripe week after week of the
+  // grid, so it's pinned above the month instead; shorter runs stay as
+  // tape on their days.
+  const pinned = useMemo(
+    () => inMonth.filter((e) => isLongRun(e, year, month)),
+    [inMonth, year, month],
+  );
   const cells = useMemo(
-    () => buildMonthGrid(year, month, inMonth, today),
+    () =>
+      buildMonthGrid(
+        year,
+        month,
+        inMonth.filter((e) => !isLongRun(e, year, month)),
+        today,
+      ),
     [year, month, inMonth, today],
   );
 
@@ -237,7 +250,12 @@ export function CommunityCalendar({
           </div>
 
           {inMonth.length > 0 ? (
-            <MonthGrid cells={cells} onSelect={setSelectedId} />
+            <MonthGrid
+              cells={cells}
+              pinned={pinned}
+              ym={ym}
+              onSelect={setSelectedId}
+            />
           ) : (
             <EmptyMonth
               month={MONTHS[month]}
@@ -448,6 +466,50 @@ function jitter(seed: string) {
   return (hash >>> 0) / 4294967296;
 }
 
+/** Runs that cross this many weeks (rows) of the month grid are pinned above it. */
+const LONG_RUN_WEEKS = 3;
+
+/**
+ * Whether a run crosses LONG_RUN_WEEKS or more rows of this month's grid.
+ * Counted by rows, not days: a week-long run over one or two rows is easy
+ * to read as tape, while a long one stripes the whole month.
+ */
+function isLongRun(event: DecoratedEvent, year: number, month: number) {
+  if (!event.lastDate) return false;
+  const ym = `${year}-${String(month + 1).padStart(2, "0")}`;
+  const lead = new Date(year, month, 1).getDay();
+  const days = new Date(year, month + 1, 0).getDate();
+  const first =
+    event.date.slice(0, 7) < ym ? 1 : Number(event.date.slice(8, 10));
+  const last =
+    event.lastDate.slice(0, 7) > ym
+      ? days
+      : Number(event.lastDate.slice(8, 10));
+  const row = (day: number) => Math.floor((lead + day - 1) / 7);
+  return row(last) - row(first) + 1 >= LONG_RUN_WEEKS;
+}
+
+/** A pinned run's dates as seen from month `ym`: "All month", "Thru Nov 22", "From Nov 10" or "Nov 3–22". */
+function pinnedWhen(event: DecoratedEvent, ym: string) {
+  const first = event.date;
+  const last = lastDayOf(event);
+  const short = (key: string) =>
+    `${MONTHS[Number(key.slice(5, 7)) - 1].slice(0, 3)} ${Number(key.slice(8, 10))}`;
+  const startsBefore = first.slice(0, 7) < ym;
+  const endsAfter = last.slice(0, 7) > ym;
+  const monthLength = new Date(
+    Number(ym.slice(0, 4)),
+    Number(ym.slice(5, 7)),
+    0,
+  ).getDate();
+  const fromStart = startsBefore || Number(first.slice(8, 10)) === 1;
+  const toEnd = endsAfter || Number(last.slice(8, 10)) === monthLength;
+  if (fromStart && toEnd) return "All month";
+  if (fromStart) return `Thru ${short(last)}`;
+  if (toEnd) return `From ${short(first)}`;
+  return `${short(first)}–${Number(last.slice(8, 10))}`;
+}
+
 /** How many days a run carries on from cell `i` without leaving its week. */
 function tapeSpan(cells: MonthCell[], i: number, eventId: string) {
   let span = 1;
@@ -467,13 +529,49 @@ function tapeSpan(cells: MonthCell[], i: number, eventId: string) {
  */
 function MonthGrid({
   cells,
+  pinned,
+  ym,
   onSelect,
 }: {
   cells: MonthCell[];
+  pinned: DecoratedEvent[];
+  ym: string;
   onSelect: (eventId: string) => void;
 }) {
+  const rows = cells.length / 7;
+  const seed = cells.find((cell) => cell.day !== null)?.key ?? "";
+  const corners = useMemo(() => dayCorners(rows, seed), [rows, seed]);
+
   return (
     <div className={styles.grid}>
+      {pinned.length > 0 && (
+        <div className={styles.pinned}>
+          {pinned.map((event) => (
+            <button
+              key={event.id}
+              type="button"
+              title={event.title}
+              aria-label={`${event.title}, ${event.longDate}`}
+              onClick={() => onSelect(event.id)}
+              className={`${styles.tape} ${styles.tornStart} ${styles.tornEnd} ${styles.pinnedTape} ${event.past ? styles.pinnedPast : ""}`}
+              style={
+                {
+                  "--chip-color": event.categoryColor,
+                  "--tilt": `${(jitter(`${event.id}:pin`) * 2 - 1) * 1.5}deg`,
+                } as CSSProperties
+              }
+            >
+              <span className={styles.pinnedWhen} aria-hidden="true">
+                {pinnedWhen(event, ym)}
+              </span>
+              <span className={styles.tapeLabel} aria-hidden="true">
+                {event.title}
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className={styles.weekdays} aria-hidden="true">
         {WEEKDAYS.map((weekday) => (
           <div key={weekday} className={styles.weekday}>
@@ -483,10 +581,7 @@ function MonthGrid({
       </div>
 
       <div className={styles.days}>
-        <GridLines
-          rows={cells.length / 7}
-          seed={cells.find((cell) => cell.day !== null)?.key ?? ""}
-        />
+        <GridLines rows={rows} seed={seed} />
         {cells.map((cell, i) => {
           const blobs = cell.events.filter((e) => !e.lastDate);
           const runs = cell.events.filter((e) => e.lastDate);
@@ -497,6 +592,13 @@ function MonthGrid({
             >
               <div
                 className={`${styles.cellDay} ${cell.isToday ? styles.cellToday : ""}`}
+                style={
+                  {
+                    "--corner-x": corners[i].x.toFixed(2),
+                    "--corner-y": corners[i].y.toFixed(2),
+                    "--day-gap": `${5 + jitter(`${cell.key}:day`) * 4}px`,
+                  } as CSSProperties
+                }
               >
                 {cell.day ?? ""}
                 {cell.isToday && <TodayCircle />}
@@ -575,6 +677,79 @@ function MonthGrid({
   );
 }
 
+type Point = [number, number];
+type Curve = [Point, Point, Point];
+
+/**
+ * The month's rules as quadratic curves (start, control, end) in
+ * GridLines' box: 100 units a day each way, `rows` weeks tall.
+ */
+function gridGeometry(rows: number, seed: string) {
+  const width = 700;
+  const height = rows * 100;
+  const over = 5;
+  const bend = (key: string, amount: number) =>
+    (jitter(`${seed}:${key}`) * 2 - 1) * amount;
+
+  const across = Array.from({ length: rows + 1 }, (_, i): Curve => {
+    const y = i * 100;
+    return [
+      [-over, y + bend(`h${i}a`, 4)],
+      [width / 2 + bend(`h${i}m`, 160), y + bend(`h${i}b`, 13)],
+      [width + over, y + bend(`h${i}c`, 4)],
+    ];
+  });
+  const down = Array.from({ length: 8 }, (_, i): Curve => {
+    const x = i * 100;
+    return [
+      [x + bend(`v${i}a`, 4), -over],
+      [x + bend(`v${i}b`, 11), height / 2 + bend(`v${i}m`, height / 5)],
+      [x + bend(`v${i}c`, 4), height + over],
+    ];
+  });
+  return { across, down };
+}
+
+/** The point on a curve whose `axis` coordinate is `value` (it runs one way along it). */
+function along(curve: Curve, axis: 0 | 1, value: number): Point {
+  const at = (t: number): Point => {
+    const u = 1 - t;
+    return [0, 1].map(
+      (k) =>
+        u * u * curve[0][k] + 2 * u * t * curve[1][k] + t * t * curve[2][k],
+    ) as Point;
+  };
+  let lo = 0;
+  let hi = 1;
+  for (let n = 0; n < 24; n++) {
+    const mid = (lo + hi) / 2;
+    if (at(mid)[axis] < value) lo = mid;
+    else hi = mid;
+  }
+  return at((lo + hi) / 2);
+}
+
+/**
+ * Where each day's top-right rules actually cross, as a percentage of its
+ * own cell, so the date can sit tucked into that corner and follow the
+ * bow of the lines instead of lining up with every other date.
+ */
+function dayCorners(rows: number, seed: string) {
+  const { across, down } = gridGeometry(rows, seed);
+  return Array.from({ length: rows * 7 }, (_, i) => {
+    const row = Math.floor(i / 7);
+    const col = i % 7;
+    // Settle onto the crossing: a couple of passes is plenty for curves this gentle.
+    let x = (col + 1) * 100;
+    let y = row * 100;
+    for (let n = 0; n < 3; n++) {
+      y = along(across[row], 0, x)[1];
+      x = along(down[col + 1], 1, y)[0];
+    }
+    return { x: x - col * 100, y: y - row * 100 };
+  });
+}
+
 /**
  * The month's rules: bold, smooth lines, each with its own gentle bow and
  * running a touch past the corners, like a quick marker line rather than a
@@ -583,31 +758,20 @@ function MonthGrid({
  * of each line is fixed per month, so a month always looks the same.
  */
 function GridLines({ rows, seed }: { rows: number; seed: string }) {
-  const width = 700;
-  const height = rows * 100;
-  const over = 5;
-  const bend = (key: string, amount: number) =>
-    (jitter(`${seed}:${key}`) * 2 - 1) * amount;
-
-  const across = Array.from({ length: rows + 1 }, (_, i) => {
-    const y = i * 100;
-    return `M${-over} ${y + bend(`h${i}a`, 4)} Q${width / 2 + bend(`h${i}m`, 160)} ${y + bend(`h${i}b`, 13)} ${width + over} ${y + bend(`h${i}c`, 4)}`;
-  });
-  const down = Array.from({ length: 8 }, (_, i) => {
-    const x = i * 100;
-    return `M${x + bend(`v${i}a`, 4)} ${-over} Q${x + bend(`v${i}b`, 11)} ${height / 2 + bend(`v${i}m`, height / 5)} ${x + bend(`v${i}c`, 4)} ${height + over}`;
-  });
+  const { across, down } = gridGeometry(rows, seed);
+  const path = ([a, m, b]: Curve) =>
+    `M${a[0]} ${a[1]} Q${m[0]} ${m[1]} ${b[0]} ${b[1]}`;
 
   return (
     <svg
       className={styles.gridLines}
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox={`0 0 700 ${rows * 100}`}
       preserveAspectRatio="none"
       fill="none"
       aria-hidden="true"
       focusable="false"
     >
-      {[...across, ...down].map((d) => (
+      {[...across, ...down].map(path).map((d) => (
         <path
           key={d}
           d={d}

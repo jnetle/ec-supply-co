@@ -29,6 +29,7 @@ import formStyles from "@/components/ui/form.module.css";
 import styles from "./event-dialog.module.css";
 import { EventAbout } from "./event-about";
 import { googleCalendarUrl, type DecoratedEvent } from "./event-model";
+import { EventPhoto } from "./event-photo";
 
 const SHOP_LOCATION = `${SITE_NAME}, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city}`;
 const calendarLink = button({ variant: "link", tone: "teal" });
@@ -86,7 +87,9 @@ export function EventDialog({
     <Dialog.Root open onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content}>
+        <Dialog.Content
+          className={`${styles.content} ${event.photo ? styles.withPhoto : ""}`}
+        >
           <div
             className={styles.header}
             style={
@@ -117,117 +120,130 @@ export function EventDialog({
             </div>
           </div>
 
-          <div ref={bodyRef} className={styles.body}>
-            {/* The short teaser, then the full About section. With no teaser
+          <div className={styles.columns}>
+            {/* The event's own photo or flyer, beside the details on wider
+                screens; phones skip it to keep the details in view. An event with no
+                photo yet skips it rather than showing the stand-in. */}
+            {event.photo ? (
+              <div className={styles.side}>
+                <EventPhoto event={event} sizes="300px" chip={false} />
+              </div>
+            ) : null}
+
+            <div className={styles.main}>
+              <div ref={bodyRef} className={styles.body}>
+                {/* The short teaser, then the full About section. With no teaser
                 the blurb is the About text itself, so it isn't shown twice,
                 and the About section describes the dialog instead. */}
-            {showTeaser ? (
-              <Dialog.Description className={styles.description}>
-                {event.description}
-              </Dialog.Description>
-            ) : null}
+                {showTeaser ? (
+                  <Dialog.Description className={styles.description}>
+                    {event.description}
+                  </Dialog.Description>
+                ) : null}
 
-            {event.about ? (
-              showTeaser ? (
-                <EventAbout blocks={event.about} />
-              ) : (
-                <Dialog.Description asChild>
-                  <div>
+                {event.about ? (
+                  showTeaser ? (
                     <EventAbout blocks={event.about} />
+                  ) : (
+                    <Dialog.Description asChild>
+                      <div>
+                        <EventAbout blocks={event.about} />
+                      </div>
+                    </Dialog.Description>
+                  )
+                ) : null}
+
+                <div className={styles.facts}>
+                  {event.priceLabel ? (
+                    <span className={styles.fact}>{event.priceLabel}</span>
+                  ) : null}
+                  {event.spotsLabel ? (
+                    <span className={styles.fact}>{event.spotsLabel}</span>
+                  ) : null}
+                </div>
+
+                {event.past ? null : (
+                  <div className={styles.addToCalendar}>
+                    <span className={styles.addLabel}>Add to calendar</span>
+                    <a
+                      href={googleCalendarUrl(event, SHOP_LOCATION)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={calendarLink}
+                    >
+                      Google
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                    <a
+                      href={`/api/events/${encodeURIComponent(event.id)}`}
+                      className={calendarLink}
+                    >
+                      Apple / Outlook
+                    </a>
                   </div>
-                </Dialog.Description>
-              )
-            ) : null}
+                )}
 
-            <div className={styles.facts}>
-              {event.priceLabel ? (
-                <span className={styles.fact}>{event.priceLabel}</span>
-              ) : null}
-              {event.spotsLabel ? (
-                <span className={styles.fact}>{event.spotsLabel}</span>
+                {outcome ? (
+                  <div className={styles.done} aria-live="polite">
+                    <div className={styles.doneTitle}>
+                      {outcome === "waitlisted"
+                        ? "You're on the waitlist"
+                        : "You're in!"}
+                    </div>
+                    <div className={styles.doneBody}>
+                      {outcome === "waitlisted"
+                        ? "We'll email you if a seat opens up."
+                        : "A confirmation is on its way to your inbox."}
+                    </div>
+                  </div>
+                ) : null}
+
+                {note ? <div className={styles.note}>{note}</div> : null}
+
+                {event.orderUrl && !event.past ? (
+                  <a
+                    href={event.orderUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={button({ tone: "tealDeep", size: "lg" })}
+                  >
+                    {event.orderLabel} →
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ) : null}
+
+                {canJoin ? (
+                  // Keyed so each event starts with a fresh form and result.
+                  <RsvpForm
+                    key={event.id}
+                    eventId={event.id}
+                    waitlist={isWaitlist}
+                    maxSeats={event.maxSeats}
+                    draft={Boolean(event.draft)}
+                    mock={mock}
+                    onDone={setOutcome}
+                  />
+                ) : null}
+              </div>
+
+              {moreBelow ? (
+                <div className={styles.more}>
+                  <button
+                    type="button"
+                    tabIndex={-1}
+                    onClick={scrollDown}
+                    className={button({
+                      variant: "link",
+                      tone: "navy",
+                      className: styles.moreCue,
+                    })}
+                  >
+                    More below ↓
+                  </button>
+                </div>
               ) : null}
             </div>
-
-            {event.past ? null : (
-              <div className={styles.addToCalendar}>
-                <span className={styles.addLabel}>Add to calendar</span>
-                <a
-                  href={googleCalendarUrl(event, SHOP_LOCATION)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={calendarLink}
-                >
-                  Google
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-                <a
-                  href={`/api/events/${encodeURIComponent(event.id)}`}
-                  className={calendarLink}
-                >
-                  Apple / Outlook
-                </a>
-              </div>
-            )}
-
-            {outcome ? (
-              <div className={styles.done} aria-live="polite">
-                <div className={styles.doneTitle}>
-                  {outcome === "waitlisted"
-                    ? "You're on the waitlist"
-                    : "You're in!"}
-                </div>
-                <div className={styles.doneBody}>
-                  {outcome === "waitlisted"
-                    ? "We'll email you if a seat opens up."
-                    : "A confirmation is on its way to your inbox."}
-                </div>
-              </div>
-            ) : null}
-
-            {note ? <div className={styles.note}>{note}</div> : null}
-
-            {event.orderUrl && !event.past ? (
-              <a
-                href={event.orderUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={button({ tone: "tealDeep", size: "lg" })}
-              >
-                {event.orderLabel} →
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-            ) : null}
-
-            {canJoin ? (
-              // Keyed so each event starts with a fresh form and result.
-              <RsvpForm
-                key={event.id}
-                eventId={event.id}
-                waitlist={isWaitlist}
-                maxSeats={event.maxSeats}
-                draft={Boolean(event.draft)}
-                mock={mock}
-                onDone={setOutcome}
-              />
-            ) : null}
           </div>
-
-          {moreBelow ? (
-            <div className={styles.more}>
-              <button
-                type="button"
-                tabIndex={-1}
-                onClick={scrollDown}
-                className={button({
-                  variant: "link",
-                  tone: "navy",
-                  className: styles.moreCue,
-                })}
-              >
-                More below ↓
-              </button>
-            </div>
-          ) : null}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

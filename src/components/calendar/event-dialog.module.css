@@ -31,6 +31,42 @@
   --color-ecs-ply-ink: var(--color-ecs-navy);
 }
 
+/* Below the header: the photo (when there is one, on wider screens) and
+   the details beside it. Only the details scroll. */
+.columns {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.side {
+  display: none;
+}
+
+@media (min-width: 760px) {
+  .withPhoto {
+    width: min(900px, calc(100vw - 64px));
+  }
+
+  /* The photo stays put to the left while the details scroll. */
+  .side {
+    display: block;
+    flex: none;
+    width: 300px;
+    padding: clamp(24px, 4vw, 34px) 0 clamp(24px, 4vw, 34px)
+      clamp(24px, 4vw, 34px);
+    overflow-y: auto;
+  }
+}
+
 /* Over the bottom of the body while it has more to scroll to. Clicks pass
    through the fade to the content; only the cue itself takes them. */
 .more {
