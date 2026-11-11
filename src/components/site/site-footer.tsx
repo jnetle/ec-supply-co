@@ -9,9 +9,14 @@ import {
   NAV_GROUPS,
   SHOP_ADDRESS,
 } from '@/lib/content/nav';
+import { HELPERS } from '@/lib/content/thanks';
 import { vercel } from '@/lib/env';
 
 import styles from './site-footer.module.css';
+
+/** The site's photographer, credited in the colophon. Read from the
+    /the-build thanks list so her name and link live in one place. */
+const PHOTOGRAPHER = HELPERS.find((h) => h.id === 'stephanie-dolen');
 
 /** The full sitemap footer shown on every page. */
 export function SiteFooter() {
@@ -53,6 +58,19 @@ export function SiteFooter() {
           Reserved.
         </span>
         <span className={styles.colophonLinks}>
+          {PHOTOGRAPHER?.link && (
+            <span>
+              Photography by{' '}
+              <a
+                href={PHOTOGRAPHER.link.href}
+                target="_blank"
+                rel="noopener"
+                className={styles.colophonLink}
+              >
+                {PHOTOGRAPHER.name}
+              </a>
+            </span>
+          )}
           {/* Google Analytics, and so its cookie banner, only runs on the
               live site; elsewhere this button would have nothing to open. */}
           {vercel.isProduction() && (
