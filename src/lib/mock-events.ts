@@ -176,6 +176,30 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
         "Runs over several days, already going: its card shows the dates and no time, and the month view shows it every day.",
     },
     {
+      id: "mock-save-the-date",
+      date: on(30),
+      start: "13:00",
+      end: "16:00",
+      category: "workshop",
+      title: "Wreath making",
+      price: 0,
+      seats: { kind: "soon" },
+      description:
+        "A save the date: sign-ups aren't open yet, so there's no button.",
+    },
+    {
+      id: "mock-save-the-date-scheduled",
+      date: on(34),
+      start: "18:00",
+      end: "20:00",
+      category: "community",
+      title: "Winter makers night",
+      price: 0,
+      seats: { kind: "soon", opens: on(14) },
+      description:
+        "A save the date whose sign-ups open on a set day, so the card says when.",
+    },
+    {
       id: "mock-closed",
       date: on(12),
       start: "18:00",

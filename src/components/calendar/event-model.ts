@@ -172,8 +172,14 @@ export const monthIndex = (year: number, month: number) => year * 12 + month;
 export type DecoratedEvent = CalendarEvent & {
   past: boolean;
   dropIn: boolean;
-  /** Where sign-ups stand; null for a drop-in or external event. */
+  /** Where sign-ups stand; null for a drop-in, external or save-the-date
+   * event. */
   availability: Availability | null;
+  /** A save the date: sign-ups (or preorders) aren't open yet. */
+  soon: boolean;
+  /** "Sign-ups open Dec 1", or "Sign-ups open soon" with no date. Empty
+   * unless `soon`. */
+  opensLabel: string;
   /** The host's page to sign up or order on, for an external event (a
    * vendor's workshop, a pick-up's preorder). Unset when there's no link. */
   orderUrl?: string;
@@ -227,12 +233,27 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
   const pickup = event.category === "pickup";
   const orderLabel = pickup ? "Preorder" : "Sign up";
 
+  const soon = event.seats.kind === "soon";
+  const opens =
+    event.seats.kind === "soon" && event.seats.opens
+      ? new Date(`${event.seats.opens}T12:00:00`)
+      : undefined;
+  const opensLabel = soon
+    ? `${pickup ? "Preorders" : "Sign-ups"} open ${
+        opens
+          ? `${MONTHS[opens.getMonth()].slice(0, 3)} ${opens.getDate()}`
+          : "soon"
+      }`
+    : "";
+
   // A drop-in shows no chip: the dialog's note already says "Just come by."
   const spotsLabel = availability
     ? SPOTS_LABELS[availability]
-    : external && !pickup
-      ? "Sign up ahead"
-      : "";
+    : soon
+      ? opensLabel
+      : external && !pickup
+        ? "Sign up ahead"
+        : "";
 
   const cta = past
     ? "Past"
@@ -247,6 +268,8 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
     past,
     dropIn,
     availability,
+    soon,
+    opensLabel,
     orderUrl,
     orderLabel,
     maxSeats: event.seats.kind === "rsvp" ? event.seats.maxSeats : 0,

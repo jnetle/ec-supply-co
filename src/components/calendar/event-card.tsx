@@ -89,6 +89,12 @@ export function EventCard({
                   {event.spotsLabel && <dd>{event.spotsLabel}</dd>}
                 </div>
               )}
+              {event.soon && !event.past && (
+                <div>
+                  <dt>Save the date</dt>
+                  <dd>{event.opensLabel}</dd>
+                </div>
+              )}
             </dl>
 
             <div className={styles.actions}>

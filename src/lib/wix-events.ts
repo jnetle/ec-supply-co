@@ -42,6 +42,9 @@ export const DRAFT_CATEGORY = "IN DRAFT MODE - TESTING ONLY";
 const isDraftCategory = (name: string) =>
   squash(name) === squash(DRAFT_CATEGORY);
 
+/** The Wix category for an event whose sign-ups aren't open yet. */
+const SAVE_THE_DATE = squash("Save the date");
+
 type RichNode = NonNullable<wixEventsV2.RichContent["nodes"]>[number];
 
 const SAFE_LINK = /^(https?:|mailto:)/i;
@@ -52,8 +55,7 @@ function aboutText(node: RichNode): AboutText[] {
     const text = node.textData?.text ?? "";
     if (!text) return [];
     const decorations = node.textData?.decorations ?? [];
-    const url = decorations.find((d) => d.type === "LINK")?.linkData?.link
-      ?.url;
+    const url = decorations.find((d) => d.type === "LINK")?.linkData?.link?.url;
     return [
       {
         text,
@@ -104,7 +106,6 @@ function aboutBlocks(nodes: RichNode[] | undefined): AboutBlock[] {
     }
   });
 }
-
 
 function locationText(event: wixEventsV2.Event): string | undefined {
   const location = event.location;
@@ -256,12 +257,42 @@ function maxSeats(form: wixEventsV2.Form | undefined): number {
  * sign-ups and pick-up preorders.
  * A "Drop-in" category makes any event drop-in, since Wix's dashboard doesn't
  * always offer an event with no registration at all.
+ *
+ * A save the date (sign-ups not open yet) comes from an RSVP Wix has
+ * scheduled to open later, or from the "Save the date" category on an event
+ * with no registration or closed RSVPs. Wix won't save an external
+ * registration without a link, so a host's sign-up page goes on later: an
+ * external link or open RSVPs beat the category, so the event goes live the
+ * moment registration opens, even if the category is never removed. That
+ * category isn't a type, so it adds no filter.
+ * (An external registration with no link, should Wix ever allow one, is also
+ * a save the date.)
  */
 function seatsFor(
   event: wixEventsV2.Event,
   names: string[],
 ): Seats | undefined {
   const registration = event.registration;
+  const saveTheDate = names.some((name) => squash(name) === SAVE_THE_DATE);
+
+  if (
+    registration?.type === "RSVP" &&
+    registration.status === "SCHEDULED_RSVP"
+  ) {
+    const opens = registration.rsvp?.startDate;
+    return { kind: "soon", opens: opens ? shopDate.format(opens) : undefined };
+  }
+  if (registration?.type === "EXTERNAL" && !registration.external?.url) {
+    return { kind: "soon" };
+  }
+  if (saveTheDate) {
+    const open =
+      registration?.type === "EXTERNAL" ||
+      (registration?.type === "RSVP" &&
+        ["open", "waitlist"].includes(availability(registration)));
+    if (!open) return { kind: "soon" };
+  }
+
   if (
     !registration?.type ||
     registration.type === "NONE" ||
