@@ -2,7 +2,13 @@
 
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
-import { useState, type CSSProperties } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 
 import { button } from "@/components/ui/button";
 import { NAV_GROUPS, SHOP_ADDRESS, VISIT_HREF } from "@/lib/content/nav";
@@ -19,6 +25,24 @@ const stagger = (i: number) => ({ "--i": i }) as CSSProperties;
 export function MobileNav() {
   // Every link closes the drawer itself, so same-page anchors work too.
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // A same-page anchor ("/#tools" while on "/") waits until the drawer has
+  // gone. While it is open the page is scroll-locked, and lifting the lock
+  // cuts off the smooth scroll partway, leaving the page short of the section.
+  const pendingAnchor = useRef<string | null>(null);
+
+  const follow = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    const [path, hash] = href.split("#");
+    const modified =
+      event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+    if (hash && path === pathname && !modified) {
+      event.preventDefault();
+      pendingAnchor.current = href;
+    }
+    setOpen(false);
+  };
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -32,7 +56,17 @@ export function MobileNav() {
 
       <Dialog.Portal>
         <Dialog.Overlay className={styles.scrim} />
-        <Dialog.Content className={styles.drawer}>
+        <Dialog.Content
+          className={styles.drawer}
+          // Fires once the closing animation has ended and the scroll lock is
+          // off, which is the earliest the anchor scroll can run in full.
+          onCloseAutoFocus={() => {
+            const href = pendingAnchor.current;
+            if (!href) return;
+            pendingAnchor.current = null;
+            router.push(href);
+          }}
+        >
           <div className={styles.drawerHeader}>
             <Dialog.Title className="sr-only">Site menu</Dialog.Title>
             <Dialog.Close
@@ -62,7 +96,7 @@ export function MobileNav() {
                   key={link.href}
                   href={link.href}
                   className={styles.link}
-                  onClick={() => setOpen(false)}
+                  onClick={(event) => follow(event, link.href)}
                 >
                   {link.label}
                 </Link>
@@ -78,7 +112,7 @@ export function MobileNav() {
               className: styles.visit,
             })}
             style={stagger(NAV_GROUPS.length + 1)}
-            onClick={() => setOpen(false)}
+            onClick={(event) => follow(event, VISIT_HREF)}
           >
             Visit us
           </Link>
