@@ -90,6 +90,16 @@
   text-transform: uppercase;
 }
 
+/* A save the date: sign-ups aren't open yet. Up with the tags rather than
+   in the footer, so the button keeps its place beside the date. */
+.saveTheDate {
+  composes: tag;
+  background: transparent;
+  color: inherit;
+  outline: 2px solid var(--tag-color);
+  outline-offset: -2px;
+}
+
 /* Marks a Wix draft in the local draft preview; never seen on the live site. */
 .draft {
   composes: tag;

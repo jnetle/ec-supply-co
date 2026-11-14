@@ -183,9 +183,9 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
       category: "workshop",
       title: "Wreath making",
       price: 0,
-      seats: { kind: "soon" },
+      seats: { kind: "soon", notify: "open" },
       description:
-        "A save the date: sign-ups aren't open yet, so there's no button.",
+        "A save the date with a notify list: leave an email to hear when sign-ups open.",
     },
     {
       id: "mock-save-the-date-scheduled",
@@ -197,7 +197,7 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
       price: 0,
       seats: { kind: "soon", opens: on(14) },
       description:
-        "A save the date whose sign-ups open on a set day, so the card says when.",
+        "A save the date whose sign-ups open on a set day, so the pop-up says when.",
     },
     {
       id: "mock-closed",

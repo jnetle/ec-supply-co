@@ -121,5 +121,7 @@ export const eventRsvpSchema = z.object({
   seats: z.coerce.number().int().min(1).max(MAX_RSVP_SEATS),
   // Checkboxes and the waitlist flag arrive as "on" or not at all.
   waitlist: z.boolean(),
+  /** A save the date's notify list: an RSVP that only means "email me". */
+  notify: z.boolean(),
   news: z.boolean(),
 });

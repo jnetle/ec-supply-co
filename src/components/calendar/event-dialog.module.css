@@ -179,6 +179,48 @@
   line-height: 1.5;
 }
 
+/* A save the date's panel, first in the body: where sign-ups stand and,
+   with a notify list, the email form. White on the sky surface with a
+   heavier line, so it reads as its own thing above the event's details. */
+.soon {
+  display: grid;
+  gap: 10px;
+  border: 3px solid var(--color-ecs-sky-line);
+  border-radius: 22px;
+  padding: clamp(18px, 3vw, 24px);
+  background: #ffffff;
+}
+
+.soonLabel {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ecs-cobalt);
+}
+
+.soonTitle {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(20px, 2.6vw, 24px);
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--color-ecs-navy);
+}
+
+.soonBody {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+/* The form sits a little apart from the words above it. */
+.soon form {
+  margin-top: 8px;
+}
+
 .done {
   border-radius: 18px;
   padding: 18px;

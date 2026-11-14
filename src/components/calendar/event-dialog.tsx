@@ -34,7 +34,7 @@ import { EventPhoto } from "./event-photo";
 const SHOP_LOCATION = `${SITE_NAME}, ${SHOP_ADDRESS.street}, ${SHOP_ADDRESS.city}`;
 const calendarLink = button({ variant: "link", tone: "teal" });
 
-type Outcome = "reserved" | "waitlisted";
+type Outcome = "reserved" | "waitlisted" | "notified";
 
 type EventDialogProps = {
   event: DecoratedEvent | null;
@@ -53,11 +53,15 @@ export function EventDialog({
 
   if (!event) return null;
 
-  const isWaitlist = event.availability === "waitlist";
+  // A notify list is Wix RSVPs underneath, so it can hit the RSVP limit too.
+  const isWaitlist =
+    event.availability === "waitlist" || event.notify === "waitlist";
   const showTeaser =
     !event.about || event.description !== aboutPlainText(event.about);
   const canJoin =
-    !event.past && !outcome && (event.availability === "open" || isWaitlist);
+    !event.past &&
+    !outcome &&
+    (event.availability === "open" || isWaitlist || Boolean(event.notify));
 
   const note = outcome
     ? null
@@ -66,18 +70,45 @@ export function EventDialog({
       : event.dropIn
         ? "No sign-up needed. Just come by."
         : event.soon
-          ? `Save the date: add it to your calendar now, and check back here once ${event.category === "pickup" ? "preorders" : "sign-ups"} open.`
+          ? null
           : event.seats.kind === "external"
-            ? event.orderUrl
-              ? event.category === "pickup"
-                ? "Preorder on the vendor's site, then pick it up at the shop."
-                : "Sign-ups are on the host's own site."
-              : "Sign-up details are on the way."
-            : event.availability === "full"
-              ? "This one is full."
-              : event.availability === "closed"
-                ? "Sign-ups for this one are closed."
-                : null;
+              ? event.orderUrl
+                ? event.category === "pickup"
+                  ? "Preorder on the vendor's site, then pick it up at the shop."
+                  : "Sign-ups are on the host's own site."
+                : "Sign-up details are on the way."
+              : event.availability === "full"
+                ? "This one is full."
+                : event.availability === "closed"
+                  ? "Sign-ups for this one are closed."
+                  : null;
+
+  const soonPanel = event.soon && !event.past;
+  const things = event.category === "pickup" ? "Preorders" : "Sign-ups";
+  // "Sign-ups open Nov 24" when Wix knows the day.
+  const soonTitle =
+    event.seats.kind === "soon" && event.seats.opens
+      ? event.opensLabel
+      : `${things} aren’t open yet`;
+
+  const done = outcome ? (
+    <div className={styles.done} aria-live="polite">
+      <div className={styles.doneTitle}>
+        {outcome === "notified"
+          ? "You're on the list"
+          : outcome === "waitlisted"
+            ? "You're on the waitlist"
+            : "You're in!"}
+      </div>
+      <div className={styles.doneBody}>
+        {outcome === "notified"
+          ? "We'll email you the sign-up link once it's ready."
+          : outcome === "waitlisted"
+            ? "We'll email you if a seat opens up."
+            : "A confirmation is on its way to your inbox."}
+      </div>
+    </div>
+  ) : null;
 
   const handleOpenChange = (next: boolean) => {
     if (next) return;
@@ -134,6 +165,42 @@ export function EventDialog({
 
             <div className={styles.main}>
               <div ref={bodyRef} className={styles.body}>
+                {/* A save the date leads with where sign-ups stand, above the
+                event's own words, so a teaser written for later ("RSVP
+                now!") can't read as open sign-ups. */}
+                {soonPanel ? (
+                  outcome ? (
+                    done
+                  ) : (
+                    <section
+                      className={styles.soon}
+                      aria-labelledby="soon-title"
+                    >
+                      <div className={styles.soonLabel}>Save the date</div>
+                      <h3 id="soon-title" className={styles.soonTitle}>
+                        {soonTitle}
+                      </h3>
+                      <p className={styles.soonBody}>
+                        {event.notify
+                          ? "Want a heads-up? It’s optional: leave your email and we’ll send you the sign-up link as soon as it’s ready. Or just check back here."
+                          : "Add it to your calendar now, and check back here once they open."}
+                      </p>
+                      {canJoin ? (
+                        <RsvpForm
+                          key={event.id}
+                          eventId={event.id}
+                          waitlist={isWaitlist}
+                          notify
+                          maxSeats={event.maxSeats}
+                          draft={Boolean(event.draft)}
+                          mock={mock}
+                          onDone={setOutcome}
+                        />
+                      ) : null}
+                    </section>
+                  )
+                ) : null}
+
                 {/* The short teaser, then the full About section. With no teaser
                 the blurb is the About text itself, so it isn't shown twice,
                 and the About section describes the dialog instead. */}
@@ -159,7 +226,7 @@ export function EventDialog({
                   {event.priceLabel ? (
                     <span className={styles.fact}>{event.priceLabel}</span>
                   ) : null}
-                  {event.spotsLabel ? (
+                  {event.spotsLabel && !soonPanel ? (
                     <span className={styles.fact}>{event.spotsLabel}</span>
                   ) : null}
                 </div>
@@ -185,20 +252,7 @@ export function EventDialog({
                   </div>
                 )}
 
-                {outcome ? (
-                  <div className={styles.done} aria-live="polite">
-                    <div className={styles.doneTitle}>
-                      {outcome === "waitlisted"
-                        ? "You're on the waitlist"
-                        : "You're in!"}
-                    </div>
-                    <div className={styles.doneBody}>
-                      {outcome === "waitlisted"
-                        ? "We'll email you if a seat opens up."
-                        : "A confirmation is on its way to your inbox."}
-                    </div>
-                  </div>
-                ) : null}
+                {soonPanel ? null : done}
 
                 {note ? <div className={styles.note}>{note}</div> : null}
 
@@ -214,12 +268,13 @@ export function EventDialog({
                   </a>
                 ) : null}
 
-                {canJoin ? (
+                {canJoin && !soonPanel ? (
                   // Keyed so each event starts with a fresh form and result.
                   <RsvpForm
                     key={event.id}
                     eventId={event.id}
                     waitlist={isWaitlist}
+                    notify={Boolean(event.notify)}
                     maxSeats={event.maxSeats}
                     draft={Boolean(event.draft)}
                     mock={mock}
@@ -311,6 +366,9 @@ type RsvpFormProps = {
   eventId: string;
   /** The event is full but takes names for its waitlist. */
   waitlist: boolean;
+  /** A save the date's notify list: one email, no seats, and the wording
+   * says it's a heads-up rather than a place. */
+  notify: boolean;
   /** Seats one RSVP may save; the picker is hidden at 1. */
   maxSeats: number;
   /** A draft event: the sign-up is real, which the form says. */
@@ -322,6 +380,7 @@ type RsvpFormProps = {
 function RsvpForm({
   eventId,
   waitlist,
+  notify,
   maxSeats,
   draft,
   mock,
@@ -337,6 +396,14 @@ function RsvpForm({
   useEffect(() => {
     if (reported.current === state) return;
     reported.current = state;
+    if (
+      notify &&
+      (state.status === "reserved" || state.status === "waitlisted")
+    ) {
+      if (!mock) trackEvent("event_notify");
+      onDone("notified");
+      return;
+    }
     if (state.status === "reserved") {
       if (!mock) trackEvent("event_rsvp", { seats: state.seats ?? 1 });
       onDone("reserved");
@@ -345,37 +412,41 @@ function RsvpForm({
       if (!mock) trackEvent("event_waitlist");
       onDone("waitlisted");
     }
-  }, [state, onDone, mock]);
+  }, [state, onDone, mock, notify]);
 
   return (
     <form action={formAction} className={formStyles.form}>
       <input type="hidden" name="eventId" value={eventId} />
       {waitlist && <input type="hidden" name="waitlist" value="on" />}
+      {notify && <input type="hidden" name="notify" value="on" />}
 
-      <div className={formStyles.pair}>
-        <Field id="signup-first" label="First name" required>
-          {(props) => (
-            <input
-              {...props}
-              name="first"
-              required
-              maxLength={MAX_RSVP_NAME_LENGTH}
-              autoComplete="given-name"
-            />
-          )}
-        </Field>
-        <Field id="signup-last" label="Last name" required>
-          {(props) => (
-            <input
-              {...props}
-              name="last"
-              required
-              maxLength={MAX_RSVP_NAME_LENGTH}
-              autoComplete="family-name"
-            />
-          )}
-        </Field>
-      </div>
+
+      {notify ? null : (
+        <div className={formStyles.pair}>
+          <Field id="signup-first" label="First name" required>
+            {(props) => (
+              <input
+                {...props}
+                name="first"
+                required
+                maxLength={MAX_RSVP_NAME_LENGTH}
+                autoComplete="given-name"
+              />
+            )}
+          </Field>
+          <Field id="signup-last" label="Last name" required>
+            {(props) => (
+              <input
+                {...props}
+                name="last"
+                required
+                maxLength={MAX_RSVP_NAME_LENGTH}
+                autoComplete="family-name"
+              />
+            )}
+          </Field>
+        </div>
+      )}
 
       <Field id="signup-email" label="Email" required>
         {(props) => (
@@ -390,7 +461,7 @@ function RsvpForm({
         )}
       </Field>
 
-      {waitlist || maxSeats <= 1 ? null : (
+      {waitlist || notify || maxSeats <= 1 ? null : (
         <div className={formStyles.field}>
           <label htmlFor="signup-seats" className={formStyles.label}>
             Seats
@@ -410,10 +481,14 @@ function RsvpForm({
         </div>
       )}
 
-      <label className={formStyles.checkbox}>
-        <input type="checkbox" name="news" />
-        Sign up for news and updates
-      </label>
+      {/* A notify list is already a heads-up email; a second opt-in beside
+          it reads as the same thing twice. */}
+      {notify ? null : (
+        <label className={formStyles.checkbox}>
+          <input type="checkbox" name="news" />
+          Sign up for news and updates
+        </label>
+      )}
 
       {/* Honeypot: hidden from users and assistive tech, tempting to bots. */}
       <input
@@ -435,7 +510,13 @@ function RsvpForm({
           className: formStyles.submit,
         })}
       >
-        {pending ? "Saving…" : waitlist ? "Join waitlist" : "Save my seat"}
+        {pending
+          ? "Saving…"
+          : notify
+            ? "Notify me"
+            : waitlist
+              ? "Join waitlist"
+              : "Save my seat"}
       </button>
 
       <p aria-live="polite" className={formStyles.error}>
@@ -449,7 +530,7 @@ function RsvpForm({
       ) : draft ? (
         <p className={styles.note}>
           Draft event: this sign-up is real. It goes on the guest list in Wix
-          and takes a seat; remove it there after testing.
+          {notify ? "" : " and takes a seat"}; remove it there after testing.
         </p>
       ) : null}
     </form>

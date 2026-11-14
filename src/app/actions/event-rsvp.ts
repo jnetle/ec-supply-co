@@ -3,7 +3,7 @@
 import { track } from "@vercel/analytics/server";
 import { headers } from "next/headers";
 
-import { HONEYPOT_FIELD } from "@/lib/form-limits";
+import { HONEYPOT_FIELD, MAX_RSVP_NAME_LENGTH } from "@/lib/form-limits";
 import { eventRsvpSchema } from "@/lib/form-schemas";
 import type { RsvpState } from "@/lib/event-rsvp";
 import { addToNewsletter } from "@/lib/newsletter-signup";
@@ -29,6 +29,22 @@ const REFUSALS: Record<string, string> = {
   WAITING_LIST_UNAVAILABLE: "This event is full and has no waitlist.",
 };
 
+/** The last name a notify-list guest gets in Wix, which asks for one. */
+const NOTIFY_LIST_LAST_NAME = "Notify list";
+
+/** The same refusals, worded for a save the date's notify list. */
+const NOTIFY_REFUSALS: Record<string, string> = {
+  MEMBER_ALREADY_REGISTERED:
+    "That email is already on the list for this event.",
+  MEMBER_EMAIL_ALREADY_REGISTERED:
+    "That email is already on the list for this event.",
+  RSVP_LIMIT_EXCEEDED:
+    "The list for this event is full. Refresh the page to join the waitlist.",
+  GUEST_LIMIT_EXCEEDED:
+    "The list for this event is full. Refresh the page to join the waitlist.",
+  RSVPS_CLOSED: "The list for this event is closed.",
+};
+
 export async function rsvpToEvent(
   _prevState: RsvpState,
   formData: FormData,
@@ -39,24 +55,36 @@ export async function rsvpToEvent(
     return { status: "reserved", message: "", seats: 1 };
   }
 
+  // A notify list asks for an email only, but Wix's RSVP form requires a
+  // name. The part before the @ stands in, and "Notify list" marks these
+  // guests apart in Wix.
+  const notifyList = formData.get("notify") === "on";
+  const emailName = String(formData.get("email") ?? "")
+    .split("@")[0]
+    .slice(0, MAX_RSVP_NAME_LENGTH);
+
   const result = eventRsvpSchema.safeParse({
     eventId: formData.get("eventId"),
-    first: formData.get("first"),
-    last: formData.get("last"),
+    first: notifyList ? emailName : formData.get("first"),
+    last: notifyList ? NOTIFY_LIST_LAST_NAME : formData.get("last"),
     email: formData.get("email"),
     seats: formData.get("seats") ?? 1,
     waitlist: formData.get("waitlist") === "on",
+    notify: notifyList,
     news: formData.get("news") === "on",
   });
 
   if (!result.success) {
     return {
       status: "error",
-      message: "Check your name and email, then try again.",
+      message: notifyList
+        ? "Check your email, then try again."
+        : "Check your name and email, then try again.",
     };
   }
 
-  const { eventId, first, last, email, seats, waitlist, news } = result.data;
+  const { eventId, first, last, email, seats, waitlist, notify, news } =
+    result.data;
   // Wix asks for a name for each extra guest; the visitor only gives theirs.
   // A one-person RSVP leaves the guests out entirely: an event whose RSVP
   // form has no guests question rejects even an empty list.
@@ -78,8 +106,9 @@ export async function rsvpToEvent(
     if (existing) {
       return {
         status: "error",
-        message:
-          existing === "WAITLIST"
+        message: notify
+          ? "That email is already on the list for this event."
+          : existing === "WAITLIST"
             ? "That email is already on the waitlist for this event."
             : "That email is already signed up for this event.",
       };
@@ -106,7 +135,9 @@ export async function rsvpToEvent(
     });
   } catch (error) {
     const details = describeWixError(error);
-    const refusal = details.code ? REFUSALS[details.code] : undefined;
+    const refusal = details.code
+      ? (notify && NOTIFY_REFUSALS[details.code]) || REFUSALS[details.code]
+      : undefined;
     if (refusal) return { status: "error", message: refusal };
 
     // INVALID_FORM_RESPONSE means the event's Wix RSVP form has a required
@@ -128,9 +159,13 @@ export async function rsvpToEvent(
   }
 
   // No form values are sent: the event is just a tally.
-  await track(waitlist ? "Event waitlist" : "Event RSVP", undefined, {
-    headers: await headers(),
-  });
+  await track(
+    notify ? "Event notify list" : waitlist ? "Event waitlist" : "Event RSVP",
+    undefined,
+    {
+      headers: await headers(),
+    },
+  );
 
   return waitlist
     ? { status: "waitlisted", message: "" }
