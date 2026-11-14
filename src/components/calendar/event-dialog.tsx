@@ -65,17 +65,19 @@ export function EventDialog({
       ? "This one already happened — check the calendar for the next round."
       : event.dropIn
         ? "No sign-up needed. Just come by."
-        : event.seats.kind === "external"
-          ? event.orderUrl
-            ? event.category === "pickup"
-              ? "Preorder on the vendor's site, then pick it up at the shop."
-              : "Sign-ups are on the host's own site."
-            : "Sign-up details are on the way."
-          : event.availability === "full"
-            ? "This one is full."
-            : event.availability === "closed"
-              ? "Sign-ups for this one are closed."
-              : null;
+        : event.soon
+          ? `Save the date: add it to your calendar now, and check back here once ${event.category === "pickup" ? "preorders" : "sign-ups"} open.`
+          : event.seats.kind === "external"
+            ? event.orderUrl
+              ? event.category === "pickup"
+                ? "Preorder on the vendor's site, then pick it up at the shop."
+                : "Sign-ups are on the host's own site."
+              : "Sign-up details are on the way."
+            : event.availability === "full"
+              ? "This one is full."
+              : event.availability === "closed"
+                ? "Sign-ups for this one are closed."
+                : null;
 
   const handleOpenChange = (next: boolean) => {
     if (next) return;

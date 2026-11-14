@@ -13,9 +13,16 @@ export type Availability = "open" | "waitlist" | "full" | "closed";
  * How people come: just turn up, RSVP through Wix, or sign up or order on
  * the host's own site (a vendor's workshop, a pick-up's preorder). The shop
  * takes no sign-ups or payments for an "external" event; it only links out.
+ * "soon" is a save the date: sign-ups (or preorders) aren't open yet.
  */
 export type Seats =
   | { kind: "drop-in" }
+  | {
+      kind: "soon";
+      /** The day sign-ups open, as YYYY-MM-DD in shop time, when Wix knows
+       * it (an RSVP scheduled to open). */
+      opens?: string;
+    }
   | {
       kind: "external";
       /** The host's sign-up or order page, from Wix's external registration link.
