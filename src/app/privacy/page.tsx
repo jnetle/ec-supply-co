@@ -78,9 +78,11 @@ export default function PrivacyPage() {
                 <strong>Event sign-ups:</strong> your name, email and how many
                 seats you&rsquo;re saving, so the event knows who&rsquo;s
                 coming and can send your confirmation. If you tick the box,
-                your email also joins the newsletter. Some events are booked on
-                the host&rsquo;s own site instead; what you give them is covered
-                by their privacy policy, not this one.
+                your email also joins the newsletter. For an event whose
+                sign-ups aren&rsquo;t open yet, we use your email to send you
+                the sign-up link once, when they open. Some events are
+                booked on the host&rsquo;s own site instead; what you give them
+                is covered by their privacy policy, not this one.
               </li>
             </ul>
           </section>

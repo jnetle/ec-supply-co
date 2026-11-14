@@ -259,12 +259,13 @@ function maxSeats(form: wixEventsV2.Form | undefined): number {
  * always offer an event with no registration at all.
  *
  * A save the date (sign-ups not open yet) comes from an RSVP Wix has
- * scheduled to open later, or from the "Save the date" category on an event
- * with no registration or closed RSVPs. Wix won't save an external
- * registration without a link, so a host's sign-up page goes on later: an
- * external link or open RSVPs beat the category, so the event goes live the
- * moment registration opens, even if the category is never removed. That
- * category isn't a type, so it adds no filter.
+ * scheduled to open later, or from the "Save the date" category. Wix won't
+ * save an external registration without a link, so the host's sign-up page
+ * (Luma) goes on later, and an external link beats the category: the event
+ * goes live the moment the link is in, even if the category stays.
+ * With the category, open RSVPs are a notify list rather than seats: people
+ * leave an email, and the shop emails the Wix guest list once the link
+ * exists. That category isn't a type, so it adds no filter.
  * (An external registration with no link, should Wix ever allow one, is also
  * a save the date.)
  */
@@ -285,12 +286,12 @@ function seatsFor(
   if (registration?.type === "EXTERNAL" && !registration.external?.url) {
     return { kind: "soon" };
   }
-  if (saveTheDate) {
-    const open =
-      registration?.type === "EXTERNAL" ||
-      (registration?.type === "RSVP" &&
-        ["open", "waitlist"].includes(availability(registration)));
-    if (!open) return { kind: "soon" };
+  if (saveTheDate && registration?.type !== "EXTERNAL") {
+    const rsvps =
+      registration?.type === "RSVP" ? availability(registration) : undefined;
+    return rsvps === "open" || rsvps === "waitlist"
+      ? { kind: "soon", notify: rsvps }
+      : { kind: "soon" };
   }
 
   if (

@@ -177,6 +177,9 @@ export type DecoratedEvent = CalendarEvent & {
   availability: Availability | null;
   /** A save the date: sign-ups (or preorders) aren't open yet. */
   soon: boolean;
+  /** A save the date that takes emails for a heads-up once sign-ups open;
+   * "waitlist" once its Wix RSVP limit is reached. Null otherwise. */
+  notify: "open" | "waitlist" | null;
   /** "Sign-ups open Dec 1", or "Sign-ups open soon" with no date. Empty
    * unless `soon`. */
   opensLabel: string;
@@ -255,13 +258,18 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
         ? "Sign up ahead"
         : "";
 
+  const notify =
+    event.seats.kind === "soon" ? (event.seats.notify ?? null) : null;
+
   const cta = past
     ? "Past"
-    : availability
-      ? CTA_LABELS[availability]
-      : orderUrl
-        ? orderLabel
-        : "Details";
+    : notify
+      ? "Notify me"
+      : availability
+        ? CTA_LABELS[availability]
+        : orderUrl
+          ? orderLabel
+          : "Details";
 
   return {
     ...event,
@@ -269,6 +277,7 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
     dropIn,
     availability,
     soon,
+    notify,
     opensLabel,
     orderUrl,
     orderLabel,

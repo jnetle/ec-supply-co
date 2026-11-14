@@ -67,6 +67,16 @@ export function EventCard({
               >
                 {event.categoryLabel}
               </span>
+              {event.soon && !event.past && (
+                <span
+                  className={styles.saveTheDate}
+                  style={
+                    { "--tag-color": event.categoryColor } as CSSProperties
+                  }
+                >
+                  Save the date
+                </span>
+              )}
               {event.draft && <span className={styles.draft}>Draft</span>}
             </div>
             <h3 className={styles.title}>{event.title}</h3>
@@ -87,12 +97,6 @@ export function EventCard({
                   <dt>Cost</dt>
                   <dd>{event.priceLabel}</dd>
                   {event.spotsLabel && <dd>{event.spotsLabel}</dd>}
-                </div>
-              )}
-              {event.soon && !event.past && (
-                <div>
-                  <dt>Save the date</dt>
-                  <dd>{event.opensLabel}</dd>
                 </div>
               )}
             </dl>

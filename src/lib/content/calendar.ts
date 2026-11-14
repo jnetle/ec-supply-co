@@ -22,6 +22,10 @@ export type Seats =
       /** The day sign-ups open, as YYYY-MM-DD in shop time, when Wix knows
        * it (an RSVP scheduled to open). */
       opens?: string;
+      /** A notify list: the event's Wix RSVPs are open but only collect
+       * emails, so the shop can send the sign-up link once it exists.
+       * "waitlist" when the RSVP limit is reached. */
+      notify?: "open" | "waitlist";
     }
   | {
       kind: "external";
