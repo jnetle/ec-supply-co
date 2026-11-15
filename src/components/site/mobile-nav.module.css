@@ -151,9 +151,11 @@
   }
 }
 
+/* "Home" on the left, the close button on the right. */
 .drawerHeader {
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .groupLabel {

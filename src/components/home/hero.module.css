@@ -39,6 +39,25 @@
   object-fit: cover;
 }
 
+/* The tagline story's photos, stacked; the hook marks the one showing and
+   they crossfade between. The shade in .photo::after stays over them all. */
+.photoLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+
+.photoLayer[data-active] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .photoLayer {
+    transition: none;
+  }
+}
+
 /* A light, neutral shade over the whole photo so the white wordmark and
    the words animating around it hold up on bright shots. Plain black, so
    it dims the photo without shifting the photographer's colours. */
@@ -47,7 +66,16 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: color-mix(in srgb, #000 24%, transparent);
+  background:
+    /* A soft pool of shade where the logo and its thin script tagline sit,
+       so they hold up over the shelves without dimming the whole shot. */
+    radial-gradient(
+      ellipse 46% 34% at 50% 44%,
+      rgb(0 0 0 / 0.34),
+      rgb(0 0 0 / 0.16) 55%,
+      transparent 100%
+    ),
+    color-mix(in srgb, #000 24%, transparent);
 }
 
 .content {
@@ -281,6 +309,62 @@
    stage this short can't be pinned without the empty track showing beneath
    it, so it scrolls away like any other section and the hook plays the
    sequence once on its own (the breakpoint is mirrored in hero.tsx). */
+/* What the "Co." stands for, faded in by the hook once the hero is back to
+   the logo. Out of flow, so the lockup's measured size doesn't change; the
+   hook centres it under "Supply Co." The lockup is drawn scaled down, so
+   the size is divided by that scale to keep it steady on screen. */
+.caption {
+  position: absolute;
+  left: 0;
+  top: 100%;
+  text-align: center;
+  margin: 0.9em 0 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: calc(clamp(1rem, 1.5vw, 1.4rem) / var(--lockup-scale, 1));
+  line-height: 1.3;
+  color: #fff;
+  text-shadow: 0 1px 12px rgb(0 0 0 / 0.35);
+  opacity: 0;
+  will-change: opacity, transform;
+}
+
+/* ── The tagline story ─────────────────────────────────────────────────────
+   The whole logo in one SVG, centred on the photo a little above the
+   middle, where the photo's horizon sits. The photo starts under the
+   awning, 64px up (see .track). */
+.taglineStage {
+  /* How much of the stage is tucked under the awning (see .track). */
+  --hero-tuck: 64px;
+}
+
+/* Sized to the screen: nearly full width on tablets, then growing more
+   slowly so it stays a centrepiece on big monitors rather than filling
+   them, and held to the photo's height so short, wide screens (laptops,
+   phones on their side) keep room above and below it. */
+.taglineLogo {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--hero-tuck) + (100% - var(--hero-tuck)) * 0.4);
+  width: min(88vw, 480px + 30vw, (100vh - var(--hero-tuck)) * 1.4);
+  height: auto;
+  overflow: visible;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* The script is thin, so a soft shadow lifts it off a busy photo. */
+.taglineInk {
+  filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.55));
+}
+
+/* Swells about the middle of "CO", like the scroll-driven version. */
+.taglineCo {
+  transform-box: fill-box;
+  transform-origin: 40% 60%;
+  will-change: transform;
+}
+
 @media (max-width: 620px) {
   .track {
     height: auto;
@@ -297,6 +381,21 @@
   /* No pinned scroll left to cue. */
   .cue {
     display: none;
+  }
+
+  /* The tagline hero is taller than the photo's own shape on phones, so the
+     logo has room around it and the script reads; the photo covers it,
+     cropped at the sides. The stage isn't tucked under the awning here. */
+  .stage.taglineStage {
+    --hero-tuck: 0px;
+    aspect-ratio: 4 / 5;
+    max-height: 78vh;
+    padding-bottom: 0;
+  }
+
+  .taglineStage .taglineLogo {
+    top: 46%;
+    width: 94vw;
   }
 
   /* The wordmark fills the short phone stage's bottom edge, so the photo
