@@ -28,16 +28,18 @@ export function MobileNav() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // A same-page anchor ("/#tools" while on "/") waits until the drawer has
-  // gone. While it is open the page is scroll-locked, and lifting the lock
-  // cuts off the smooth scroll partway, leaving the page short of the section.
+  // A link to the page you're on ("/#tools", or Home, while on "/") waits
+  // until the drawer has gone. While it is open the page is scroll-locked,
+  // and lifting the lock cuts off the smooth scroll partway, leaving the page
+  // short of the section (or of the top).
   const pendingAnchor = useRef<string | null>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
 
   const follow = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
-    const [path, hash] = href.split("#");
+    const [path] = href.split("#");
     const modified =
       event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
-    if (hash && path === pathname && !modified) {
+    if (path === pathname && !modified) {
       event.preventDefault();
       pendingAnchor.current = href;
     }
@@ -46,7 +48,11 @@ export function MobileNav() {
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger className={styles.burger} aria-label="Menu">
+      <Dialog.Trigger
+        ref={burgerRef}
+        className={styles.burger}
+        aria-label="Menu"
+      >
         <span className={styles.bars} aria-hidden="true">
           <span className={`${styles.bar} ${styles.barTop}`} />
           <span className={`${styles.bar} ${styles.barMid}`} />
@@ -60,15 +66,36 @@ export function MobileNav() {
           className={styles.drawer}
           // Fires once the closing animation has ended and the scroll lock is
           // off, which is the earliest the anchor scroll can run in full.
-          onCloseAutoFocus={() => {
+          onCloseAutoFocus={(event) => {
             const href = pendingAnchor.current;
             if (!href) return;
             pendingAnchor.current = null;
-            router.push(href);
+            // Radix's own focus return scrolls to the burger, which cuts the
+            // scroll short; hand focus back without moving the page.
+            event.preventDefault();
+            burgerRef.current?.focus({ preventScroll: true });
+            if (href.includes("#")) {
+              router.push(href);
+              return;
+            }
+            // The page itself: back to the top, dropping any #section left
+            // in the address by an earlier anchor link.
+            if (window.location.hash) window.history.replaceState(null, "", href);
+            window.scrollTo({ top: 0 });
           }}
         >
           <div className={styles.drawerHeader}>
             <Dialog.Title className="sr-only">Site menu</Dialog.Title>
+            {/* The drawer hides the header's logo, so home gets its own way
+                back, first in the list. */}
+            <Link
+              href="/"
+              className={styles.link}
+              aria-current={pathname === "/" ? "page" : undefined}
+              onClick={(event) => follow(event, "/")}
+            >
+              Home
+            </Link>
             <Dialog.Close
               className={button({
                 variant: "outline",

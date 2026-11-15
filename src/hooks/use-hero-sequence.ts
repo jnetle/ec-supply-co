@@ -28,6 +28,19 @@ const SIGN_DWELL = 2.2;
 const SIGN_DESCENT = 7.2;
 /** The squiggle is gone by the time the sign is this far down. */
 const SIGN_SQUIGGLE_FADE = 0.45;
+/** Stops the last word is held for before the outro, without the sign. */
+const LAST_HOLD = 0.45;
+/**
+ * Stops for the outro, which ends the sequence when the sign is off: the
+ * last word slides up and out, the squiggle undraws and the period comes
+ * back, then "Co" lifts up beside "Supply" and "El Cerrito" re-arches
+ * over both as the lockup glides back to the middle, so the hero ends as
+ * the logo, as it began. Last, a line fades in under it to say what the
+ * "Co." stands for.
+ */
+const OUTRO_SPAN = 2.2;
+/** Stops held on the returned "Co." at the end of the track. */
+const OUTRO_TAIL = 0.2;
 
 /* ── Autoplay script ────────────────────────────────────────────────────── */
 
@@ -42,6 +55,8 @@ const PLAY_SWAP_MS = 600;
 const PLAY_HOLD_MS = 1800;
 /** The sign coming down, once the last word has been read. */
 const PLAY_SIGN_MS = 1800;
+/** The outro back to "Co.", once the last word has been read. */
+const PLAY_OUTRO_MS = 3400;
 
 /* ── Easings, as named in the design ────────────────────────────────────── */
 
@@ -70,7 +85,9 @@ export function heroTrackVh(wordCount: number, showSign: boolean) {
   const travel = Math.round(
     showSign
       ? base * SIGN_TRACK_MULTIPLIER
-      : base * ((wordCount + CO_SPAN + 0.45) / (wordCount + 1.45)),
+      : base *
+          ((wordCount + CO_SPAN + LAST_HOLD + OUTRO_SPAN + OUTRO_TAIL) /
+            (wordCount + 1.45)),
   );
   return 100 + travel;
 }
@@ -89,6 +106,11 @@ type CoGeometry = {
   restY: number;
   /** Lifts the settled, left-aligned lockup to halfway up the photo. */
   endY: number;
+  /**
+   * The logo again at the end, centred with the caption hung under it, so
+   * the two together sit on the eye line.
+   */
+  finalY: number;
 };
 
 /**
@@ -130,7 +152,10 @@ const EYE_LINE = 0.28;
 type HeroOptions = {
   wordCount: number;
   enabled: boolean;
-  /** Whether the hanging sign is lowered after the words finish. */
+  /**
+   * Whether the hanging sign is lowered after the words finish. It takes
+   * the place of the outro back to "Co.", which only plays without it.
+   */
   showSign: boolean;
   /**
    * Play the sequence once on its own, paced to be read, instead of
@@ -145,8 +170,12 @@ type HeroOptions = {
  * "Supply Co.", centered on the photo. The period morphs into a squiggle,
  * "Co" drops to its own line at 2.4× the word pace while the whole lockup
  * travels to the left edge, halfway up, and the arched letters settle onto
- * a straight line above "Supply", and the suffixes cycle through — all scrubbed directly
- * off scroll position, with no snapping.
+ * a straight line above "Supply", and the suffixes cycle through. Without
+ * the sign, it then folds back into the logo: the last suffix leaves, the
+ * squiggle undraws, the period returns and the opening move plays in
+ * reverse, ending on the logo with a line under it spelling out the
+ * "Co.". All scrubbed directly off scroll position,
+ * with no snapping.
  *
  * Driven by a rAF loop gated on an IntersectionObserver rather than scroll
  * events, because on mobile the scrolling element is often an ancestor
@@ -170,6 +199,7 @@ export function useHeroSequence({
   const cueRef = useRef<HTMLDivElement>(null);
   const signRef = useRef<HTMLDivElement>(null);
   const signTextRef = useRef<HTMLSpanElement>(null);
+  const captionRef = useRef<HTMLParagraphElement>(null);
   // Set by the effect while autoplay is running; null otherwise.
   const replayRef = useRef<(() => void) | null>(null);
 
@@ -178,7 +208,11 @@ export function useHeroSequence({
     if (!track) return;
 
     // With the sign on, the words share the track with its descent and dwell.
-    const budget = showSign ? wordCount + SIGN_SPAN : wordCount + CO_SPAN + 0.45;
+    // Without it, the outro back to "Co." follows the last word's hold.
+    const outroStart = CO_SPAN + wordCount + LAST_HOLD;
+    const budget = showSign
+      ? wordCount + SIGN_SPAN
+      : outroStart + OUTRO_SPAN + OUTRO_TAIL;
 
     /* ── Track height ─────────────────────────────────────────────────── */
 
@@ -436,77 +470,6 @@ export function useHeroSequence({
       return (labelTop + lockupRect.height) / 2;
     };
 
-    if (!enabled) {
-      // Reduced motion: collapse the scroll track to one screen so there is
-      // no dead scrolling, and rest the sequence at the end state it would
-      // otherwise scrub to — last word in, period already melted into the
-      // squiggle — so the hero still reads as designed.
-      track.style.height = autoplay ? "" : "100vh";
-      coDotRef.current?.style.setProperty("opacity", "0");
-
-      const words = coWindowRef.current?.querySelectorAll<HTMLElement>(
-        "[data-suffix]",
-      );
-      // The landed sign covers the last word, which has faded under it.
-      words?.forEach((word, i) => {
-        word.style.opacity = i === wordCount - 1 && !showSign ? "1" : "0";
-      });
-
-      const squiggle = squiggleRef.current;
-      const coWindow = coWindowRef.current;
-      const lockup = lockupRef.current;
-
-      if (squiggle && coWindow && words?.length) {
-        const widest = Math.max(
-          ...Array.from(words, (w) => w.getBoundingClientRect().width),
-        );
-        squiggle.style.left = `${coWindow.offsetLeft}px`;
-        squiggle.style.width = `${Math.round(widest)}px`;
-        squiggle.style.clipPath = "none";
-      }
-
-      if (lockup && brandLineRef.current && coWordRef.current) {
-        matchLineGap(lockup, brandLineRef.current, coWordRef.current);
-      }
-
-      if (showSign && coWindow && lockup) {
-        // The sequence ends with the sign landed and the underline already
-        // given way to it, so that is where it rests.
-        measureSign(coWindow, lockup);
-        const sign = signRef.current;
-        if (sign) {
-          sign.style.transform = "translate3d(0,0,0) rotate(-1.2deg)";
-        }
-        if (squiggle) squiggle.style.opacity = "0";
-      }
-      // Rests at the end state: the label straight, sized like the
-      // animated version.
-      const settle = () => {
-        const brandLine = brandLineRef.current;
-        const coWord = coWordRef.current;
-        if (!lockup || !brandLine || !coWord) return;
-        lockup.style.transform = "none";
-        matchLineGap(lockup, brandLine, coWord);
-        if (showSign && coWindow) measureSign(coWindow, lockup);
-        measureArc(lockup, brandLine, coWord);
-        placeArc(1);
-        const scale = fitScale(lockup, brandLine, coWord);
-        const lift = toPhotoMiddle(lockup, scale, 0, settledMiddle(lockup, brandLine)).y;
-        lockup.style.transform = `translate3d(0,${lift.toFixed(1)}px,0) scale(${scale.toFixed(4)})`;
-        lockup.style.setProperty("--lockup-scale", scale.toFixed(4));
-        lockup.setAttribute("data-ready", "");
-      };
-
-      settle();
-      let stillLive = true;
-      void document.fonts?.ready.then(() => stillLive && settle());
-      window.addEventListener("resize", settle);
-      return () => {
-        stillLive = false;
-        window.removeEventListener("resize", settle);
-      };
-    }
-
     // Measured with the live transforms cleared, then restored — otherwise
     // every frame's own animation would feed back into the measurement.
     const measureGeometry = () => {
@@ -539,6 +502,32 @@ export function useHeroSequence({
       );
       const end = toPhotoMiddle(lockup, scale, 0, settledMiddle(lockup, brandLine));
 
+      // The caption hangs centred under "Supply Co." as it reads at rest,
+      // on one line. Its size depends on the lockup's scale, so that is set
+      // before it is measured.
+      lockup.style.setProperty("--lockup-scale", scale.toFixed(4));
+      let logoBottom = brand.bottom - lockupRect.top;
+      const caption = captionRef.current;
+      if (caption) {
+        // As wide as it needs, up to the stage less its gutters, but never
+        // narrower than the logo; centred on the logo either way.
+        caption.style.width = "max-content";
+        const stage = lockup.closest<HTMLElement>("[data-hero-stage]");
+        const room = ((stage?.clientWidth ?? window.innerWidth) - 32) / scale;
+        const width = Math.max(pairWidth, Math.min(caption.offsetWidth, room));
+        const centre = brand.left - lockupRect.left + pairWidth / 2;
+        caption.style.left = `${(centre - width / 2).toFixed(1)}px`;
+        caption.style.top = `${logoBottom.toFixed(1)}px`;
+        caption.style.width = `${width.toFixed(1)}px`;
+        logoBottom = caption.offsetTop + caption.offsetHeight;
+      }
+      const final = toPhotoMiddle(
+        lockup,
+        scale,
+        brand.left - lockupRect.left + pairWidth / 2,
+        (arcTop + logoBottom) / 2,
+      );
+
       geometry = {
         dx: brand.right + gap - co.left,
         dy: brand.top - co.top,
@@ -546,6 +535,7 @@ export function useHeroSequence({
         restX: rest.x,
         restY: rest.y,
         endY: end.y,
+        finalY: final.y,
       };
 
       const squiggle = squiggleRef.current;
@@ -561,6 +551,108 @@ export function useHeroSequence({
       lockup.style.transform = prevLockup;
       coWord.style.transform = prevCo;
     };
+
+    /**
+     * Places "Co", "El Cerrito" and the lockup between the logo (0) and the
+     * settled, left-aligned layout (1), with the lockup's own y given.
+     */
+    const placeLockup = (placed: number, y: number, coScale = 1) => {
+      const coWord = coWordRef.current;
+      const lockup = lockupRef.current;
+      if (!geometry || !coWord) return;
+      const x = (geometry.dx * (1 - placed)).toFixed(1);
+      const coY = (geometry.dy * (1 - placed)).toFixed(1);
+      coWord.style.transform = `translate3d(${x}px,${coY}px,0) scale(${coScale.toFixed(4)})`;
+      placeArc(placed);
+      if (!lockup) return;
+      const homeX = (geometry.restX * (1 - placed)).toFixed(1);
+      lockup.style.transform = `translate3d(${homeX}px,${y.toFixed(1)}px,0) scale(${geometry.scale.toFixed(4)})`;
+      // The sign's poles and the caption are sized against this.
+      lockup.style.setProperty("--lockup-scale", geometry.scale.toFixed(4));
+      // Shown only once it has been measured and scaled; see .lockup.
+      lockup.setAttribute("data-ready", "");
+    };
+
+    if (!enabled) {
+      // Reduced motion: collapse the scroll track to one screen so there is
+      // no dead scrolling, and rest the sequence at the end state it would
+      // otherwise scrub to, so the hero still reads as designed. Without
+      // the sign that is the name again, "Co." with its period and no
+      // suffix; with it, the period melted into the squiggle and the sign
+      // landed over the last word, which has faded under it.
+      track.style.height = autoplay ? "" : "100vh";
+      coDotRef.current?.style.setProperty("opacity", showSign ? "0" : "1");
+
+      const words = coWindowRef.current?.querySelectorAll<HTMLElement>(
+        "[data-suffix]",
+      );
+      words?.forEach((word) => {
+        word.style.opacity = "0";
+      });
+      captionRef.current?.style.setProperty("opacity", "1");
+
+      const squiggle = squiggleRef.current;
+      const coWindow = coWindowRef.current;
+      const lockup = lockupRef.current;
+
+      if (squiggle && coWindow && words?.length) {
+        const widest = Math.max(
+          ...Array.from(words, (w) => w.getBoundingClientRect().width),
+        );
+        squiggle.style.left = `${coWindow.offsetLeft}px`;
+        squiggle.style.width = `${Math.round(widest)}px`;
+        squiggle.style.clipPath = "none";
+        // The outro has undrawn it by the end.
+        if (!showSign) squiggle.style.opacity = "0";
+      }
+
+      if (lockup && brandLineRef.current && coWordRef.current) {
+        matchLineGap(lockup, brandLineRef.current, coWordRef.current);
+      }
+
+      if (showSign && coWindow && lockup) {
+        // The sequence ends with the sign landed and the underline already
+        // given way to it, so that is where it rests.
+        measureSign(coWindow, lockup);
+        const sign = signRef.current;
+        if (sign) {
+          sign.style.transform = "translate3d(0,0,0) rotate(-1.2deg)";
+        }
+        if (squiggle) squiggle.style.opacity = "0";
+      }
+      // Rests at the end state, sized like the animated version: without
+      // the sign that is the logo with the caption under it; with it, the
+      // label straight above the settled lockup.
+      const settle = () => {
+        if (!showSign) {
+          measureGeometry();
+          if (geometry) placeLockup(0, geometry.finalY);
+          return;
+        }
+        const brandLine = brandLineRef.current;
+        const coWord = coWordRef.current;
+        if (!lockup || !brandLine || !coWord) return;
+        lockup.style.transform = "none";
+        matchLineGap(lockup, brandLine, coWord);
+        if (showSign && coWindow) measureSign(coWindow, lockup);
+        measureArc(lockup, brandLine, coWord);
+        placeArc(1);
+        const scale = fitScale(lockup, brandLine, coWord);
+        const lift = toPhotoMiddle(lockup, scale, 0, settledMiddle(lockup, brandLine)).y;
+        lockup.style.transform = `translate3d(0,${lift.toFixed(1)}px,0) scale(${scale.toFixed(4)})`;
+        lockup.style.setProperty("--lockup-scale", scale.toFixed(4));
+        lockup.setAttribute("data-ready", "");
+      };
+
+      settle();
+      let stillLive = true;
+      void document.fonts?.ready.then(() => stillLive && settle());
+      window.addEventListener("resize", settle);
+      return () => {
+        stillLive = false;
+        window.removeEventListener("resize", settle);
+      };
+    }
 
     /* ── Progress ─────────────────────────────────────────────────────── */
 
@@ -608,28 +700,43 @@ export function useHeroSequence({
       // One slow swell, a breath, then a glide back down to size.
       const scale = 1 + 0.16 * oq(seg(0, 0.3)) - 0.16 * io(seg(0.42, 0.92));
 
-      const wordTarget = Math.min(wordCount, Math.max(0, posRaw - CO_SPAN));
+      // The outro, without the sign: the last word slides up and out like
+      // the ones before it, then the squiggle undraws, the period comes
+      // back, the lockup folds back into the logo, and last the line saying
+      // what the "Co." stands for.
+      const outro = showSign ? 0 : clamp01((posRaw - outroStart) / OUTRO_SPAN);
+      const outroWord = io(clamp01(outro / 0.22));
+      const outroUndraw = io(clamp01((outro - 0.13) / 0.23));
+      const outroDot = io(clamp01((outro - 0.27) / 0.18));
+      // The opening move in reverse, without its swell.
+      const outroBack = io(clamp01((outro - 0.4) / 0.42));
+      const outroCaption = io(clamp01((outro - 0.8) / 0.2));
+
+      const caption = captionRef.current;
+      if (caption) {
+        caption.style.opacity = outroCaption.toFixed(3);
+        caption.style.transform = `translate3d(0,${((1 - outroCaption) * 0.4).toFixed(3)}em,0)`;
+      }
+
+      const wordTarget = Math.min(
+        wordCount + outroWord,
+        Math.max(0, posRaw - CO_SPAN),
+      );
       wordFollow += (wordTarget - wordFollow) * follow;
       if (Math.abs(wordTarget - wordFollow) < 0.002) wordFollow = wordTarget;
 
-      const coWord = coWordRef.current;
-      const lockup = lockupRef.current;
-      if (geometry && coWord) {
-        const x = (geometry.dx * (1 - move)).toFixed(1);
-        const y = (geometry.dy * (1 - move)).toFixed(1);
-        coWord.style.transform = `translate3d(${x}px,${y}px,0) scale(${scale.toFixed(4)})`;
-        placeArc(move);
-        if (lockup) {
-          // Starts centered on the photo, and travels to the left edge,
-          // halfway up, as "Co" drops.
-          const homeX = (geometry.restX * (1 - move)).toFixed(1);
-          const homeY = (geometry.endY + (geometry.restY - geometry.endY) * (1 - move)).toFixed(1);
-          lockup.style.transform = `translate3d(${homeX}px,${homeY}px,0) scale(${geometry.scale.toFixed(4)})`;
-          // The sign's poles reach a screen up in the lockup's own px.
-          lockup.style.setProperty("--lockup-scale", geometry.scale.toFixed(4));
-          // Shown only once it has been measured and scaled; see .lockup.
-          lockup.setAttribute("data-ready", "");
-        }
+      if (geometry) {
+        // Starts as the logo centred on the photo, and travels to the left
+        // edge, halfway up, as "Co" drops; the outro brings it back. Once
+        // the outro has begun, "placed" is still 1, so switching the logo's
+        // y to the one that also centres the caption can't jump.
+        const placed = move * (1 - outroBack);
+        const logoY = outro > 0 ? geometry.finalY : geometry.restY;
+        placeLockup(
+          placed,
+          geometry.endY + (logoY - geometry.endY) * (1 - placed),
+          scale,
+        );
       }
 
       // The last word gives way as the sign comes down over it, so only
@@ -647,12 +754,15 @@ export function useHeroSequence({
         });
 
       const dot = coDotRef.current;
-      if (dot) dot.style.opacity = Math.max(0, 1 - gate / 0.3).toFixed(3);
+      if (dot) {
+        dot.style.opacity = Math.max(0, 1 - gate / 0.3, outroDot).toFixed(3);
+      }
 
       const squiggle = squiggleRef.current;
       if (squiggle && suffixWidths.length) {
         squiggle.style.width = `${Math.round(Math.max(...suffixWidths))}px`;
-        const draw = io(clamp01((gate - 0.1) / 0.9));
+        // Retracts toward "Co" as the clip's right inset grows back.
+        const draw = io(clamp01((gate - 0.1) / 0.9)) * (1 - outroUndraw);
         squiggle.style.clipPath = `inset(-20% ${((1 - draw) * 100).toFixed(1)}% -20% 0)`;
       }
 
@@ -719,6 +829,10 @@ export function useHeroSequence({
       // Straight to the top of the descent, then down.
       step(200, wordCount + CO_SPAN + SIGN_DWELL);
       step(PLAY_SIGN_MS, wordCount + CO_SPAN + SIGN_DWELL + SIGN_DESCENT);
+    } else {
+      // Straight past the scroll hold, which the word's own hold covers.
+      step(0, outroStart);
+      step(PLAY_OUTRO_MS, outroStart + OUTRO_SPAN);
     }
     step(200, budget);
 
@@ -852,5 +966,6 @@ export function useHeroSequence({
     cueRef,
     signRef,
     signTextRef,
+    captionRef,
   };
 }
