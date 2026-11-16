@@ -1,9 +1,7 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
-import { PhotoCredit } from "@/components/ui/photo-credit";
 import { WixImage } from "@/components/ui/wix-image";
-import { photoCredit } from "@/lib/content/thanks";
 import { isWixMedia } from "@/lib/wix-media";
 
 import type { DecoratedEvent } from "./event-model";
@@ -53,7 +51,6 @@ export function EventPhoto({
   chip = true,
 }: EventPhotoProps) {
   const photo = event.photo ?? FALLBACK_PHOTO;
-  const credit = photoCredit(photo);
   const ratio = FRAME_RATIO;
 
   return (
@@ -71,7 +68,6 @@ export function EventPhoto({
         />
       )}
       {chip && <EventDateChip event={event} className={styles.pinned} />}
-      {credit && <PhotoCredit helper={credit} />}
     </div>
   );
 }

@@ -1,0 +1,78 @@
+/* The space (/the-space): each photo shoot is a chapter of tight rows. The
+   photos in a row share one height, each clipped to a wavy-edged shape
+   that differs from its neighbours'. No captions: the photos carry it. */
+
+.chapter {
+  --gap: clamp(10px, 1.4vw, 20px);
+  /* The same side margins as every other page. */
+  padding: clamp(8px, 2vh, 24px) clamp(18px, 4vw, 56px) clamp(40px, 7vh, 88px);
+  display: grid;
+  gap: var(--gap);
+  scroll-margin-top: calc(var(--ecs-header-clearance, 100px) + 24px);
+}
+
+/* The photographer's credit, the one line above the photos. */
+.chapterMeta {
+  margin: 0 0 clamp(4px, 1vh, 10px);
+  font-size: 15px;
+  color: var(--color-ecs-neutral-700);
+}
+
+.chapterMeta a {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-ecs-teal);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Each frame grows by its own width-over-height (set inline), so all the
+   frames in a row come out the same height. */
+.row {
+  display: flex;
+  gap: var(--gap);
+  align-items: flex-start;
+}
+
+.frame {
+  flex-basis: 0;
+}
+
+/* On a phone, a row puts its first photo on a line of its own and the
+   others share the next. */
+@media (max-width: 760px) {
+  .row {
+    flex-wrap: wrap;
+  }
+
+  .row > :first-child,
+  /* In a row of two, the second photo would be left alone at a fraction of
+     the width, so it takes a full line too. */
+  .row:not(:has(> :nth-child(3))) > * {
+    flex-basis: 100%;
+  }
+}
+
+/* The way out: a visit, or what's on. */
+.visit {
+  padding: 0 clamp(18px, 4vw, 56px) clamp(48px, 8vh, 104px);
+}
+
+.visitTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.9rem, 4.4vw, 4.2rem);
+  line-height: 1;
+  letter-spacing: 0.008em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
