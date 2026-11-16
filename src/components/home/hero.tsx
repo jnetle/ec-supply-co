@@ -7,10 +7,12 @@ import { heroTrackVh, useHeroSequence } from "@/hooks/use-hero-sequence";
 import { useHeroTagline } from "@/hooks/use-hero-tagline";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { HOLIDAY_DECOR } from "@/lib/holiday";
 
 import { ARC_HEIGHT, ARC_LETTERS, ARC_WIDTH } from "./el-cerrito-arc";
 import styles from "./hero.module.css";
 import { LOGO_LAYOUT, TAGLINE } from "./logo-tagline";
+import { CO_SWELL_ORIGIN, HeroTinsel, HeroTinselDefs } from "./hero-tinsel";
 import { CAP_HEIGHT, CO, DOT, SUPPLY } from "./logo-wordmark";
 import {
   LOGO_EXTRUDE_DEPTH_EM,
@@ -153,7 +155,8 @@ const HERO_PHOTOS = {
 
 /**
  * The tagline story's photos. The first holds while the tagline is
- * written; then the hook crossfades through them every 6s, in this order.
+ * written; as the last letter is inked the hook crossfades to the next,
+ * then through the rest every 6s, in this order.
  */
 const TAGLINE_PHOTOS = [
   HERO_PHOTOS.shopFloor,
@@ -264,6 +267,13 @@ function HeroTagline() {
             </mask>
           </defs>
 
+          {HOLIDAY_DECOR ? (
+            <>
+              <HeroTinselDefs />
+              <HeroTinsel garland="supply" layer="back" />
+            </>
+          ) : null}
+
           <g transform={`translate(${LOGO_LAYOUT.arcX} ${LOGO_LAYOUT.arcY})`} fill="#fff">
             {ARC_LETTERS.map((letter, i) => (
               <path key={i} d={letter.arched} />
@@ -271,11 +281,18 @@ function HeroTagline() {
           </g>
 
           <LogoShape word={SUPPLY} />
+          {HOLIDAY_DECOR ? <HeroTinsel garland="supply" layer="front" /> : null}
 
           {/* "Co." swells about its own middle; the dot rides along until
               it leaves, and the hook moves it in the logo's units. */}
-          <g ref={coRef} className={styles.taglineCo}>
+          <g
+            ref={coRef}
+            className={styles.taglineCo}
+            style={HOLIDAY_DECOR ? CO_SWELL_ORIGIN : undefined}
+          >
+            {HOLIDAY_DECOR ? <HeroTinsel garland="co" layer="back" /> : null}
             <LogoShape word={CO} x={LOGO_LAYOUT.coX} />
+            {HOLIDAY_DECOR ? <HeroTinsel garland="co" layer="front" /> : null}
             <g ref={dotRef}>
               <LogoShape word={DOT} x={LOGO_LAYOUT.dotX} />
             </g>
