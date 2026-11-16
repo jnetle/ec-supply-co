@@ -1,0 +1,44 @@
+/* Holiday tinsel draped through the hero logo (see hero-tinsel.tsx). All
+   sizes are in the logo's own units. */
+
+.tinsel {
+  pointer-events: none;
+}
+
+.strands path {
+  fill: none;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+}
+
+/* Where the strands bunch at the middle and shade each other. */
+.core {
+  fill: none;
+  stroke: #7d858d;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.9;
+}
+
+/* Strands catching the light square on. They flash a little as the air
+   moves; reduced motion leaves them lit. */
+.glint {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  animation: tinsel-glint 3.2s ease-in-out infinite;
+}
+
+/* Declared here rather than in globals.css: CSS Modules scopes every
+   animation-name in this file (see the note in ui/eyebrow.module.css). */
+@keyframes tinsel-glint {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
