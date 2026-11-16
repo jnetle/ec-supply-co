@@ -155,7 +155,8 @@ const HERO_PHOTOS = {
 
 /**
  * The tagline story's photos. The first holds while the tagline is
- * written; then the hook crossfades through them every 6s, in this order.
+ * written; as the last letter is inked the hook crossfades to the next,
+ * then through the rest every 6s, in this order.
  */
 const TAGLINE_PHOTOS = [
   HERO_PHOTOS.shopFloor,
