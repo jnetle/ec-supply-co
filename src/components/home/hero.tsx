@@ -3,12 +3,10 @@
 import Image from "next/image";
 import { useEffect, useId, useState, type CSSProperties } from "react";
 
-import { PhotoCredit } from "@/components/ui/photo-credit";
 import { heroTrackVh, useHeroSequence } from "@/hooks/use-hero-sequence";
 import { useHeroTagline } from "@/hooks/use-hero-tagline";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { photoCredit } from "@/lib/content/thanks";
 import { HOLIDAY_DECOR } from "@/lib/holiday";
 
 import { ARC_HEIGHT, ARC_LETTERS, ARC_WIDTH } from "./el-cerrito-arc";
@@ -169,7 +167,6 @@ const TAGLINE_PHOTOS = [
 
 const HERO_PHOTO = HERO_PHOTOS.shopFloor;
 const PHOTO_SRC = HERO_PHOTO.src;
-const PHOTO_CREDIT = photoCredit(PHOTO_SRC);
 
 export function Hero() {
   return HERO_STORY === "tagline" ? <HeroTagline /> : <HeroWords />;
@@ -315,8 +312,6 @@ function HeroTagline() {
             <span aria-hidden="true">↻</span> Replay
           </button>
         ) : null}
-
-        <HeroCredit />
       </div>
     </section>
   );
@@ -347,12 +342,6 @@ function HeroPhoto() {
       />
     </div>
   );
-}
-
-function HeroCredit() {
-  return PHOTO_CREDIT ? (
-    <PhotoCredit helper={PHOTO_CREDIT} variant="corner" className={styles.credit} />
-  ) : null;
 }
 
 function HeroWords() {
@@ -530,8 +519,6 @@ function HeroWords() {
             <span aria-hidden="true">↻</span> Replay
           </button>
         ) : null}
-
-        <HeroCredit />
       </div>
     </section>
   );

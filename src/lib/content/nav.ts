@@ -55,6 +55,11 @@ export const NAV_GROUPS: NavGroup[] = [
         note: "Borrow it, do not buy it twice",
         href: "/#tools",
       },
+      {
+        label: "See the space",
+        note: "Photos of the shop",
+        href: "/the-space",
+      },
     ],
   },
   {

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import type { CSSProperties } from "react";
 
 import { SiteFooter } from "@/components/site/site-footer";
 import { SiteHeader } from "@/components/site/site-header";
 import { BlobImage } from "@/components/ui/blob-image";
+import { button } from "@/components/ui/button";
 import { LinkIcon } from "@/components/ui/link-icon";
 import { PageIntro } from "@/components/ui/page-intro";
-import { HELPERS, MADE_OF } from "@/lib/content/thanks";
+import { WavyClipPaths, wavyClip } from "@/components/ui/wavy-clip-paths";
+import { HELPERS, MADE_OF, type MadeOfPhoto } from "@/lib/content/thanks";
 import { pageMetadata } from "@/lib/site";
 
 import styles from "@/components/the-build/the-build-page.module.css";
@@ -18,29 +21,18 @@ export const metadata: Metadata = pageMetadata({
   path: "/the-build",
 });
 
-/** Landscape masks for the "made of" photos, the home page's feature shapes. */
-const PIECE_RADII = [
-  "46% 54% 18% 22% / 38% 34% 8% 9%",
-  "44% 56% 20% 20% / 40% 36% 8% 10%",
-];
+/** "4/3" → 1.333: a photo's width over its height. */
+function aspect(photo: MadeOfPhoto) {
+  const [w, h] = photo.ratio.split("/").map(Number);
+  return w / h;
+}
 
-/** The same shape stood upright, for portrait photos; the arch stays shallow. */
-const PORTRAIT_RADIUS = "48% 52% 20% 18% / 26% 28% 7% 8%";
-
-/** A paired photo's masks: the portrait shape, then its mirror. */
-const PAIR_RADII = [PORTRAIT_RADIUS, "52% 48% 18% 20% / 28% 26% 8% 7%"];
-
-/** Card fills, rotated so neighbours never match; the manifesto's palette. */
-const CARD_COLORS = [
-  { background: "var(--color-ecs-surface)", accent: "var(--color-ecs-teal)" },
-  { background: "var(--color-ecs-teal-pale)", accent: "var(--color-ecs-teal-deep)" },
-  // Teal focus rings drop under 3:1 on the pink card.
-  {
-    background: "var(--color-ecs-pink)",
-    accent: "var(--color-ecs-pink-deep)",
-    ring: "var(--color-ecs-ink)",
-  },
-];
+/** How many photos come before each row, so the outlines keep cycling. */
+const PHOTOS_BEFORE_ROW = MADE_OF.map((_, r) =>
+  MADE_OF.slice(0, r)
+    .flat()
+    .reduce((count, entry) => count + entry.photos.length, 0),
+);
 
 export default function TheBuildPage() {
   return (
@@ -48,6 +40,8 @@ export default function TheBuildPage() {
       <SiteHeader />
 
       <main>
+        <WavyClipPaths />
+
         <PageIntro
           eyebrow="Thank you"
           eyebrowColor="var(--color-ecs-red)"
@@ -61,79 +55,85 @@ export default function TheBuildPage() {
             What the shop is made of
           </h2>
 
-          <div className={styles.pieces}>
-            {MADE_OF.map((entry, i) => {
-              const colors = CARD_COLORS[i % CARD_COLORS.length];
-              const helpers = entry.helpers.flatMap((id) => {
-                const helper = HELPERS.find((h) => h.id === id);
-                return helper ? [helper] : [];
-              });
+          <div className={styles.rows}>
+            {MADE_OF.map((row, r) => {
+              const rowAspect = row
+                .flat()
+                .reduce(
+                  (sum, entry) =>
+                    sum +
+                    entry.photos.reduce((n, photo) => n + aspect(photo), 0),
+                  0,
+                );
+              let photoIndex = PHOTOS_BEFORE_ROW[r];
               return (
-                <article
-                  key={entry.id}
-                  id={entry.id}
-                  className={`${styles.piece} ${entry.photo?.portrait ? styles.portrait : ""} ${entry.photo?.compact ? styles.compact : ""} ${entry.photo?.pair ? styles.paired : ""}`}
-                  style={
-                    {
-                      "--card-bg": colors.background,
-                      "--card-accent": colors.accent,
-                      "--ecs-focus-ring": colors.ring,
-                    } as CSSProperties
-                  }
-                >
-                  {entry.photo?.pair ? (
-                    <div className={`${styles.piecePhoto} ${styles.photoPair}`}>
-                      {[entry.photo, entry.photo.pair].map((photo, j) => (
-                        <BlobImage
-                          key={photo.src}
-                          src={photo.src}
-                          alt={photo.alt}
-                          radius={PAIR_RADII[j]}
-                          ratio="2/3"
-                          parallax={false}
-                          sizes="(max-width: 1099px) 46vw, 340px"
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <BlobImage
-                      src={entry.photo?.src}
-                      alt={entry.photo?.alt ?? ""}
-                      radius={
-                        entry.photo?.portrait
-                          ? PORTRAIT_RADIUS
-                          : PIECE_RADII[i % PIECE_RADII.length]
-                      }
-                      ratio={entry.photo?.portrait ? "2/3" : "4/3"}
-                      // Parallax overscales the photo, which would crop the
-                      // very edges a portrait frame exists to show.
-                      parallax={!entry.photo?.portrait}
-                      sizes={
-                        entry.photo?.portrait
-                          ? "(max-width: 760px) 92vw, (max-width: 1099px) 46vw, 340px"
-                          : "(max-width: 760px) 92vw, 760px"
-                      }
-                      eager={i === 0}
-                      className={styles.piecePhoto}
-                    />
-                  )}
-                  <div className={styles.pieceText}>
-                    <h3 className={styles.name}>{entry.name}</h3>
-                    <p className={styles.note}>{entry.provenance}</p>
-                    {helpers.length > 0 && (
-                      <p className={styles.credit}>
-                        {entry.creditedAs}{" "}
-                        {helpers.map((helper, j) => (
-                          <span key={helper.id}>
-                            {j > 0 &&
-                              (j === helpers.length - 1 ? " and " : ", ")}
-                            <a href={`#${helper.id}`}>{helper.name}</a>
-                          </span>
-                        ))}
-                      </p>
-                    )}
-                  </div>
-                </article>
+                <div key={row[0].id} className={styles.row}>
+                  {row.map((entry) => {
+                    const entryAspect = entry.photos.reduce(
+                      (n, photo) => n + aspect(photo),
+                      0,
+                    );
+                    const helpers = entry.helpers.flatMap((id) => {
+                      const helper = HELPERS.find((h) => h.id === id);
+                      return helper ? [helper] : [];
+                    });
+                    return (
+                      <article
+                        key={entry.id}
+                        id={entry.id}
+                        className={styles.entry}
+                        // Grows by its photos' combined shape, plus the gap
+                        // between a pair, so every photo in the row comes out
+                        // the same height.
+                        style={
+                          {
+                            "--grow": entryAspect,
+                            "--basis": `calc(var(--gap) * ${entry.photos.length - 1})`,
+                          } as CSSProperties
+                        }
+                      >
+                        <div className={styles.entryPhotos}>
+                          {entry.photos.map((photo) => {
+                            const n = photoIndex++;
+                            return (
+                              <BlobImage
+                                key={photo.src}
+                                src={photo.src}
+                                alt={photo.alt}
+                                // The clip path draws the shape.
+                                radius="0"
+                                ratio={photo.ratio}
+                                parallax={false}
+                                eager={n === 0}
+                                sizes={`(max-width: 760px) ${Math.round(100 / entry.photos.length)}vw, ${Math.round((100 * aspect(photo)) / rowAspect)}vw`}
+                                className={styles.frame}
+                                style={{
+                                  // Shares that add up to 1, so a lone photo fills its entry.
+                                  flexGrow: aspect(photo) / entryAspect,
+                                  ...wavyClip(n),
+                                }}
+                              />
+                            );
+                          })}
+                        </div>
+                        <h3 className={styles.name}>{entry.name}</h3>
+                        <p className={styles.note}>{entry.provenance}</p>
+                        {helpers.length > 0 && (
+                          <p className={styles.credit}>
+                            {entry.creditedAs}{" "}
+                            {helpers.map((helper, j) => (
+                              <span key={helper.id}>
+                                {j > 0 &&
+                                  (j === helpers.length - 1 ? " and " : ", ")}
+                                <a href={`#${helper.id}`}>{helper.name}</a>
+                              </span>
+                            ))}
+                          </p>
+                        )}
+                      </article>
+                    );
+                  })}
+                </div>
               );
             })}
           </div>
@@ -168,6 +168,21 @@ export default function TheBuildPage() {
               </li>
             ))}
           </ul>
+        </section>
+
+        <section className={styles.finished} aria-labelledby="finished-heading">
+          <h2 id="finished-heading" className={styles.sectionTitle}>
+            And here&rsquo;s how it turned out
+          </h2>
+          <Link
+            href="/the-space"
+            className={button({
+              variant: "outline",
+              className: styles.finishedLink,
+            })}
+          >
+            See the space →
+          </Link>
         </section>
       </main>
 

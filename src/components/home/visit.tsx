@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { BlobImage } from "@/components/ui/blob-image";
 import { button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -66,6 +68,9 @@ export async function Visit() {
           >
             Follow on Instagram
           </a>
+          <Link href="/the-space" className={button({ variant: "link" })}>
+            See the space →
+          </Link>
         </div>
       </div>
 

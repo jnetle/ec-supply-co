@@ -266,7 +266,7 @@
   pointer-events: none;
 }
 
-/* Mirrors the photo credit in the opposite corner: small, quiet, findable. */
+/* Small, quiet, findable, in the bottom-left corner. */
 .replay {
   position: absolute;
   z-index: 1;
@@ -398,9 +398,8 @@
     width: 94vw;
   }
 
-  /* The wordmark fills the short phone stage's bottom edge, so the photo
-     credit moves to the top corner, clear of it. */
-  .stage .credit,
+  /* The wordmark fills the short phone stage's bottom edge, so the replay
+     chip moves to the top corner, clear of it. */
   .replay {
     top: 10px;
     bottom: auto;
