@@ -22,7 +22,9 @@ const HOP_HOME_MS = 850;
 const T_SWELL = OPEN_MS;
 const T_DOWN = T_SWELL + SWELL_MS;
 const T_WRITE = T_DOWN + HOP_DOWN_MS;
-const T_HOME = T_WRITE + WRITE_MS + PAUSE_MS;
+/** The last letter is inked: the photos start to turn. */
+const T_WRITTEN = T_WRITE + WRITE_MS;
+const T_HOME = T_WRITTEN + PAUSE_MS;
 const T_END = T_HOME + HOP_HOME_MS;
 
 /* ── The pen, in the logo's units (see logo-tagline.ts) ─────────────────── */
@@ -41,8 +43,8 @@ const HOP_HOME_RISE = 90;
 const INK_FEATHER = 14;
 
 /**
- * How long each hero photo shows before crossfading to the next, once the
- * tagline is written and the dot is home.
+ * How long each hero photo shows before crossfading to the next. The first
+ * crossfade starts as the dot inks the last letter.
  */
 const PHOTO_CYCLE_MS = 6000;
 
@@ -135,8 +137,9 @@ const FINAL: Frame = {
  * before hopping back to its place, leaving the full logo with its tagline.
  * Played once on its own; with reduced motion it rests on the last frame.
  *
- * The hero's photos hold on the first while the tagline is written, then,
- * once the dot is home, crossfade to the next every PHOTO_CYCLE_MS.
+ * The hero's photos hold on the first while the tagline is written, then
+ * crossfade to the next the moment the last letter is inked (while the dot
+ * hops home), and every PHOTO_CYCLE_MS after.
  * `photosRef` holds one layer per photo, in order; the stylesheet does the
  * fade.
  *
@@ -194,10 +197,13 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
 
     let photo = 0;
     showPhoto(photo);
-    // Started once, when the dot first gets home; a replay leaves it running.
+    // Started once, when the tagline is first written: the next photo comes
+    // in straight away, then one every PHOTO_CYCLE_MS. A replay leaves it
+    // running.
     let cycleId = 0;
     const startCycling = () => {
       if (cycleId) return;
+      showPhoto(++photo);
       cycleId = window.setInterval(() => showPhoto(++photo), PHOTO_CYCLE_MS);
     };
 
@@ -205,10 +211,10 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
     let rafId = 0;
     const loop = () => {
       const t = performance.now() - start;
+      if (t >= T_WRITTEN) startCycling();
       if (t >= T_END) {
-        // The dot is home: stop drawing frames and let the photos turn.
+        // The dot is home: stop drawing frames.
         paint(FINAL);
-        startCycling();
         return;
       }
       paint(frameAt(t));
