@@ -327,23 +327,24 @@ const CTA_LABELS: Record<Availability, string> = {
   closed: "Details",
 };
 
-export type MonthCell = {
+/** One day square of a month grid, before anything is put on it. */
+export type MonthDay = {
   key: string;
   /** Empty for leading and trailing padding cells. */
   day: number | null;
   isToday: boolean;
   /** Before today: a run's chip fades here even while the run goes on. */
   past: boolean;
-  events: DecoratedEvent[];
 };
 
-/** One 7-column grid of whole weeks covering the month. */
-export function buildMonthGrid(
+export type MonthCell = MonthDay & { events: DecoratedEvent[] };
+
+/** The days of one 7-column grid of whole weeks covering the month. */
+export function monthDays(
   year: number,
   month: number,
-  events: DecoratedEvent[],
   today: string,
-): MonthCell[] {
+): MonthDay[] {
   const ym = `${year}-${pad(month + 1)}`;
   const lead = new Date(year, month, 1).getDay();
   const days = new Date(year, month + 1, 0).getDate();
@@ -353,17 +354,29 @@ export function buildMonthGrid(
     const day = i - lead + 1;
     const inside = day >= 1 && day <= days;
     const key = inside ? `${ym}-${pad(day)}` : `pad-${i}`;
-
     return {
       key,
       day: inside ? day : null,
       isToday: key === today,
       past: inside && key < today,
-      events: inside
-        ? events
-            .filter((e) => e.date <= key && key <= lastDayOf(e))
-            .sort(singleDayFirst)
-        : [],
     };
   });
+}
+
+/** One 7-column grid of whole weeks covering the month, with its events. */
+export function buildMonthGrid(
+  year: number,
+  month: number,
+  events: DecoratedEvent[],
+  today: string,
+): MonthCell[] {
+  return monthDays(year, month, today).map((cell) => ({
+    ...cell,
+    events:
+      cell.day === null
+        ? []
+        : events
+            .filter((e) => e.date <= cell.key && cell.key <= lastDayOf(e))
+            .sort(singleDayFirst),
+  }));
 }

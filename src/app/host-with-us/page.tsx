@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 
+import { shopTodayKey } from '@/components/calendar/event-model';
+import { AvailabilityCalendar } from '@/components/host-with-us/availability-calendar';
 import {
   InquiryForm,
   InquiryTypeLink,
@@ -16,6 +18,7 @@ import {
   CO_MARKETING_WORKSHOP_ENABLED,
   HOST_WITH_US_ENABLED,
 } from '@/lib/content/host-with-us';
+import { getShopAvailability } from '@/lib/shop-availability';
 import { pageMetadata } from '@/lib/site';
 
 import styles from '@/components/host-with-us/host-with-us-page.module.css';
@@ -31,6 +34,9 @@ export const metadata: Metadata = {
   // Reachable by URL for review, but kept out of search until it's public.
   ...(!HOST_WITH_US_ENABLED && { robots: { index: false, follow: false } }),
 };
+
+// Picks up new shifts and bookings from the shop calendar within 15 minutes.
+export const revalidate = 900;
 
 const WAYS: {
   type: RentalType;
@@ -72,7 +78,11 @@ const RENTAL_FACTS = [
   { value: 'Outside store hours', note: 'Mornings and evenings' },
 ];
 
-export default function HostWithUsPage() {
+export default async function HostWithUsPage() {
+  const today = shopTodayKey();
+  const availability = await getShopAvailability(today);
+  const hasFreeTime = availability?.days.some((day) => day.windows.length > 0);
+
   return (
     <>
       <SiteHeader />
@@ -132,6 +142,35 @@ export default function HostWithUsPage() {
             ))}
           </ol>
         </section>
+
+        {/* Without the calendar (no address, or Google is down) the page
+            goes back to asking for a date in the form. */}
+        {availability && (
+          <section
+            id="availability"
+            className={`${styles.band} ${styles.availability}`}
+          >
+            <div className={styles.availabilityIntro}>
+              <Eyebrow
+                color="var(--color-ecs-marigold)"
+                ink="var(--color-ecs-ink)"
+                className="mb-[18px]"
+              >
+                When it&rsquo;s free
+              </Eyebrow>
+              <h2 className={styles.heading}>Find a time that works.</h2>
+              <p className={styles.lede}>
+                {hasFreeTime
+                  ? 'These are the times the space is free over the next few months, outside store hours and other bookings.'
+                  : 'We’re booked up for the next few months. Tell us the date you have in mind in the form below and we’ll see what we can do.'}
+              </p>
+            </div>
+
+            {hasFreeTime && (
+              <AvailabilityCalendar days={availability.days} today={today} />
+            )}
+          </section>
+        )}
 
         <section id="inquire" className={`${styles.band} ${styles.rental}`}>
           <WaveDivider edge="top" fill="var(--color-ecs-teal-deep)" />

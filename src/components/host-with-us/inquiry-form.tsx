@@ -4,6 +4,7 @@ import {
   startTransition,
   useCallback,
   useEffect,
+  useRef,
   useState,
   type FormEvent,
   type ReactNode,
@@ -30,6 +31,15 @@ import styles from "@/components/ui/form.module.css";
 const AFTER_HOURS_HINT =
   "Please keep in mind that private events are held outside of normal operating hours.";
 
+/** How long the event would run, so a request can be checked against a free window. */
+const DURATIONS = [
+  { value: "1-2", label: "1 to 2 hours" },
+  { value: "2-3", label: "2 to 3 hours" },
+  { value: "3-4", label: "3 to 4 hours" },
+  { value: "4-plus", label: "More than 4 hours" },
+  { value: "unsure", label: "Not sure yet" },
+];
+
 const CATERING = [
   { value: "coffee-cart", label: "A coffee cart" },
   { value: "food-vendor", label: "A food vendor from the community" },
@@ -55,6 +65,16 @@ export const OFFERED_RENTAL_TYPES = RENTAL_TYPES.filter(
 );
 
 const CHOOSE_TYPE = "inquiry:choose-type";
+const CHOOSE_WHEN = "inquiry:choose-when";
+
+/**
+ * Fills in the form's preferred date/time ("YYYY-MM-DDTHH:MM", shop time),
+ * from a free window on the availability calendar. The caller links to
+ * #inquiry for the scroll.
+ */
+export function chooseInquiryWhen(when: string) {
+  window.dispatchEvent(new CustomEvent(CHOOSE_WHEN, { detail: when }));
+}
 
 const isRentalType = (value: string | null): value is RentalType =>
   OFFERED_RENTAL_TYPES.some((type) => type.value === value);
@@ -85,12 +105,18 @@ export function InquiryTypeLink({
 
 function InquiryFields({
   type,
+  when,
   onTypeChange,
   onReset,
   onRestart,
   scrollToTop,
 }: {
   type: string;
+  /**
+   * A time picked on the availability calendar, written into the field. A
+   * new object per pick, so picking the same time again still rewrites it.
+   */
+  when: { value: string } | null;
   onTypeChange: (type: string) => void;
   onReset: () => void;
   onRestart: () => void;
@@ -102,12 +128,23 @@ function InquiryFields({
     scrollToTop,
   );
 
-  // Picking a card after sending brings the form back for that choice.
+  // Picking a card or a time after sending brings the form back for it.
   useEffect(() => {
     if (state.status !== "success") return;
     window.addEventListener(CHOOSE_TYPE, onRestart);
-    return () => window.removeEventListener(CHOOSE_TYPE, onRestart);
+    window.addEventListener(CHOOSE_WHEN, onRestart);
+    return () => {
+      window.removeEventListener(CHOOSE_TYPE, onRestart);
+      window.removeEventListener(CHOOSE_WHEN, onRestart);
+    };
   }, [state.status, onRestart]);
+
+  // The field stays uncontrolled, so the visitor can still change it; a
+  // newly picked time just overwrites it.
+  const whenRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (when && whenRef.current) whenRef.current.value = when.value;
+  }, [when]);
 
   // Not <form action>, which resets the form after every attempt: a failed
   // send would wipe the visitor's answers, and React doesn't restore a
@@ -204,7 +241,27 @@ function InquiryFields({
         label="Preferred date/time"
         hint={AFTER_HOURS_HINT}
       >
-        {(props) => <input {...props} type="datetime-local" name="when" />}
+        {(props) => (
+          <input {...props} ref={whenRef} type="datetime-local" name="when" />
+        )}
+      </Field>
+
+      <Field id="inquiry-duration" label="How long?">
+        {(props) => (
+          <select
+            {...props}
+            className={`${props.className} ${styles.select}`}
+            name="duration"
+            defaultValue=""
+          >
+            <option value="">Choose one</option>
+            {DURATIONS.map((duration) => (
+              <option key={duration.value} value={duration.value}>
+                {duration.label}
+              </option>
+            ))}
+          </select>
+        )}
       </Field>
 
       <Field id="inquiry-people" label="How many people?">
@@ -298,6 +355,7 @@ function InquiryFields({
 export function InquiryForm() {
   const [attempt, setAttempt] = useState(0);
   const [type, setType] = useState("");
+  const [when, setWhen] = useState<{ value: string } | null>(null);
   const { ref, scrollToTop } = useScrollToTop<HTMLDivElement>();
   const restart = useCallback(() => setAttempt((current) => current + 1), []);
 
@@ -309,8 +367,18 @@ export function InquiryForm() {
     const choose = (event: Event) => {
       setType((event as CustomEvent<RentalType>).detail);
     };
+    // A time from the availability calendar is for renting the space,
+    // unless they've already said otherwise.
+    const chooseWhen = (event: Event) => {
+      setWhen({ value: (event as CustomEvent<string>).detail });
+      setType((current) => current || "private-event");
+    };
     window.addEventListener(CHOOSE_TYPE, choose);
-    return () => window.removeEventListener(CHOOSE_TYPE, choose);
+    window.addEventListener(CHOOSE_WHEN, chooseWhen);
+    return () => {
+      window.removeEventListener(CHOOSE_TYPE, choose);
+      window.removeEventListener(CHOOSE_WHEN, chooseWhen);
+    };
   }, []);
 
   return (
@@ -318,11 +386,13 @@ export function InquiryForm() {
       <InquiryFields
         key={attempt}
         type={type}
+        when={when}
         onTypeChange={setType}
         onRestart={restart}
         scrollToTop={scrollToTop}
         onReset={() => {
           setType("");
+          setWhen(null);
           restart();
           scrollToTop();
         }}

@@ -102,6 +102,7 @@ export const hostInquirySchema = z.object({
   type: z.enum(["private-event", "co-marketing-workshop", "pitch-an-idea"]),
   // From a datetime-local input, which has no time zone.
   when: z.union([z.literal(""), z.iso.datetime({ local: true })]),
+  duration: z.enum(["", "1-2", "2-3", "3-4", "4-plus", "unsure"]),
   people: z.string().trim().regex(/^(?:[1-9]\d{0,3})?$/),
   catering: z.array(z.enum(["coffee-cart", "food-vendor"])).max(2),
   needs: z.array(z.enum(["additional-table", "garden-area"])).max(2),

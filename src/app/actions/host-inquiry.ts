@@ -25,6 +25,14 @@ const CATERING_ANSWERS = {
   "food-vendor": "Food vendor from the community",
 } as const;
 
+const DURATION_ANSWERS = {
+  "1-2": "1 to 2 hours",
+  "2-3": "2 to 3 hours",
+  "3-4": "3 to 4 hours",
+  "4-plus": "more than 4 hours",
+  unsure: "length not sure yet",
+} as const;
+
 const NEEDS_ANSWERS = {
   "additional-table": "Additional table",
   "garden-area": "Garden in the back",
@@ -49,6 +57,7 @@ function validationMessage(error: z.ZodError<HostInquiry>): string {
   if (field === "email") return "Enter a valid email address.";
   if (field === "type") return "Choose how you would like to use the space.";
   if (field === "when") return "Check the preferred date and time.";
+  if (field === "duration") return "Choose how long the event would run.";
   if (field === "people") return "Enter how many people as a number.";
 
   const label = field && FIELD_LABELS[field];
@@ -81,6 +90,15 @@ function readableDateTime(value: string): string {
   }).format(new Date(`${value}Z`));
 }
 
+/**
+ * The Wix form has no field for the length, so it rides along with the
+ * preferred time: "Nov 19, 2026, 6:30 PM · 2 to 3 hours".
+ */
+function whenWithDuration(when: string, duration: HostInquiry["duration"]) {
+  const length = duration === "" ? "" : DURATION_ANSWERS[duration];
+  return [readableDateTime(when), length].filter(Boolean).join(" · ");
+}
+
 export async function submitHostInquiry(
   _prevState: ApplicationState,
   formData: FormData,
@@ -97,6 +115,7 @@ export async function submitHostInquiry(
     email: formValue(formData, "email"),
     type: formValue(formData, "type"),
     when: formValue(formData, "when"),
+    duration: formValue(formData, "duration"),
     people: formValue(formData, "people"),
     catering: formData.getAll("catering"),
     needs: formData.getAll("needs"),
@@ -118,7 +137,10 @@ export async function submitHostInquiry(
         [HOST_FORM_FIELDS.lastName]: inquiry.last,
         [HOST_FORM_FIELDS.email]: inquiry.email,
         [HOST_FORM_FIELDS.use]: USE_ANSWERS[inquiry.type],
-        [HOST_FORM_FIELDS.when]: readableDateTime(inquiry.when),
+        [HOST_FORM_FIELDS.when]: whenWithDuration(
+          inquiry.when,
+          inquiry.duration,
+        ),
         [HOST_FORM_FIELDS.people]: inquiry.people,
         [HOST_FORM_FIELDS.catering]: inquiry.catering
           .map((answer) => CATERING_ANSWERS[answer])

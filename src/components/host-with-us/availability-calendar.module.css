@@ -1,0 +1,177 @@
+.calendar {
+  display: grid;
+  gap: clamp(16px, 2.4vh, 24px);
+  min-width: 0;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 2vw, 20px);
+}
+
+.month {
+  margin: 0;
+  min-width: 9ch;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 3.6vw, 2.8rem);
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+}
+
+.year {
+  font-family: var(--font-heading);
+  font-size: 0.4em;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+}
+
+/* Wide screens: a month grid. */
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekday {
+  padding: 0 0 8px;
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 112px;
+  padding: 8px;
+  border-radius: 16px;
+  background: var(--color-ecs-surface);
+  color: var(--color-ecs-ink);
+  box-shadow: 0 5px 0 -2px color-mix(in srgb, var(--color-ecs-ply-ink) 18%, transparent);
+}
+
+.cell[data-today] {
+  outline: 3px solid var(--color-ecs-marigold);
+  outline-offset: -3px;
+}
+
+.cell[data-booked] {
+  background: color-mix(in srgb, var(--color-ecs-surface) 45%, transparent);
+  box-shadow: none;
+}
+
+.cell[data-past] {
+  opacity: 0.4;
+}
+
+.date {
+  align-self: flex-end;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.booked {
+  margin-top: auto;
+  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-ecs-neutral-700);
+}
+
+/* One free window. Calendar chips aren't buttons, but still 44px to tap. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 2px solid var(--color-ecs-teal-deep);
+  background: var(--color-ecs-teal-pale);
+  color: var(--color-ecs-teal-deep);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 1.1;
+  text-align: center;
+  text-decoration: none;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .chip:hover {
+    background: var(--color-ecs-teal-deep);
+    color: #ffffff;
+  }
+}
+
+.chip:focus-visible {
+  background: var(--color-ecs-teal-deep);
+  color: #ffffff;
+}
+
+/* Phones: the free days as a list. */
+.list {
+  display: none;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 4.2em 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: var(--color-ecs-surface);
+  color: var(--color-ecs-ink);
+}
+
+.rowDate {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.rowWindows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.none {
+  font-style: italic;
+}
+
+.note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (max-width: 760px) {
+  .grid {
+    display: none;
+  }
+
+  .list {
+    display: grid;
+  }
+}

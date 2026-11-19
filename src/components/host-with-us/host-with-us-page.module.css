@@ -82,6 +82,16 @@
   align-self: start;
 }
 
+/* The free windows: one column, the calendar under its intro. */
+.availability {
+  grid-template-columns: 1fr;
+  color: var(--color-ecs-teal-deep);
+}
+
+.availabilityIntro {
+  max-width: 820px;
+}
+
 .rental {
   background: var(--color-ecs-teal-deep);
   color: var(--color-ecs-neutral-100);
