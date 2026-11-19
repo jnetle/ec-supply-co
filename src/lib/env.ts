@@ -20,6 +20,8 @@ const HINTS = {
   WIX_SITE_ID: "The ID after /dashboard/ in the Wix dashboard's address bar.",
   GOOGLE_PLACES_API_KEY:
     "Google Cloud console > APIs & Services > Credentials. Enable Places API (New) and restrict the key to it.",
+  GOOGLE_CALENDAR_ICS_URL:
+    "Google Calendar > Settings for the shop calendar > Integrate calendar > Secret address in iCal format. Server-only: never prefix it NEXT_PUBLIC_.",
 } as const;
 
 type EnvKey = keyof typeof HINTS;
@@ -51,6 +53,9 @@ export const env = {
   wixSiteId: () => required("WIX_SITE_ID"),
   // Optional: without a key the visit section falls back to a note and links.
   googlePlacesApiKey: () => optional("GOOGLE_PLACES_API_KEY"),
+  // Optional: the shop calendar (open shifts and bookings) behind the
+  // availability on /host-with-us. Without it the page asks for a date instead.
+  googleCalendarIcsUrl: () => optional("GOOGLE_CALENDAR_ICS_URL"),
 };
 
 /**

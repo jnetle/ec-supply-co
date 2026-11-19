@@ -102,7 +102,16 @@ export const hostInquirySchema = z.object({
   type: z.enum(["private-event", "co-marketing-workshop", "pitch-an-idea"]),
   // From a datetime-local input, which has no time zone.
   when: z.union([z.literal(""), z.iso.datetime({ local: true })]),
-  people: z.string().trim().regex(/^(?:[1-9]\d{0,3})?$/),
+  duration: z.enum(["", "1-2", "2-3", "3-4", "4-plus", "unsure"]),
+  // The end picked on the availability calendar, same day as `when`.
+  until: z.union([
+    z.literal(""),
+    z.string().regex(/^(?:[01]\d|2[0-3]):[0-5]\d$/),
+  ]),
+  people: z
+    .string()
+    .trim()
+    .regex(/^(?:[1-9]\d{0,3})?$/),
   catering: z.array(z.enum(["coffee-cart", "food-vendor"])).max(2),
   needs: z.array(z.enum(["additional-table", "garden-area"])).max(2),
   about: longText.min(1),
