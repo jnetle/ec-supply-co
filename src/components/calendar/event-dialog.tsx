@@ -229,7 +229,9 @@ export function EventDialog({
                   ) : null}
                 </div>
 
-                {event.past ? null : (
+                {/* An ongoing run's Wix end date is only a placeholder, so
+                    saving it would block out months of someone's calendar. */}
+                {event.past || event.ongoing ? null : (
                   <div className={styles.addToCalendar}>
                     <span className={styles.addLabel}>Add to calendar</span>
                     <a

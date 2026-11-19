@@ -489,8 +489,9 @@ function isLongRun(event: DecoratedEvent, year: number, month: number) {
   return row(last) - row(first) + 1 >= LONG_RUN_WEEKS;
 }
 
-/** A pinned run's dates as seen from month `ym`: "All month", "Thru Nov 22", "From Nov 10" or "Nov 3–22". */
+/** A pinned run's dates as seen from month `ym`: "All month", "Thru Nov 22", "From Nov 10" or "Nov 3–22". An ongoing run is "Ongoing". */
 function pinnedWhen(event: DecoratedEvent, ym: string) {
+  if (event.ongoing) return event.longDate;
   const first = event.date;
   const last = lastDayOf(event);
   const short = (key: string) =>
