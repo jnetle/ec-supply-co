@@ -14,3 +14,29 @@ export const HOST_WITH_US_ENABLED = false;
  * the space instead of three.
  */
 export const CO_MARKETING_WORKSHOP_ENABLED = true;
+
+/**
+ * The hours of a day the space can be rented at all, in minutes from
+ * midnight, shop time: 9am to 9pm. Free windows on /host-with-us are cut
+ * from these.
+ */
+export const RENTAL_DAY = { startMinute: 9 * 60, endMinute: 21 * 60 };
+
+/** Setup and cleanup kept clear on each side of anything on the calendar. */
+export const BOOKING_BUFFER_MINUTES = 30;
+
+/** Gaps shorter than this aren't worth offering. */
+export const MIN_WINDOW_MINUTES = 2 * 60;
+
+/** How far ahead the availability calendar looks, counting today. */
+export const AVAILABILITY_DAYS = 90;
+
+/**
+ * ?preview=mock fills the availability band with a made-up shop calendar,
+ * to try it without the secret address. Never on the production site.
+ */
+export const MOCK_AVAILABILITY_PREVIEW = {
+  param: "preview",
+  value: "mock",
+  allowed: process.env.VERCEL_ENV !== "production",
+} as const;

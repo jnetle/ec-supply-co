@@ -17,8 +17,11 @@ import {
   useScrollToTop,
 } from "@/components/ui/application-form";
 import { button } from "@/components/ui/button";
+import { clock, type PickedSlot } from "@/components/host-with-us/free-time";
+import { FreeTimePicker } from "@/components/host-with-us/free-time-picker";
 import { Field } from "@/components/ui/field";
 import { CO_MARKETING_WORKSHOP_ENABLED } from "@/lib/content/host-with-us";
+import type { AvailabilityDay } from "@/lib/shop-availability";
 import {
   MAX_EMAIL_LENGTH,
   MAX_LONG_TEXT_LENGTH,
@@ -29,6 +32,15 @@ import styles from "@/components/ui/form.module.css";
 
 const AFTER_HOURS_HINT =
   "Please keep in mind that private events are held outside of normal operating hours.";
+
+/** How long the event would run, so a request can be checked against a free window. */
+const DURATIONS = [
+  { value: "1-2", label: "1 to 2 hours" },
+  { value: "2-3", label: "2 to 3 hours" },
+  { value: "3-4", label: "3 to 4 hours" },
+  { value: "4-plus", label: "More than 4 hours" },
+  { value: "unsure", label: "Not sure yet" },
+];
 
 const CATERING = [
   { value: "coffee-cart", label: "A coffee cart" },
@@ -83,14 +95,74 @@ export function InquiryTypeLink({
   );
 }
 
+/**
+ * The date and time, placed as a block on a free day in a dialog. Sent as
+ * `when` ("YYYY-MM-DDTHH:MM", like the plain date/time input it stands in
+ * for) and `until` ("HH:MM"), the end the block was dragged to.
+ */
+function FreeTimeField({ days }: { days: AvailabilityDay[] }) {
+  const [value, setValue] = useState<PickedSlot | null>(null);
+
+  return (
+    <>
+      <Field
+        id="inquiry-when"
+        label="Date and time"
+        hint={`${AFTER_HOURS_HINT} Don't see a time that works? Leave it blank and tell us in the notes.`}
+      >
+        {(props) => (
+          <FreeTimePicker
+            days={days}
+            value={value}
+            onChange={setValue}
+            fieldProps={props}
+          />
+        )}
+      </Field>
+      <input
+        type="hidden"
+        name="when"
+        value={value ? `${value.date}T${clock(value.start)}` : ""}
+      />
+      <input type="hidden" name="until" value={value ? clock(value.end) : ""} />
+    </>
+  );
+}
+
+/** How long the event would run, for the plain date/time box. */
+function DurationField() {
+  return (
+    <Field id="inquiry-duration" label="How long?">
+      {(props) => (
+        <select
+          {...props}
+          className={`${props.className} ${styles.select}`}
+          name="duration"
+          defaultValue=""
+        >
+          <option value="">Choose one</option>
+          {DURATIONS.map((duration) => (
+            <option key={duration.value} value={duration.value}>
+              {duration.label}
+            </option>
+          ))}
+        </select>
+      )}
+    </Field>
+  );
+}
+
 function InquiryFields({
   type,
+  availability,
   onTypeChange,
   onReset,
   onRestart,
   scrollToTop,
 }: {
   type: string;
+  /** Free days from the shop calendar; without them, a plain date/time box. */
+  availability?: AvailabilityDay[];
   onTypeChange: (type: string) => void;
   onReset: () => void;
   onRestart: () => void;
@@ -199,13 +271,22 @@ function InquiryFields({
         )}
       </Field>
 
-      <Field
-        id="inquiry-when"
-        label="Preferred date/time"
-        hint={AFTER_HOURS_HINT}
-      >
-        {(props) => <input {...props} type="datetime-local" name="when" />}
-      </Field>
+      {/* With the calendar, the block sets the length too; without it, a
+          plain date/time box and a "How long?" dropdown. */}
+      {availability?.some((day) => day.windows.length > 0) ? (
+        <FreeTimeField days={availability} />
+      ) : (
+        <>
+          <Field
+            id="inquiry-when"
+            label="Preferred date/time"
+            hint={AFTER_HOURS_HINT}
+          >
+            {(props) => <input {...props} type="datetime-local" name="when" />}
+          </Field>
+          <DurationField />
+        </>
+      )}
 
       <Field id="inquiry-people" label="How many people?">
         {(props) => (
@@ -295,7 +376,12 @@ function InquiryFields({
  * the ways it is. "Send another" remounts the fields with a new key, which
  * clears both the values and the action state.
  */
-export function InquiryForm() {
+export function InquiryForm({
+  availability,
+}: {
+  /** Free days from the shop calendar, offered in a calendar picker. */
+  availability?: AvailabilityDay[];
+} = {}) {
   const [attempt, setAttempt] = useState(0);
   const [type, setType] = useState("");
   const { ref, scrollToTop } = useScrollToTop<HTMLDivElement>();
@@ -318,6 +404,7 @@ export function InquiryForm() {
       <InquiryFields
         key={attempt}
         type={type}
+        availability={availability}
         onTypeChange={setType}
         onRestart={restart}
         scrollToTop={scrollToTop}

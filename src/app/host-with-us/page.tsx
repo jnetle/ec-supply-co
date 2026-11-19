@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 
+import { shopTodayKey } from '@/components/calendar/event-model';
 import {
   InquiryForm,
   InquiryTypeLink,
@@ -15,7 +16,10 @@ import { WaveDivider } from '@/components/ui/wave-divider';
 import {
   CO_MARKETING_WORKSHOP_ENABLED,
   HOST_WITH_US_ENABLED,
+  MOCK_AVAILABILITY_PREVIEW,
 } from '@/lib/content/host-with-us';
+import { mockShopAvailability } from '@/lib/mock-availability';
+import { getShopAvailability } from '@/lib/shop-availability';
 import { pageMetadata } from '@/lib/site';
 
 import styles from '@/components/host-with-us/host-with-us-page.module.css';
@@ -72,7 +76,22 @@ const RENTAL_FACTS = [
   { value: 'Outside store hours', note: 'Mornings and evenings' },
 ];
 
-export default function HostWithUsPage() {
+type HostWithUsPageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function HostWithUsPage({
+  searchParams,
+}: HostWithUsPageProps) {
+  const today = shopTodayKey();
+  const mock =
+    MOCK_AVAILABILITY_PREVIEW.allowed &&
+    (await searchParams)[MOCK_AVAILABILITY_PREVIEW.param] ===
+      MOCK_AVAILABILITY_PREVIEW.value;
+  const availability = mock
+    ? mockShopAvailability(today)
+    : await getShopAvailability(today);
+
   return (
     <>
       <SiteHeader />
@@ -173,7 +192,7 @@ export default function HostWithUsPage() {
             />
           </div>
 
-          <InquiryForm />
+          <InquiryForm availability={availability?.days} />
         </section>
       </main>
 
