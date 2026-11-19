@@ -67,21 +67,19 @@ export function EventDialog({
     ? null
     : event.past
       ? "This one already happened — check the calendar for the next round."
-      : event.dropIn
-        ? "No sign-up needed. Just come by."
-        : event.soon
-          ? null
-          : event.seats.kind === "external"
-              ? event.orderUrl
-                ? event.category === "pickup"
-                  ? "Preorder on the vendor's site, then pick it up at the shop."
-                  : "Sign-ups are on the host's own site."
-                : "Sign-up details are on the way."
-              : event.availability === "full"
-                ? "This one is full."
-                : event.availability === "closed"
-                  ? "Sign-ups for this one are closed."
-                  : null;
+      : event.dropIn || event.soon
+        ? null
+        : event.seats.kind === "external"
+          ? event.orderUrl
+            ? event.category === "pickup"
+              ? "Preorder on the vendor's site, then pick it up at the shop."
+              : "Sign-ups are on the host's own site."
+            : "Sign-up details are on the way."
+          : event.availability === "full"
+            ? "This one is full."
+            : event.availability === "closed"
+              ? "Sign-ups for this one are closed."
+              : null;
 
   const soonPanel = event.soon && !event.past;
   const things = event.category === "pickup" ? "Preorders" : "Sign-ups";
@@ -419,7 +417,6 @@ function RsvpForm({
       <input type="hidden" name="eventId" value={eventId} />
       {waitlist && <input type="hidden" name="waitlist" value="on" />}
       {notify && <input type="hidden" name="notify" value="on" />}
-
 
       {notify ? null : (
         <div className={formStyles.pair}>

@@ -249,7 +249,7 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
       }`
     : "";
 
-  // A drop-in shows no chip: the dialog's note already says "Just come by."
+  // A drop-in shows no chip and no dialog note.
   const spotsLabel = availability
     ? SPOTS_LABELS[availability]
     : soon
