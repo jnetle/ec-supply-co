@@ -53,8 +53,15 @@ export function EventCard({
         <div className={styles.body}>
           <div className={styles.intro}>
             {/* Beside the title, off the photo, so it never covers a
-                flyer's own text or logo. The When line says it in words. */}
-            <EventDateChip event={event} className={styles.date} aria-hidden />
+                flyer's own text or logo. The When line says it in words.
+                An ongoing run has no end date to show, so no chip. */}
+            {!event.ongoing && (
+              <EventDateChip
+                event={event}
+                className={styles.date}
+                aria-hidden
+              />
+            )}
             <div className={styles.tags}>
               <span
                 className={styles.tag}

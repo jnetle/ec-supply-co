@@ -169,8 +169,29 @@ export function googleCalendarUrl(
 /** Months since year 0, so navigation is one number to clamp. */
 export const monthIndex = (year: number, month: number) => year * 12 + month;
 
+/**
+ * A run this many days long or longer is a fixture at the shop (Mirage's
+ * coffee bar), not a date to circle: it reads "Ongoing", with no end date.
+ * Its Wix end date still takes it off the site, so set that well ahead and
+ * push it out as it nears.
+ */
+const ONGOING_DAYS = 60;
+
+/** Whether a run lasts ONGOING_DAYS or more, counting both ends. */
+function isOngoing(event: Pick<CalendarEvent, "date" | "lastDate">) {
+  if (!event.lastDate) return false;
+  const days =
+    (Date.parse(`${event.lastDate}T00:00:00Z`) -
+      Date.parse(`${event.date}T00:00:00Z`)) /
+      (24 * HOUR) +
+    1;
+  return days >= ONGOING_DAYS;
+}
+
 export type DecoratedEvent = CalendarEvent & {
   past: boolean;
+  /** A run long enough to be a fixture: "Ongoing", no end date shown. */
+  ongoing: boolean;
   dropIn: boolean;
   /** Where sign-ups stand; null for a drop-in, external or save-the-date
    * event. */
@@ -219,6 +240,7 @@ export type DecoratedEvent = CalendarEvent & {
 export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
   const category = CATEGORIES[event.category];
   const past = lastDayOf(event) < today;
+  const ongoing = isOngoing(event);
   const dropIn = event.seats.kind === "drop-in";
   const availability =
     event.seats.kind === "rsvp" ? event.seats.availability : null;
@@ -274,6 +296,7 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
   return {
     ...event,
     past,
+    ongoing,
     dropIn,
     availability,
     soon,
@@ -285,13 +308,17 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
     categoryLabel: category.label,
     categoryColor: category.color,
     categoryInk: category.ink,
-    // A run's chip counts down to its last day: "THRU 30".
+    // A run's chip counts down to its last day: "THRU 30". An ongoing run
+    // shows no chip at all (see EventCard), since its end date is only a
+    // placeholder.
     dow: last ? "THRU" : WEEKDAYS[date.getDay()].toUpperCase(),
     day: (last ?? date).getDate(),
     month: MONTHS[(last ?? date).getMonth()].slice(0, 3).toUpperCase(),
-    longDate: last
-      ? runLabel(date, last)
-      : `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
+    longDate: ongoing
+      ? "Ongoing"
+      : last
+        ? runLabel(date, last)
+        : `${WEEKDAYS[date.getDay()]}, ${MONTHS[date.getMonth()]} ${date.getDate()}`,
     // Empty while the time isn't set yet, and for a run, whose hours vary
     // day to day; every view then shows the dates alone.
     time:

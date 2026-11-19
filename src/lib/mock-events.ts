@@ -176,6 +176,20 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
         "Runs over several days, already going: its card shows the dates and no time, and the month view shows it every day.",
     },
     {
+      id: "mock-ongoing",
+      date: on(-20),
+      lastDate: on(160),
+      start: "08:00",
+      end: "14:00",
+      category: "popup",
+      title: "Neighborhood coffee bar",
+      photo: "/assets/photos/id-102-600-600.jpg",
+      price: 0,
+      seats: { kind: "drop-in" },
+      description:
+        "Runs for months, so it reads Ongoing instead of its dates, with no THRU chip, and is pinned as Ongoing in the month view.",
+    },
+    {
       id: "mock-save-the-date",
       date: on(30),
       start: "13:00",
