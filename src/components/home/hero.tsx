@@ -316,7 +316,7 @@ function HeroTagline() {
             href="#about"
             className={button({ variant: "link", tone: "paper" })}
           >
-            A shop for local makers, with coffee and popups{" "}
+            A community shop of local maker goods, with coffee and pop-up events{" "}
             <span aria-hidden="true" className={styles.outroArrow}>↓</span>
           </a>
         </div>
