@@ -199,8 +199,10 @@
   font-size: 15px;
 }
 
-/* The main button and, for a host-booked event, its Details link. */
+/* The main button and, for a host-booked event, its Details link. Kept to
+   the right, even when it wraps under the facts. */
 .actions {
+  margin-left: auto;
   display: flex;
   flex-wrap: wrap;
   align-items: center;

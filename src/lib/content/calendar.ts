@@ -22,6 +22,9 @@ export type Seats =
       /** The day sign-ups open, as YYYY-MM-DD in shop time, when Wix knows
        * it (an RSVP scheduled to open). */
       opens?: string;
+      /** The exact go-live time (ISO), when an external link is scheduled
+       * with `#opens=`, so the label can say the hour. */
+      opensAt?: string;
       /** A notify list: the event's Wix RSVPs are open but only collect
        * emails, so the shop can send the sign-up link once it exists.
        * "waitlist" when the RSVP limit is reached. */
@@ -32,6 +35,9 @@ export type Seats =
       /** The host's sign-up or order page, from Wix's external registration link.
        * Unset shows no button. */
       url?: string;
+      /** When the link goes live (ISO), from an `#opens=` tag on it. Until
+       * then `applyOpenings` turns the event into a save the date. */
+      opensAt?: string;
     }
   | {
       kind: "rsvp";

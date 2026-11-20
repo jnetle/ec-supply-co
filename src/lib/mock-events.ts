@@ -1,47 +1,6 @@
-import { SHOP_TIME_ZONE, type CalendarEvent } from "@/lib/content/calendar";
+import type { CalendarEvent } from "@/lib/content/calendar";
 import type { RsvpState } from "@/lib/event-rsvp";
-
-const wallClock = new Intl.DateTimeFormat("en-US", {
-  timeZone: SHOP_TIME_ZONE,
-  hourCycle: "h23",
-  year: "numeric",
-  month: "numeric",
-  day: "numeric",
-  hour: "numeric",
-  minute: "numeric",
-});
-
-/** How far the shop's clock is ahead of UTC (negative here) at an instant. */
-function shopOffset(instant: number): number {
-  const part = Object.fromEntries(
-    wallClock
-      .formatToParts(instant)
-      .map(({ type, value }) => [type, Number(value)]),
-  );
-  const wall = Date.UTC(
-    part.year,
-    part.month - 1,
-    part.day,
-    part.hour,
-    part.minute,
-  );
-  return wall - Math.floor(instant / 60_000) * 60_000;
-}
-
-/**
- * "2026-12-13" + "11:00" in shop time → its ISO instant. Real events get theirs
- * from Wix; this is only for the made-up ones. The offset is checked again at
- * the result, so a time on a clock-change day lands on the right side of it.
- */
-function shopInstant(date: string, time: string): string {
-  const [year, month, day] = date.split("-").map(Number);
-  const [hour, minute] = time.split(":").map(Number);
-  const asUtc = Date.UTC(year, month - 1, day, hour, minute);
-  let instant = asUtc - shopOffset(asUtc);
-  const settled = shopOffset(instant);
-  if (settled !== asUtc - instant) instant = asUtc - settled;
-  return new Date(instant).toISOString();
-}
+import { shopInstant } from "@/lib/shop-time";
 
 /**
  * Made-up events for /calendar?preview=mock, one for each state the list and
@@ -135,6 +94,39 @@ export function mockCalendarEvents(today: string): CalendarEvent[] {
       seats: { kind: "external", url: "https://example.com" },
       description:
         "Dye a cotton scarf with onion skins and avocado pits. Sign-ups and payment are on the teacher's site.",
+    },
+    {
+      id: "mock-external-opens-noon",
+      date: on(8),
+      start: "11:00",
+      end: "13:00",
+      category: "workshop",
+      title: "Block printing tea towels",
+      photo: "/assets/photos/id-63-600-600.jpg",
+      price: 0,
+      seats: {
+        kind: "external",
+        url: "https://example.com/opens-today",
+        opensAt: shopInstant(today, "12:00"),
+      },
+      description:
+        "Sign-ups open on the teacher's site at noon today. Before then it's a save the date; after, it has a Sign up button.",
+    },
+    {
+      id: "mock-external-opens-tomorrow",
+      date: on(15),
+      start: "14:00",
+      end: "16:00",
+      category: "workshop",
+      title: "Beeswax candle rolling",
+      price: 0,
+      seats: {
+        kind: "external",
+        url: "https://example.com/opens-tomorrow",
+        opensAt: shopInstant(on(1), "12:00"),
+      },
+      description:
+        "Sign-ups open at noon tomorrow, so this one always shows as a save the date.",
     },
     {
       id: "mock-pickup",

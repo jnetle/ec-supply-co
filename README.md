@@ -198,6 +198,35 @@ events**. Verify **Settings > Development & integrations > Headless Settings**
 and ensure every environment uses the client ID for the site that owns the real
 events.
 
+## Scheduled sign-up links
+
+An event whose sign-up lives on another site (Luma, a vendor's page) can have
+its link put in Wix ahead of time and go live by itself. In the Wix event, set
+registration to an external site and add `#opens=` with the go-live time to
+the end of the link:
+
+```
+https://luma.com/3ep54yn7?utm_source=website#opens=2026-11-20T12:00
+```
+
+- The time is shop time (Pacific), 24-hour, written `YYYY-MM-DDTHH:MM`. It
+  goes at the very end, after any `?utm_…` part.
+- Until then the event shows as a save the date ("Sign-ups open Nov 20,
+  12pm") with no button, and the link is left out of the page entirely, so it
+  can't be found in the page source.
+- No "Save the date" category is needed.
+- When it goes live, the button links to the URL without the `#opens=` part.
+  `/calendar` switches on the next page load; the home page's events can take
+  up to 5 minutes (it refreshes every 300 seconds). A page someone already has
+  open switches when they refresh.
+- A tag that doesn't match the format is logged as a warning, and the link
+  shows straight away.
+- To see both states, open `/calendar?preview=mock` (outside production):
+  "Block printing tea towels" goes live at noon today and "Beeswax candle
+  rolling" at noon tomorrow.
+
+Code: `src/lib/event-openings.ts` (`splitOpens`, `applyOpenings`).
+
 ## Makers
 
 `/makers` and the home page spotlight read the Wix CMS collection **`LocalMakers`**
