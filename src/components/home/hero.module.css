@@ -365,6 +365,61 @@
   will-change: transform;
 }
 
+/* The quiet link saying what the shop is, near the foot of the photo. Hidden until the dot is home (see use-hero-tagline). */
+.outro {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(20px, 7vh, 72px);
+  width: min(92vw, 40rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transform: translateX(-50%);
+  transition:
+    opacity 600ms ease-out,
+    transform 600ms ease-out;
+}
+
+.outro[data-pending] {
+  opacity: 0;
+  transform: translate(-50%, 10px);
+  pointer-events: none;
+}
+
+.outroArrow {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .outro:not([data-pending]) .outroArrow {
+    animation: outro-bob 2.4s ease-in-out 1s infinite;
+  }
+}
+
+@keyframes outro-bob {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .outro {
+    transition: none;
+  }
+}
+
+@media (max-width: 620px) {
+  .outro {
+    bottom: 14px;
+  }
+}
+
 @media (max-width: 620px) {
   .track {
     height: auto;

@@ -151,6 +151,7 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
   const coRef = useRef<SVGGElement>(null);
   const dotRef = useRef<SVGGElement>(null);
   const inkRef = useRef<SVGLinearGradientElement>(null);
+  const outroRef = useRef<HTMLDivElement>(null);
   const replayRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -187,9 +188,17 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
       }
     };
 
+    const showOutro = (shown: boolean) => {
+      const outro = outroRef.current;
+      if (!outro) return;
+      if (shown) outro.removeAttribute("data-pending");
+      else outro.setAttribute("data-pending", "");
+    };
+
     if (!enabled) {
       // Reduced motion: the finished logo over the first photo, still.
       paint(FINAL);
+      showOutro(true);
       showPhoto(0);
       replayRef.current = null;
       return;
@@ -215,6 +224,7 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
       if (t >= T_END) {
         // The dot is home: stop drawing frames.
         paint(FINAL);
+        showOutro(true);
         return;
       }
       paint(frameAt(t));
@@ -226,6 +236,7 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
 
     replayRef.current = () => {
       cancelAnimationFrame(rafId);
+      showOutro(false);
       start = performance.now();
       rafId = requestAnimationFrame(loop);
     };
@@ -239,5 +250,5 @@ export function useHeroTagline({ enabled }: { enabled: boolean }) {
 
   const replay = useCallback(() => replayRef.current?.(), []);
 
-  return { replay, photosRef, coRef, dotRef, inkRef };
+  return { replay, photosRef, coRef, dotRef, inkRef, outroRef };
 }
