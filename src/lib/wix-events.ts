@@ -13,6 +13,7 @@ import {
   type EventCategory,
   type Seats,
 } from "@/lib/content/calendar";
+import { splitOpens } from "@/lib/event-openings";
 import { MAX_RSVP_SEATS } from "@/lib/form-limits";
 import type { IcsEvent } from "@/lib/ics";
 import { getWixClient } from "@/lib/wix";
@@ -268,6 +269,9 @@ function maxSeats(form: wixEventsV2.Form | undefined): number {
  * exists. That category isn't a type, so it adds no filter.
  * (An external registration with no link, should Wix ever allow one, is also
  * a save the date.)
+ *
+ * An external link can carry its go-live time (`#opens=2026-11-20T12:00`);
+ * `applyOpenings` keeps it a save the date until then.
  */
 function seatsFor(
   event: wixEventsV2.Event,
@@ -302,7 +306,10 @@ function seatsFor(
     return { kind: "drop-in" };
   }
   if (registration.type === "EXTERNAL") {
-    return { kind: "external", url: registration.external?.url || undefined };
+    const link = registration.external?.url;
+    if (!link) return { kind: "external" };
+    const { url, opensAt } = splitOpens(link, event.title ?? "Untitled");
+    return { kind: "external", url, opensAt };
   }
   if (registration.type === "RSVP") {
     return {

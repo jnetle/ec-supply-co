@@ -99,11 +99,23 @@ export function EventCard({
                 <dd>{event.longDate}</dd>
                 {event.time && <dd>{event.time}</dd>}
               </div>
+              {/* A save the date says when sign-ups open on the card itself,
+                  so nobody has to open the details to find out. */}
+              {event.soon && !event.past ? (
+                <div>
+                  <dt>
+                    {event.category === "pickup" ? "Preorders" : "Sign-ups"}
+                  </dt>
+                  <dd>Open {event.opensWhen}</dd>
+                </div>
+              ) : null}
               {event.priceLabel && (
                 <div>
                   <dt>Cost</dt>
                   <dd>{event.priceLabel}</dd>
-                  {event.spotsLabel && <dd>{event.spotsLabel}</dd>}
+                  {event.spotsLabel && !event.soon && (
+                    <dd>{event.spotsLabel}</dd>
+                  )}
                 </div>
               )}
             </dl>

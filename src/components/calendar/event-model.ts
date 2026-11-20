@@ -48,6 +48,14 @@ export function shopTodayKey(now = new Date()) {
   }).format(now);
 }
 
+/** An instant's time of day in shop time, as "12:00". */
+const shopClock = new Intl.DateTimeFormat("en-GB", {
+  timeZone: SHOP_TIME_ZONE,
+  hour: "2-digit",
+  minute: "2-digit",
+  hourCycle: "h23",
+});
+
 /** The event's last day: its `lastDate` when it runs over several days. */
 export const lastDayOf = (event: Pick<CalendarEvent, "date" | "lastDate">) =>
   event.lastDate ?? event.date;
@@ -204,6 +212,8 @@ export type DecoratedEvent = CalendarEvent & {
   /** "Sign-ups open Dec 1", or "Sign-ups open soon" with no date. Empty
    * unless `soon`. */
   opensLabel: string;
+  /** Just the when of `opensLabel`: "Nov 20, 12pm", or "soon". */
+  opensWhen: string;
   /** The host's page to sign up or order on, for an external event (a
    * vendor's workshop, a pick-up's preorder). Unset when there's no link. */
   orderUrl?: string;
@@ -263,12 +273,17 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
     event.seats.kind === "soon" && event.seats.opens
       ? new Date(`${event.seats.opens}T12:00:00`)
       : undefined;
+  const opensAt =
+    event.seats.kind === "soon" && event.seats.opensAt
+      ? `, ${formatTime(shopClock.format(new Date(event.seats.opensAt)))}`
+      : "";
+  const opensWhen = soon
+    ? opens
+      ? `${MONTHS[opens.getMonth()].slice(0, 3)} ${opens.getDate()}${opensAt}`
+      : "soon"
+    : "";
   const opensLabel = soon
-    ? `${pickup ? "Preorders" : "Sign-ups"} open ${
-        opens
-          ? `${MONTHS[opens.getMonth()].slice(0, 3)} ${opens.getDate()}`
-          : "soon"
-      }`
+    ? `${pickup ? "Preorders" : "Sign-ups"} open ${opensWhen}`
     : "";
 
   // A drop-in shows no chip and no dialog note.
@@ -302,6 +317,7 @@ export function decorate(event: CalendarEvent, today: string): DecoratedEvent {
     soon,
     notify,
     opensLabel,
+    opensWhen,
     orderUrl,
     orderLabel,
     maxSeats: event.seats.kind === "rsvp" ? event.seats.maxSeats : 0,

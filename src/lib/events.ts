@@ -4,6 +4,7 @@ import { unstable_cache } from "next/cache";
 import { cache } from "react";
 
 import type { CalendarEvent } from "@/lib/content/calendar";
+import { applyOpenings } from "@/lib/event-openings";
 import { describeWixError } from "@/lib/wix";
 import {
   getWixCalendarEvents,
@@ -19,8 +20,12 @@ const cachedWixEvents = unstable_cache(
   { revalidate: 60 },
 );
 
-/** Published Wix events from the shared one-minute cache. Throws if Wix does. */
-export const getCachedWixEvents = () => cachedWixEvents();
+/**
+ * Published Wix events from the shared one-minute cache, with scheduled
+ * sign-up links held back until their time. Throws if Wix does.
+ */
+export const getCachedWixEvents = async () =>
+  applyOpenings(await cachedWixEvents());
 
 /**
  * The calendar's events: published Wix events, from the shared cache. If Wix
@@ -29,7 +34,7 @@ export const getCachedWixEvents = () => cachedWixEvents();
 export const getCalendarEvents = cache(
   async (): Promise<CalendarEvent[]> => {
     try {
-      return await cachedWixEvents();
+      return await getCachedWixEvents();
     } catch (error) {
       console.error("Loading Wix events failed", describeWixError(error));
       return [];
@@ -45,7 +50,7 @@ export const getCalendarEvents = cache(
 export const getDraftPreviewEvents = cache(
   async (): Promise<CalendarEvent[]> => {
     try {
-      return await getWixCalendarEventsWithDrafts();
+      return applyOpenings(await getWixCalendarEventsWithDrafts());
     } catch (error) {
       console.error("Loading draft Wix events failed", describeWixError(error));
       return [];

@@ -11,6 +11,7 @@ import {
   DRAFT_EVENTS_PREVIEW,
   MOCK_EVENTS_PREVIEW,
 } from "@/lib/content/calendar";
+import { applyOpenings } from "@/lib/event-openings";
 import { getCalendarEvents, getDraftPreviewEvents } from "@/lib/events";
 import { mockCalendarEvents } from "@/lib/mock-events";
 import { pageMetadata } from "@/lib/site";
@@ -39,7 +40,9 @@ async function previewMode(
 }
 
 async function loadEvents(preview: Preview) {
-  if (preview === "mock") return mockCalendarEvents(shopTodayKey());
+  if (preview === "mock") {
+    return applyOpenings(mockCalendarEvents(shopTodayKey()));
+  }
   if (preview === "drafts") return getDraftPreviewEvents();
   return getCalendarEvents();
 }
