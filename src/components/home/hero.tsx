@@ -7,6 +7,7 @@ import { heroTrackVh, useHeroSequence } from "@/hooks/use-hero-sequence";
 import { useHeroTagline } from "@/hooks/use-hero-tagline";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { button } from "@/components/ui/button";
 import { HOLIDAY_DECOR } from "@/lib/holiday";
 
 import { ARC_HEIGHT, ARC_LETTERS, ARC_WIDTH } from "./el-cerrito-arc";
@@ -182,7 +183,7 @@ const LOGO_VIEWBOX = "-40 -125 1128 417";
 
 function HeroTagline() {
   const reducedMotion = useReducedMotion();
-  const { replay, photosRef, coRef, dotRef, inkRef } = useHeroTagline({
+  const { replay, photosRef, coRef, dotRef, inkRef, outroRef } = useHeroTagline({
     enabled: !reducedMotion,
   });
   const id = useId();
@@ -306,6 +307,19 @@ function HeroTagline() {
             />
           </g>
         </svg>
+
+        {/* One quiet link that says plainly what the shop is, so it doesn't
+            read as a second tagline, and leads on down. Fades in once the
+            dot is home (the hook clears data-pending). */}
+        <div ref={outroRef} className={styles.outro} data-pending="">
+          <a
+            href="#about"
+            className={button({ variant: "link", tone: "paper" })}
+          >
+            A shop for local makers, with coffee and popups{" "}
+            <span aria-hidden="true" className={styles.outroArrow}>↓</span>
+          </a>
+        </div>
 
         {SHOW_REPLAY && !reducedMotion ? (
           <button type="button" className={styles.replay} onClick={replay}>
