@@ -11,10 +11,15 @@ import styles from "./event-photo-zoom.module.css";
 /** Wide enough to read the small print on a 1080px Instagram flyer. */
 const FULL_WIDTH = 1600;
 
+type LoadState = "loading" | "loaded" | "failed";
+
 /**
  * Opens an event's photo whole and large, so the small print on a flyer can
  * be read. The whole photo is a click target for the mouse; the corner
  * button is the one keyboards and screen readers use.
+ *
+ * The large photo is a fresh download, so until it arrives the frame opens
+ * at its final size with a spinner in it.
  */
 export function EventPhotoZoom({
   src,
@@ -27,15 +32,21 @@ export function EventPhotoZoom({
   title: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [load, setLoad] = useState<LoadState>("loading");
+
+  const handleOpenChange = (next: boolean) => {
+    if (next && load === "failed") setLoad("loading");
+    setOpen(next);
+  };
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <button
         type="button"
         tabIndex={-1}
         aria-hidden
         className={styles.cover}
-        onClick={() => setOpen(true)}
+        onClick={() => handleOpenChange(true)}
       />
       <Dialog.Trigger
         className={button({
@@ -51,7 +62,11 @@ export function EventPhotoZoom({
 
       <Dialog.Portal>
         <Dialog.Overlay className={styles.overlay} />
-        <Dialog.Content className={styles.content} aria-describedby={undefined}>
+        <Dialog.Content
+          className={styles.content}
+          aria-describedby={undefined}
+          aria-busy={load === "loading" || undefined}
+        >
           <Dialog.Title className="sr-only">{title}</Dialog.Title>
           <WixImage
             src={src}
@@ -60,8 +75,23 @@ export function EventPhotoZoom({
             width={FULL_WIDTH}
             height={Math.round(FULL_WIDTH / ratio)}
             sizes="92vw"
+            fetchPriority="high"
             className={styles.image}
+            data-loaded={load === "loaded"}
+            onLoad={() => setLoad("loaded")}
+            onError={() => setLoad("failed")}
           />
+          {load === "loading" && (
+            <div className={styles.status} role="status">
+              <span className={styles.spinner} aria-hidden="true" />
+              <span className="sr-only">Loading the photo</span>
+            </div>
+          )}
+          {load === "failed" && (
+            <p className={styles.status} role="alert">
+              The photo didn’t load. Close this and try again.
+            </p>
+          )}
           <Dialog.Close
             className={button({
               tone: "paper",
